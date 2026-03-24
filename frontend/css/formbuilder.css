@@ -1,0 +1,579 @@
+/**
+ * BBF Formbuilder – Frontend Form Styles
+ * Mobile-first responsive CSS
+ */
+
+/* ============================================
+   Base Form Container
+   ============================================ */
+.bbf-form-wrapper {
+    width: 100%;
+}
+
+.bbf-form {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1rem 0;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #1a1a1a;
+}
+
+/* ============================================
+   Field Groups
+   ============================================ */
+.bbf-field {
+    margin-bottom: 1.25rem;
+    width: 100%;
+}
+
+.bbf-field label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: #1a1a1a;
+}
+
+.bbf-field-description {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.bbf-required {
+    color: #dc2626;
+    margin-left: 0.125rem;
+    font-weight: 700;
+}
+
+/* ============================================
+   Inputs, Selects, Textareas
+   ============================================ */
+.bbf-input,
+.bbf-select,
+.bbf-textarea {
+    display: block;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    font-size: 1rem;
+    font-family: inherit;
+    line-height: 1.5;
+    color: #1a1a1a;
+    background-color: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.bbf-input:focus,
+.bbf-select:focus,
+.bbf-textarea:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.bbf-input::placeholder,
+.bbf-textarea::placeholder {
+    color: #9ca3af;
+}
+
+.bbf-textarea {
+    min-height: 7.5rem;
+    resize: vertical;
+}
+
+.bbf-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.25rem;
+}
+
+/* ============================================
+   Radio & Checkbox Groups
+   ============================================ */
+.bbf-radio-group,
+.bbf-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.bbf-radio-label,
+.bbf-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 0.9375rem;
+}
+
+.bbf-radio-label input,
+.bbf-checkbox-label input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: #2563eb;
+    flex-shrink: 0;
+}
+
+.bbf-gdpr-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.bbf-gdpr-label input {
+    margin-top: 0.2rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   Error States
+   ============================================ */
+.bbf-field--error .bbf-input,
+.bbf-field--error .bbf-select,
+.bbf-field--error .bbf-textarea {
+    border-color: #dc2626;
+}
+
+.bbf-field--error .bbf-input:focus,
+.bbf-field--error .bbf-select:focus,
+.bbf-field--error .bbf-textarea:focus {
+    outline-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.bbf-error-message {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.bbf-form-error {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.375rem;
+    color: #dc2626;
+    font-size: 0.9375rem;
+}
+
+/* ============================================
+   Success Message
+   ============================================ */
+.bbf-form-success {
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.375rem;
+    color: #166534;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ============================================
+   Fields Row (Flex Wrapper)
+   ============================================ */
+.bbf-fields-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
+}
+
+/* ============================================
+   Width Classes (mobile-first: all full width)
+   ============================================ */
+.bbf-field--full {
+    width: 100%;
+}
+
+.bbf-field--half,
+.bbf-field--third,
+.bbf-field--two-thirds,
+.bbf-field--quarter {
+    width: 100%;
+}
+
+/* ============================================
+   Submit Button
+   ============================================ */
+.bbf-submit-row {
+    margin-top: 1.5rem;
+}
+
+.bbf-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 10rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 1.5;
+    color: #fff;
+    background-color: #2563eb;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.bbf-submit-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.bbf-submit-btn:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+.bbf-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.bbf-spinner-sm {
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: bbf-spin 0.6s linear infinite;
+}
+
+@keyframes bbf-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   Multi-Step Progress
+   ============================================ */
+.bbf-multi-step-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 2rem;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+}
+
+.bbf-multi-step-progress li {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.bbf-multi-step-progress li::before {
+    counter-increment: step;
+    content: counter(step);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    color: #6b7280;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.bbf-multi-step-progress li + li::after {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 2px;
+    background-color: #e5e7eb;
+    margin: 0 0.5rem;
+    order: -1;
+}
+
+.bbf-multi-step-progress li.is-active::before {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+.bbf-multi-step-progress li.is-active {
+    color: #1a1a1a;
+}
+
+.bbf-multi-step-progress li.is-complete::before {
+    background-color: #16a34a;
+    color: #fff;
+    content: '\2713';
+}
+
+.bbf-multi-step-progress li.is-complete + li::after {
+    background-color: #16a34a;
+}
+
+/* Step Navigation */
+.bbf-step-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+.bbf-step-nav .bbf-btn-prev,
+.bbf-step-nav .bbf-btn-next {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.bbf-step-nav .bbf-btn-prev {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.bbf-step-nav .bbf-btn-prev:hover {
+    background-color: #e5e7eb;
+}
+
+.bbf-step-nav .bbf-btn-next {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+}
+
+.bbf-step-nav .bbf-btn-next:hover {
+    background-color: #1d4ed8;
+}
+
+/* ============================================
+   File Upload Drop Zone
+   ============================================ */
+.bbf-file-drop-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 8rem;
+    padding: 1.5rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+    color: #6b7280;
+    font-size: 0.9375rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.bbf-file-drop-zone:hover,
+.bbf-file-drop-zone.is-dragover {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+.bbf-file-drop-zone .bbf-file-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.bbf-file-drop-zone .bbf-file-hint {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+    margin-top: 0.25rem;
+}
+
+/* ============================================
+   Rating Stars
+   ============================================ */
+.bbf-rating {
+    display: inline-flex;
+    gap: 0.25rem;
+    direction: rtl;
+}
+
+.bbf-rating input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+.bbf-rating label {
+    display: inline-block;
+    font-size: 1.75rem;
+    color: #d1d5db;
+    cursor: pointer;
+    transition: color 0.1s ease-in-out;
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+.bbf-rating label::before {
+    content: '\2605';
+}
+
+.bbf-rating input:checked ~ label,
+.bbf-rating label:hover,
+.bbf-rating label:hover ~ label {
+    color: #f59e0b;
+}
+
+.bbf-rating input:focus-visible + label {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ============================================
+   Section Break & HTML Block
+   ============================================ */
+.bbf-section-break {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 1.5rem 0;
+}
+
+.bbf-section-break-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #1a1a1a;
+}
+
+.bbf-html-block {
+    margin-bottom: 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #374151;
+}
+
+/* ============================================
+   Slider
+   ============================================ */
+.bbf-slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.bbf-slider-wrapper input[type="range"] {
+    flex: 1;
+    height: 0.5rem;
+    accent-color: #2563eb;
+}
+
+.bbf-slider-value {
+    min-width: 2.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: #374151;
+}
+
+/* ============================================
+   Alpine.js x-cloak
+   ============================================ */
+[x-cloak] {
+    display: none !important;
+}
+
+/* ============================================
+   Responsive Breakpoints
+   ============================================ */
+@media (min-width: 640px) {
+    .bbf-field--half {
+        width: calc(50% - 0.5rem);
+    }
+
+    .bbf-field--third {
+        width: calc(33.333% - 0.667rem);
+    }
+
+    .bbf-field--two-thirds {
+        width: calc(66.666% - 0.333rem);
+    }
+
+    .bbf-field--quarter {
+        width: calc(25% - 0.75rem);
+    }
+
+    .bbf-radio-group,
+    .bbf-checkbox-group {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.25rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .bbf-form {
+        max-width: 800px;
+        padding: 1.5rem 0;
+    }
+}
+
+/* ============================================
+   Accessibility: Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    .bbf-input,
+    .bbf-select,
+    .bbf-textarea,
+    .bbf-submit-btn,
+    .bbf-file-drop-zone,
+    .bbf-rating label,
+    .bbf-step-nav .bbf-btn-prev,
+    .bbf-step-nav .bbf-btn-next {
+        transition: none;
+    }
+
+    .bbf-spinner-sm {
+        animation-duration: 1.5s;
+    }
+}
+
+/* ============================================
+   Print
+   ============================================ */
+@media print {
+    .bbf-submit-row,
+    .bbf-step-nav,
+    .bbf-file-drop-zone {
+        display: none;
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "name": "bbfdesign/formbuilder",
+    "description": "Premium Form Builder for JTL-Shop 5",
+    "type": "jtl-shop-plugin",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "BbfdesignFormbuilder\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.4"
+    }
+}

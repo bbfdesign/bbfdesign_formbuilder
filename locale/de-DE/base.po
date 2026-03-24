@@ -1,0 +1,54 @@
+# BBF Formbuilder – German translations
+# Copyright (c) 2026 bbfdesign.de
+msgid ""
+msgstr ""
+"Project-Id-Version: bbfdesign_formbuilder 1.0.0\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "form_submit"
+msgstr "Absenden"
+
+msgid "form_required_field"
+msgstr "Pflichtfeld"
+
+msgid "form_success_default"
+msgstr "Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet."
+
+msgid "form_error_default"
+msgstr "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+
+msgid "form_validation_required"
+msgstr "Dieses Feld ist ein Pflichtfeld."
+
+msgid "form_validation_email"
+msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+
+msgid "form_validation_phone"
+msgstr "Bitte geben Sie eine gültige Telefonnummer ein."
+
+msgid "form_validation_url"
+msgstr "Bitte geben Sie eine gültige URL ein."
+
+msgid "form_validation_number"
+msgstr "Bitte geben Sie eine gültige Zahl ein."
+
+msgid "form_validation_gdpr"
+msgstr "Bitte stimmen Sie der Datenschutzerklärung zu."
+
+msgid "form_next_step"
+msgstr "Weiter"
+
+msgid "form_prev_step"
+msgstr "Zurück"
+
+msgid "form_file_drag"
+msgstr "Datei hierher ziehen oder klicken"
+
+msgid "form_captcha_consent"
+msgstr "Um dieses Formular abzusenden, müssen Sie dem Laden des CAPTCHA zustimmen."
+
+msgid "form_captcha_load"
+msgstr "CAPTCHA laden"

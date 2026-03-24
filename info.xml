@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jtlshopplugin>
+    <Name>BBF Formbuilder</Name>
+    <Description>Professioneller Formular-Builder für JTL-Shop 5 mit Drag &amp; Drop, Conditional Logic, Multi-Step, Spam-Schutz und DSGVO-Konformität.</Description>
+    <Author>bbfdesign</Author>
+    <URL>https://www.bbfdesign.de/</URL>
+    <PluginID>bbfdesign_formbuilder</PluginID>
+    <XMLVersion>100</XMLVersion>
+    <ShopVersion>5.0.0</ShopVersion>
+    <Icon></Icon>
+    <Version>1.0.0</Version>
+    <CreateDate>2026-03-24</CreateDate>
+    <Install>
+        <FrontendLinks>
+            <Link>
+                <Name>Formular</Name>
+                <Template>form-page.tpl</Template>
+                <FullscreenTemplate></FullscreenTemplate>
+                <NoFollow>0</NoFollow>
+                <Identifier>bbfdesign_formbuilder_page</Identifier>
+                <Visibility>0</Visibility>
+                <LinkLanguage iso="GER">
+                    <Seo>formular</Seo>
+                    <Name>Formular</Name>
+                    <Title>Formular</Title>
+                    <MetaTitle>Formular</MetaTitle>
+                    <MetaKeywords>Formular, Kontakt</MetaKeywords>
+                    <MetaDescription>Online-Formular</MetaDescription>
+                </LinkLanguage>
+                <LinkLanguage iso="ENG">
+                    <Seo>form</Seo>
+                    <Name>Form</Name>
+                    <Title>Form</Title>
+                    <MetaTitle>Form</MetaTitle>
+                    <MetaKeywords>Form, Contact</MetaKeywords>
+                    <MetaDescription>Online form</MetaDescription>
+                </LinkLanguage>
+            </Link>
+        </FrontendLinks>
+        <Portlets>
+            <Portlet>
+                <Title>BBF Formbuilder</Title>
+                <Class>BbfdesignFormbuilder</Class>
+                <Group>content</Group>
+                <Active>1</Active>
+            </Portlet>
+        </Portlets>
+        <Adminmenu>
+            <Customlink sort="1">
+                <Name>Einstellungen</Name>
+                <Filename>index.tpl</Filename>
+            </Customlink>
+        </Adminmenu>
+        <Locales>
+            <Variable>
+                <Name>active</Name>
+                <VariableLocalized iso="GER">Aktiv</VariableLocalized>
+                <VariableLocalized iso="ENG">Active</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>inactive</Name>
+                <VariableLocalized iso="GER">Inaktiv</VariableLocalized>
+                <VariableLocalized iso="ENG">Inactive</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>draft</Name>
+                <VariableLocalized iso="GER">Entwurf</VariableLocalized>
+                <VariableLocalized iso="ENG">Draft</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>plugin_status</Name>
+                <VariableLocalized iso="GER">Plugin Status</VariableLocalized>
+                <VariableLocalized iso="ENG">Plugin Status</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>save</Name>
+                <VariableLocalized iso="GER">Speichern</VariableLocalized>
+                <VariableLocalized iso="ENG">Save</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>cancel</Name>
+                <VariableLocalized iso="GER">Abbrechen</VariableLocalized>
+                <VariableLocalized iso="ENG">Cancel</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>delete</Name>
+                <VariableLocalized iso="GER">Löschen</VariableLocalized>
+                <VariableLocalized iso="ENG">Delete</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>edit</Name>
+                <VariableLocalized iso="GER">Bearbeiten</VariableLocalized>
+                <VariableLocalized iso="ENG">Edit</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>duplicate</Name>
+                <VariableLocalized iso="GER">Duplizieren</VariableLocalized>
+                <VariableLocalized iso="ENG">Duplicate</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>close</Name>
+                <VariableLocalized iso="GER">Schließen</VariableLocalized>
+                <VariableLocalized iso="ENG">Close</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>settings</Name>
+                <VariableLocalized iso="GER">Einstellungen</VariableLocalized>
+                <VariableLocalized iso="ENG">Settings</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>search</Name>
+                <VariableLocalized iso="GER">Suche</VariableLocalized>
+                <VariableLocalized iso="ENG">Search</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>actions</Name>
+                <VariableLocalized iso="GER">Aktionen</VariableLocalized>
+                <VariableLocalized iso="ENG">Actions</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>status</Name>
+                <VariableLocalized iso="GER">Status</VariableLocalized>
+                <VariableLocalized iso="ENG">Status</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>yes</Name>
+                <VariableLocalized iso="GER">Ja</VariableLocalized>
+                <VariableLocalized iso="ENG">Yes</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>no</Name>
+                <VariableLocalized iso="GER">Nein</VariableLocalized>
+                <VariableLocalized iso="ENG">No</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>something_went_wrong</Name>
+                <VariableLocalized iso="GER">Etwas ist schief gelaufen</VariableLocalized>
+                <VariableLocalized iso="ENG">Something went wrong</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>updated_successfully</Name>
+                <VariableLocalized iso="GER">Erfolgreich aktualisiert</VariableLocalized>
+                <VariableLocalized iso="ENG">Updated successfully</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>created_successfully</Name>
+                <VariableLocalized iso="GER">Erfolgreich erstellt</VariableLocalized>
+                <VariableLocalized iso="ENG">Created successfully</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>deleted_successfully</Name>
+                <VariableLocalized iso="GER">Erfolgreich gelöscht</VariableLocalized>
+                <VariableLocalized iso="ENG">Deleted successfully</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>record_not_found</Name>
+                <VariableLocalized iso="GER">Eintrag nicht gefunden</VariableLocalized>
+                <VariableLocalized iso="ENG">Record not found</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>confirm_delete</Name>
+                <VariableLocalized iso="GER">Wirklich löschen?</VariableLocalized>
+                <VariableLocalized iso="ENG">Really delete?</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>no_entries</Name>
+                <VariableLocalized iso="GER">Keine Einträge vorhanden</VariableLocalized>
+                <VariableLocalized iso="ENG">No entries available</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>dashboard</Name>
+                <VariableLocalized iso="GER">Dashboard</VariableLocalized>
+                <VariableLocalized iso="ENG">Dashboard</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>forms</Name>
+                <VariableLocalized iso="GER">Formulare</VariableLocalized>
+                <VariableLocalized iso="ENG">Forms</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>all_forms</Name>
+                <VariableLocalized iso="GER">Alle Formulare</VariableLocalized>
+                <VariableLocalized iso="ENG">All Forms</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>new_form</Name>
+                <VariableLocalized iso="GER">Neues Formular</VariableLocalized>
+                <VariableLocalized iso="ENG">New Form</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_builder</Name>
+                <VariableLocalized iso="GER">Formular-Builder</VariableLocalized>
+                <VariableLocalized iso="ENG">Form Builder</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_name</Name>
+                <VariableLocalized iso="GER">Formularname</VariableLocalized>
+                <VariableLocalized iso="ENG">Form Name</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_description</Name>
+                <VariableLocalized iso="GER">Beschreibung</VariableLocalized>
+                <VariableLocalized iso="ENG">Description</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_slug</Name>
+                <VariableLocalized iso="GER">Slug</VariableLocalized>
+                <VariableLocalized iso="ENG">Slug</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>templates</Name>
+                <VariableLocalized iso="GER">Vorlagen</VariableLocalized>
+                <VariableLocalized iso="ENG">Templates</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>entries</Name>
+                <VariableLocalized iso="GER">Einträge</VariableLocalized>
+                <VariableLocalized iso="ENG">Entries</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>entry_detail</Name>
+                <VariableLocalized iso="GER">Eintrags-Details</VariableLocalized>
+                <VariableLocalized iso="ENG">Entry Detail</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>spam_protection</Name>
+                <VariableLocalized iso="GER">Spam-Schutz</VariableLocalized>
+                <VariableLocalized iso="ENG">Spam Protection</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>gdpr</Name>
+                <VariableLocalized iso="GER">DSGVO</VariableLocalized>
+                <VariableLocalized iso="ENG">GDPR</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>email_templates</Name>
+                <VariableLocalized iso="GER">E-Mail-Templates</VariableLocalized>
+                <VariableLocalized iso="ENG">Email Templates</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>css_editor</Name>
+                <VariableLocalized iso="GER">CSS-Editor</VariableLocalized>
+                <VariableLocalized iso="ENG">CSS Editor</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>documentation</Name>
+                <VariableLocalized iso="GER">Dokumentation</VariableLocalized>
+                <VariableLocalized iso="ENG">Documentation</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>changelog</Name>
+                <VariableLocalized iso="GER">Changelog</VariableLocalized>
+                <VariableLocalized iso="ENG">Changelog</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>total_forms</Name>
+                <VariableLocalized iso="GER">Formulare gesamt</VariableLocalized>
+                <VariableLocalized iso="ENG">Total Forms</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>total_entries</Name>
+                <VariableLocalized iso="GER">Einträge gesamt</VariableLocalized>
+                <VariableLocalized iso="ENG">Total Entries</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>unread_entries</Name>
+                <VariableLocalized iso="GER">Ungelesene Einträge</VariableLocalized>
+                <VariableLocalized iso="ENG">Unread Entries</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>spam_blocked</Name>
+                <VariableLocalized iso="GER">Spam blockiert</VariableLocalized>
+                <VariableLocalized iso="ENG">Spam Blocked</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>recent_entries</Name>
+                <VariableLocalized iso="GER">Letzte Einträge</VariableLocalized>
+                <VariableLocalized iso="ENG">Recent Entries</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_created</Name>
+                <VariableLocalized iso="GER">Formular erstellt</VariableLocalized>
+                <VariableLocalized iso="ENG">Form created</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_updated</Name>
+                <VariableLocalized iso="GER">Formular aktualisiert</VariableLocalized>
+                <VariableLocalized iso="ENG">Form updated</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_deleted</Name>
+                <VariableLocalized iso="GER">Formular gelöscht</VariableLocalized>
+                <VariableLocalized iso="ENG">Form deleted</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_duplicated</Name>
+                <VariableLocalized iso="GER">Formular dupliziert</VariableLocalized>
+                <VariableLocalized iso="ENG">Form duplicated</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>entry_deleted</Name>
+                <VariableLocalized iso="GER">Eintrag gelöscht</VariableLocalized>
+                <VariableLocalized iso="ENG">Entry deleted</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>export_csv</Name>
+                <VariableLocalized iso="GER">CSV exportieren</VariableLocalized>
+                <VariableLocalized iso="ENG">Export CSV</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>export_json</Name>
+                <VariableLocalized iso="GER">JSON exportieren</VariableLocalized>
+                <VariableLocalized iso="ENG">Export JSON</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>notifications</Name>
+                <VariableLocalized iso="GER">Benachrichtigungen</VariableLocalized>
+                <VariableLocalized iso="ENG">Notifications</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>confirmations</Name>
+                <VariableLocalized iso="GER">Bestätigungen</VariableLocalized>
+                <VariableLocalized iso="ENG">Confirmations</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>conditional_logic</Name>
+                <VariableLocalized iso="GER">Bedingte Logik</VariableLocalized>
+                <VariableLocalized iso="ENG">Conditional Logic</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_label</Name>
+                <VariableLocalized iso="GER">Bezeichnung</VariableLocalized>
+                <VariableLocalized iso="ENG">Label</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_placeholder</Name>
+                <VariableLocalized iso="GER">Platzhalter</VariableLocalized>
+                <VariableLocalized iso="ENG">Placeholder</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_required</Name>
+                <VariableLocalized iso="GER">Pflichtfeld</VariableLocalized>
+                <VariableLocalized iso="ENG">Required</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_description</Name>
+                <VariableLocalized iso="GER">Feldbeschreibung</VariableLocalized>
+                <VariableLocalized iso="ENG">Field Description</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_width</Name>
+                <VariableLocalized iso="GER">Feldbreite</VariableLocalized>
+                <VariableLocalized iso="ENG">Field Width</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_default_value</Name>
+                <VariableLocalized iso="GER">Standardwert</VariableLocalized>
+                <VariableLocalized iso="ENG">Default Value</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_css_class</Name>
+                <VariableLocalized iso="GER">CSS-Klasse</VariableLocalized>
+                <VariableLocalized iso="ENG">CSS Class</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>field_choices</Name>
+                <VariableLocalized iso="GER">Auswahloptionen</VariableLocalized>
+                <VariableLocalized iso="ENG">Choices</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>add_field</Name>
+                <VariableLocalized iso="GER">Feld hinzufügen</VariableLocalized>
+                <VariableLocalized iso="ENG">Add Field</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>remove_field</Name>
+                <VariableLocalized iso="GER">Feld entfernen</VariableLocalized>
+                <VariableLocalized iso="ENG">Remove Field</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>submit_button_text</Name>
+                <VariableLocalized iso="GER">Button-Text</VariableLocalized>
+                <VariableLocalized iso="ENG">Button Text</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>select_form</Name>
+                <VariableLocalized iso="GER">Formular auswählen</VariableLocalized>
+                <VariableLocalized iso="ENG">Select Form</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>no_form_selected</Name>
+                <VariableLocalized iso="GER">Kein Formular ausgewählt</VariableLocalized>
+                <VariableLocalized iso="ENG">No form selected</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_not_found</Name>
+                <VariableLocalized iso="GER">Formular nicht gefunden</VariableLocalized>
+                <VariableLocalized iso="ENG">Form not found</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>form_inactive</Name>
+                <VariableLocalized iso="GER">Dieses Formular ist nicht aktiv</VariableLocalized>
+                <VariableLocalized iso="ENG">This form is not active</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>submission_success</Name>
+                <VariableLocalized iso="GER">Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.</VariableLocalized>
+                <VariableLocalized iso="ENG">Thank you! Your message has been sent successfully.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>submission_error</Name>
+                <VariableLocalized iso="GER">Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</VariableLocalized>
+                <VariableLocalized iso="ENG">An error occurred while sending. Please try again.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_required</Name>
+                <VariableLocalized iso="GER">Dieses Feld ist ein Pflichtfeld.</VariableLocalized>
+                <VariableLocalized iso="ENG">This field is required.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_email</Name>
+                <VariableLocalized iso="GER">Bitte geben Sie eine gültige E-Mail-Adresse ein.</VariableLocalized>
+                <VariableLocalized iso="ENG">Please enter a valid email address.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_phone</Name>
+                <VariableLocalized iso="GER">Bitte geben Sie eine gültige Telefonnummer ein.</VariableLocalized>
+                <VariableLocalized iso="ENG">Please enter a valid phone number.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_url</Name>
+                <VariableLocalized iso="GER">Bitte geben Sie eine gültige URL ein.</VariableLocalized>
+                <VariableLocalized iso="ENG">Please enter a valid URL.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_number</Name>
+                <VariableLocalized iso="GER">Bitte geben Sie eine gültige Zahl ein.</VariableLocalized>
+                <VariableLocalized iso="ENG">Please enter a valid number.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_file_size</Name>
+                <VariableLocalized iso="GER">Die Datei ist zu groß.</VariableLocalized>
+                <VariableLocalized iso="ENG">The file is too large.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_file_type</Name>
+                <VariableLocalized iso="GER">Dieser Dateityp ist nicht erlaubt.</VariableLocalized>
+                <VariableLocalized iso="ENG">This file type is not allowed.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>validation_gdpr</Name>
+                <VariableLocalized iso="GER">Bitte stimmen Sie der Datenschutzerklärung zu.</VariableLocalized>
+                <VariableLocalized iso="ENG">Please agree to the privacy policy.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>gdpr_checkbox_text</Name>
+                <VariableLocalized iso="GER">Ich stimme der Verarbeitung meiner Daten gemäß der Datenschutzerklärung zu.</VariableLocalized>
+                <VariableLocalized iso="ENG">I agree to the processing of my data according to the privacy policy.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>next_step</Name>
+                <VariableLocalized iso="GER">Weiter</VariableLocalized>
+                <VariableLocalized iso="ENG">Next</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>previous_step</Name>
+                <VariableLocalized iso="GER">Zurück</VariableLocalized>
+                <VariableLocalized iso="ENG">Back</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>step_of</Name>
+                <VariableLocalized iso="GER">Schritt %d von %d</VariableLocalized>
+                <VariableLocalized iso="ENG">Step %d of %d</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>captcha_consent_needed</Name>
+                <VariableLocalized iso="GER">Um dieses Formular abzusenden, müssen Sie dem Laden des CAPTCHA zustimmen.</VariableLocalized>
+                <VariableLocalized iso="ENG">To submit this form, you need to consent to loading the CAPTCHA.</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>captcha_load</Name>
+                <VariableLocalized iso="GER">CAPTCHA laden</VariableLocalized>
+                <VariableLocalized iso="ENG">Load CAPTCHA</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>file_upload_drag</Name>
+                <VariableLocalized iso="GER">Datei hierher ziehen oder klicken</VariableLocalized>
+                <VariableLocalized iso="ENG">Drag file here or click</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>encryption_warning</Name>
+                <VariableLocalized iso="GER">Die Verschlüsselung schützt Daten in der Datenbank. Bei Verlust des Schlüssels sind alle verschlüsselten Daten unwiederbringlich verloren!</VariableLocalized>
+                <VariableLocalized iso="ENG">Encryption protects data in the database. If the key is lost, all encrypted data is permanently lost!</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>ip_anonymization</Name>
+                <VariableLocalized iso="GER">IP-Anonymisierung</VariableLocalized>
+                <VariableLocalized iso="ENG">IP Anonymization</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>auto_delete_days</Name>
+                <VariableLocalized iso="GER">Einträge automatisch löschen nach (Tage)</VariableLocalized>
+                <VariableLocalized iso="ENG">Auto-delete entries after (days)</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_emptyTable</Name>
+                <VariableLocalized iso="GER">Keine Daten vorhanden</VariableLocalized>
+                <VariableLocalized iso="ENG">No data available in the table</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_lengthMenu</Name>
+                <VariableLocalized iso="GER">Zeige _MENU_ Einträge</VariableLocalized>
+                <VariableLocalized iso="ENG">Show _MENU_ entries</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_info</Name>
+                <VariableLocalized iso="GER">Zeige _START_ bis _END_ von _TOTAL_ Einträgen</VariableLocalized>
+                <VariableLocalized iso="ENG">Showing _START_ to _END_ of _TOTAL_ entries</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_zeroRecords</Name>
+                <VariableLocalized iso="GER">Keine passenden Datensätze gefunden</VariableLocalized>
+                <VariableLocalized iso="ENG">No matching records found</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_search</Name>
+                <VariableLocalized iso="GER">Suche</VariableLocalized>
+                <VariableLocalized iso="ENG">Search</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_sInfoEmpty</Name>
+                <VariableLocalized iso="GER">Zeigt 0 bis 0 von 0 Datensätzen</VariableLocalized>
+                <VariableLocalized iso="ENG">Showing 0 to 0 of 0 data records</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_sInfoFiltered</Name>
+                <VariableLocalized iso="GER">(gefiltert aus _MAX_ Gesamtsätzen)</VariableLocalized>
+                <VariableLocalized iso="ENG">(filtered from _MAX_ total records)</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_previous</Name>
+                <VariableLocalized iso="GER">Vorherige</VariableLocalized>
+                <VariableLocalized iso="ENG">Previous</VariableLocalized>
+            </Variable>
+            <Variable>
+                <Name>datatable_next</Name>
+                <VariableLocalized iso="GER">Weiter</VariableLocalized>
+                <VariableLocalized iso="ENG">Next</VariableLocalized>
+            </Variable>
+        </Locales>
+    </Install>
+</jtlshopplugin>

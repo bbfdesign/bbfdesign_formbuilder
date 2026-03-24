@@ -1,0 +1,673 @@
+/* ═══════════════════════════════════════════════════════════
+   BBF Formbuilder – Drag & Drop Builder Styles
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Builder Layout (3 columns) ─── */
+
+.bbf-builder-layout {
+    display: flex;
+    gap: 0;
+    min-height: calc(100vh - 300px);
+    background: var(--bbf-bg-page);
+    border: 1px solid var(--bbf-border);
+    border-radius: var(--bbf-radius-md);
+    overflow: hidden;
+}
+
+/* ─── Field Palette (left column) ─── */
+
+.bbf-field-palette {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--bbf-bg-card);
+    border-right: 1px solid var(--bbf-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.bbf-palette-header {
+    padding: var(--bbf-spacing-md);
+    border-bottom: 1px solid var(--bbf-border-light);
+    font-size: var(--bbf-font-size-sm);
+    font-weight: var(--bbf-font-weight-bold);
+    color: var(--bbf-text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bbf-palette-search {
+    padding: var(--bbf-spacing-sm) var(--bbf-spacing-md);
+    border-bottom: 1px solid var(--bbf-border-light);
+}
+
+.bbf-palette-search input {
+    width: 100%;
+    border: 1px solid var(--bbf-border-input);
+    border-radius: var(--bbf-radius-lg);
+    background: var(--bbf-bg-input);
+    padding: 8px 12px;
+    font-size: var(--bbf-font-size-sm);
+    outline: none;
+    transition: border-color var(--bbf-transition);
+}
+
+.bbf-palette-search input:focus {
+    border-color: var(--bbf-primary);
+    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+}
+
+.bbf-palette-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--bbf-spacing-sm);
+}
+
+.bbf-palette-group {
+    margin-bottom: var(--bbf-spacing-md);
+}
+
+.bbf-palette-group-title {
+    font-size: 11px;
+    font-weight: var(--bbf-font-weight-bold);
+    color: var(--bbf-text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: var(--bbf-spacing-xs) var(--bbf-spacing-sm);
+    margin-bottom: var(--bbf-spacing-xs);
+}
+
+.bbf-palette-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--bbf-spacing-xs);
+}
+
+.bbf-palette-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: var(--bbf-bg-input);
+    border: 1px solid transparent;
+    border-radius: var(--bbf-radius-md);
+    cursor: grab;
+    transition: all var(--bbf-transition);
+    text-align: center;
+    user-select: none;
+}
+
+.bbf-palette-item:hover {
+    background: var(--bbf-primary-light);
+    border-color: var(--bbf-primary);
+    box-shadow: var(--bbf-shadow-sm);
+}
+
+.bbf-palette-item:active {
+    cursor: grabbing;
+}
+
+.bbf-palette-item svg {
+    width: 20px;
+    height: 20px;
+    color: var(--bbf-text-light);
+    flex-shrink: 0;
+}
+
+.bbf-palette-item:hover svg {
+    color: var(--bbf-primary);
+}
+
+.bbf-palette-item-label {
+    font-size: 11px;
+    font-weight: var(--bbf-font-weight-medium);
+    color: var(--bbf-text-dark);
+    line-height: 1.2;
+}
+
+/* ─── Drop Zone (center column) ─── */
+
+.bbf-drop-zone {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bbf-bg-page);
+}
+
+.bbf-drop-zone-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--bbf-spacing-md);
+    border-bottom: 1px solid var(--bbf-border-light);
+    background: var(--bbf-bg-card);
+}
+
+.bbf-drop-zone-title {
+    font-size: var(--bbf-font-size-base);
+    font-weight: var(--bbf-font-weight-bold);
+    color: var(--bbf-text-dark);
+}
+
+.bbf-drop-zone-actions {
+    display: flex;
+    gap: var(--bbf-spacing-sm);
+}
+
+.bbf-drop-zone-content {
+    flex: 1;
+    padding: var(--bbf-spacing-md);
+    overflow-y: auto;
+    min-height: 200px;
+}
+
+/* Empty state */
+.bbf-drop-zone-content.is-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--bbf-border);
+    border-radius: var(--bbf-radius-md);
+    margin: var(--bbf-spacing-md);
+}
+
+.bbf-drop-zone-empty {
+    text-align: center;
+    color: var(--bbf-text-light);
+    padding: var(--bbf-spacing-xxl) var(--bbf-spacing-lg);
+}
+
+.bbf-drop-zone-empty svg {
+    width: 48px;
+    height: 48px;
+    color: var(--bbf-border);
+    margin-bottom: var(--bbf-spacing-md);
+}
+
+.bbf-drop-zone-empty p {
+    font-size: var(--bbf-font-size-base);
+    margin: 0;
+}
+
+/* ─── Field Card in Drop Zone ─── */
+
+.bbf-field-card {
+    background: var(--bbf-bg-card);
+    border: 1px solid var(--bbf-border-light);
+    border-radius: var(--bbf-radius-md);
+    padding: var(--bbf-spacing-md);
+    margin-bottom: var(--bbf-spacing-sm);
+    cursor: grab;
+    transition: all var(--bbf-transition);
+    position: relative;
+}
+
+.bbf-field-card:hover {
+    border-color: var(--bbf-border);
+    box-shadow: var(--bbf-shadow-sm);
+}
+
+.bbf-field-card.is-selected {
+    border-color: var(--bbf-primary);
+    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+}
+
+.bbf-field-card:active {
+    cursor: grabbing;
+}
+
+.bbf-field-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--bbf-spacing-sm);
+    margin-bottom: var(--bbf-spacing-sm);
+}
+
+.bbf-field-card-drag {
+    color: var(--bbf-text-light);
+    cursor: grab;
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+.bbf-field-card-drag:active {
+    cursor: grabbing;
+}
+
+.bbf-field-card-drag svg {
+    width: 16px;
+    height: 16px;
+}
+
+.bbf-field-card-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--bbf-radius-sm);
+    background: var(--bbf-bg-input);
+    flex-shrink: 0;
+}
+
+.bbf-field-card-icon svg {
+    width: 16px;
+    height: 16px;
+    color: var(--bbf-text-light);
+}
+
+.bbf-field-card.is-selected .bbf-field-card-icon {
+    background: var(--bbf-primary-light);
+}
+
+.bbf-field-card.is-selected .bbf-field-card-icon svg {
+    color: var(--bbf-primary);
+}
+
+.bbf-field-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.bbf-field-card-name {
+    font-size: var(--bbf-font-size-sm);
+    font-weight: var(--bbf-font-weight-medium);
+    color: var(--bbf-text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bbf-field-card-type {
+    font-size: 11px;
+    color: var(--bbf-text-light);
+}
+
+.bbf-field-card-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity var(--bbf-transition);
+}
+
+.bbf-field-card:hover .bbf-field-card-actions {
+    opacity: 1;
+}
+
+.bbf-field-card-actions button {
+    background: none;
+    border: none;
+    color: var(--bbf-text-light);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--bbf-radius-sm);
+    transition: all var(--bbf-transition);
+    display: flex;
+    align-items: center;
+}
+
+.bbf-field-card-actions button:hover {
+    background: var(--bbf-bg-hover);
+    color: var(--bbf-text-dark);
+}
+
+.bbf-field-card-actions button.bbf-field-delete:hover {
+    background: var(--bbf-danger-light);
+    color: var(--bbf-danger);
+}
+
+.bbf-field-card-actions button svg {
+    width: 14px;
+    height: 14px;
+}
+
+.bbf-field-card-preview {
+    background: var(--bbf-bg-input);
+    border-radius: var(--bbf-radius-sm);
+    padding: var(--bbf-spacing-sm) var(--bbf-spacing-md);
+    font-size: var(--bbf-font-size-sm);
+    color: var(--bbf-text-light);
+    border: 1px dashed var(--bbf-border);
+}
+
+/* ─── Field Settings Panel (right column) ─── */
+
+.bbf-field-settings {
+    width: 320px;
+    flex-shrink: 0;
+    background: var(--bbf-bg-card);
+    border-left: 1px solid var(--bbf-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.bbf-settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--bbf-spacing-md);
+    border-bottom: 1px solid var(--bbf-border-light);
+}
+
+.bbf-settings-title {
+    font-size: var(--bbf-font-size-sm);
+    font-weight: var(--bbf-font-weight-bold);
+    color: var(--bbf-text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bbf-settings-close {
+    background: none;
+    border: none;
+    color: var(--bbf-text-light);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--bbf-radius-sm);
+    transition: all var(--bbf-transition);
+    display: flex;
+    align-items: center;
+}
+
+.bbf-settings-close:hover {
+    background: var(--bbf-bg-hover);
+    color: var(--bbf-text-dark);
+}
+
+.bbf-settings-close svg {
+    width: 16px;
+    height: 16px;
+}
+
+.bbf-settings-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--bbf-spacing-md);
+}
+
+.bbf-settings-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--bbf-text-light);
+    font-size: var(--bbf-font-size-sm);
+    text-align: center;
+    padding: var(--bbf-spacing-lg);
+}
+
+.bbf-settings-group {
+    margin-bottom: var(--bbf-spacing-lg);
+}
+
+.bbf-settings-group-title {
+    font-size: 11px;
+    font-weight: var(--bbf-font-weight-bold);
+    color: var(--bbf-text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-bottom: var(--bbf-spacing-sm);
+    border-bottom: 1px solid var(--bbf-border-light);
+    margin-bottom: var(--bbf-spacing-md);
+}
+
+.bbf-settings-field {
+    margin-bottom: var(--bbf-spacing-md);
+}
+
+.bbf-settings-field label {
+    display: block;
+    font-size: var(--bbf-font-size-xs) !important;
+    font-weight: var(--bbf-font-weight-medium) !important;
+    color: var(--bbf-text-dark) !important;
+    margin-bottom: var(--bbf-spacing-xs);
+    text-transform: none;
+}
+
+.bbf-settings-field input[type="text"],
+.bbf-settings-field input[type="number"],
+.bbf-settings-field input[type="email"],
+.bbf-settings-field textarea,
+.bbf-settings-field select {
+    width: 100%;
+    border: 1px solid var(--bbf-border-input);
+    border-radius: var(--bbf-radius-md);
+    background: var(--bbf-bg-input);
+    padding: 8px 12px;
+    font-size: var(--bbf-font-size-sm);
+    color: var(--bbf-text-dark);
+    outline: none;
+    transition: border-color var(--bbf-transition);
+    font-family: var(--bbf-font-family);
+}
+
+.bbf-settings-field input:focus,
+.bbf-settings-field textarea:focus,
+.bbf-settings-field select:focus {
+    border-color: var(--bbf-primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+}
+
+.bbf-settings-field textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.bbf-settings-field .bbf-settings-hint {
+    font-size: 11px;
+    color: var(--bbf-text-light);
+    margin-top: 4px;
+}
+
+/* ─── SortableJS Ghost / Drag Styling ─── */
+
+.sortable-ghost {
+    opacity: 0.4;
+    background: var(--bbf-primary-light) !important;
+    border: 2px dashed var(--bbf-primary) !important;
+    border-radius: var(--bbf-radius-md);
+}
+
+.sortable-drag {
+    opacity: 1 !important;
+    box-shadow: var(--bbf-shadow-lg) !important;
+    transform: rotate(1deg);
+    z-index: 9999;
+}
+
+.sortable-chosen {
+    background: var(--bbf-bg-card);
+}
+
+.bbf-drop-zone-content.sortable-drag-over {
+    background: var(--bbf-primary-light);
+    border-color: var(--bbf-primary);
+}
+
+/* Palette item while being dragged */
+.bbf-palette-item.sortable-ghost {
+    opacity: 0.3;
+}
+
+.bbf-palette-item.sortable-drag {
+    background: var(--bbf-bg-card);
+    border: 1px solid var(--bbf-primary);
+    box-shadow: var(--bbf-shadow-lg);
+    transform: rotate(2deg);
+}
+
+/* ─── Field Width Indicators ─── */
+
+.bbf-field-width-selector {
+    display: flex;
+    gap: var(--bbf-spacing-xs);
+    flex-wrap: wrap;
+}
+
+.bbf-field-width-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid var(--bbf-border);
+    border-radius: var(--bbf-radius-sm);
+    cursor: pointer;
+    transition: all var(--bbf-transition);
+    flex: 1;
+    min-width: 50px;
+}
+
+.bbf-field-width-option:hover {
+    border-color: var(--bbf-primary);
+    background: var(--bbf-primary-light);
+}
+
+.bbf-field-width-option.is-active {
+    border-color: var(--bbf-primary);
+    background: var(--bbf-primary-light);
+    box-shadow: 0 0 0 2px rgba(232, 66, 10, 0.15);
+}
+
+.bbf-field-width-preview {
+    height: 8px;
+    background: var(--bbf-border);
+    border-radius: 2px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.bbf-field-width-preview .bbf-width-fill {
+    height: 100%;
+    background: var(--bbf-primary);
+    border-radius: 2px;
+    transition: width var(--bbf-transition);
+}
+
+.bbf-field-width-option.is-active .bbf-field-width-preview {
+    background: rgba(232, 66, 10, 0.15);
+}
+
+.bbf-field-width-label {
+    font-size: 10px;
+    color: var(--bbf-text-light);
+    font-weight: var(--bbf-font-weight-medium);
+    white-space: nowrap;
+}
+
+.bbf-field-width-option.is-active .bbf-field-width-label {
+    color: var(--bbf-primary);
+}
+
+/* Width classes for field cards in drop zone */
+
+.bbf-field-width-full {
+    width: 100%;
+}
+
+.bbf-field-width-half {
+    width: calc(50% - 4px);
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: top;
+}
+
+.bbf-field-width-third {
+    width: calc(33.333% - 6px);
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: top;
+}
+
+.bbf-field-width-two-thirds {
+    width: calc(66.666% - 4px);
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: top;
+}
+
+.bbf-field-width-quarter {
+    width: calc(25% - 6px);
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: top;
+}
+
+/* Row container for inline fields */
+.bbf-field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bbf-spacing-sm);
+    margin-bottom: var(--bbf-spacing-sm);
+}
+
+/* ─── Responsive Adjustments ─── */
+
+@media (max-width: 1200px) {
+    .bbf-field-settings {
+        width: 280px;
+    }
+
+    .bbf-field-palette {
+        width: 220px;
+    }
+}
+
+@media (max-width: 992px) {
+    .bbf-builder-layout {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .bbf-field-palette {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--bbf-border);
+        max-height: 250px;
+    }
+
+    .bbf-palette-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .bbf-field-settings {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--bbf-border);
+        max-height: 400px;
+    }
+
+    .bbf-drop-zone-content {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .bbf-palette-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .bbf-field-width-half,
+    .bbf-field-width-third,
+    .bbf-field-width-two-thirds,
+    .bbf-field-width-quarter {
+        width: 100%;
+        display: flex;
+    }
+}
+
+@media (max-width: 576px) {
+    .bbf-palette-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .bbf-builder-layout {
+        border-radius: 0;
+    }
+}

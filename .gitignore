@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea/
+
+# Claude Code
+.claude/
