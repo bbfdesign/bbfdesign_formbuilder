@@ -53,6 +53,14 @@ class Bootstrap extends Bootstrapper
                 $route->register();
             });
         }
+
+        // Register with BBF Suchplugin (if available)
+        $dispatcher->listen('shop.hook.' . \HOOK_LETZTERINCLUDE_INC, function () {
+            if (class_exists('\\Plugin\\bbfdesign_search\\Search\\SearchProviderRegistry')) {
+                $registry = \Plugin\bbfdesign_search\Search\SearchProviderRegistry::getInstance();
+                $registry->register(new \BbfdesignFormbuilder\Search\FormBuilderSearchProvider());
+            }
+        });
     }
 
     public function installed()
