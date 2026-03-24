@@ -118,6 +118,6 @@ class FormRenderService
             'bbfFrontendPath' => $frontendPath,
         ]);
 
-        return $smarty->fetch($frontendPath . 'template/form.tpl');
+        return $smarty->fetch($frontendPath . 'template/bbf-form.tpl');
     }
 }

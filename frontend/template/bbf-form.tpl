@@ -26,7 +26,7 @@
 
         {* Multi-Step Progress *}
         {if $bbfForm->is_multi_step}
-            {include file="frontend/template/multi-step-progress.tpl"}
+            {include file="frontend/template/bbf-multi-step-progress.tpl"}
         {/if}
 
         <div class="bbf-fields-row">
