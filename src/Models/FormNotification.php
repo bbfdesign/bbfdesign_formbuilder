@@ -46,33 +46,26 @@ class FormNotification
 
     public function create(array $data): int
     {
-        $this->db->queryPrepared(
-            'INSERT INTO `' . self::TABLE . '` (form_id, name, is_active, recipient_type, recipient_email, recipient_field, reply_to_field, subject, message, email_template, custom_template_id, sender_name, sender_email, cc, bcc, attach_uploads, conditional_logic_json, sort_order)
-             VALUES (:form_id, :name, :is_active, :recipient_type, :recipient_email, :recipient_field, :reply_to_field, :subject, :message, :email_template, :custom_template_id, :sender_name, :sender_email, :cc, :bcc, :attach_uploads, :conditional_logic_json, :sort_order)',
-            [
-                'form_id'              => $data['form_id'],
-                'name'                 => $data['name'],
-                'is_active'            => $data['is_active'] ?? 1,
-                'recipient_type'       => $data['recipient_type'] ?? 'fixed',
-                'recipient_email'      => $data['recipient_email'] ?? null,
-                'recipient_field'      => $data['recipient_field'] ?? null,
-                'reply_to_field'       => $data['reply_to_field'] ?? null,
-                'subject'              => $data['subject'],
-                'message'              => $data['message'],
-                'email_template'       => $data['email_template'] ?? 'standard',
-                'custom_template_id'   => $data['custom_template_id'] ?? null,
-                'sender_name'          => $data['sender_name'] ?? null,
-                'sender_email'         => $data['sender_email'] ?? null,
-                'cc'                   => $data['cc'] ?? null,
-                'bcc'                  => $data['bcc'] ?? null,
-                'attach_uploads'       => $data['attach_uploads'] ?? 0,
-                'conditional_logic_json' => $data['conditional_logic_json'] ?? null,
-                'sort_order'           => $data['sort_order'] ?? 0,
-            ]
-        );
-
-        $result = $this->db->queryPrepared('SELECT LAST_INSERT_ID() as id', []);
-        return (int)($result[0]['id'] ?? 0);
+        return (int)$this->db->insert(self::TABLE, (object)[
+            'form_id'              => (int)$data['form_id'],
+            'name'                 => $data['name'],
+            'is_active'            => (int)($data['is_active'] ?? 1),
+            'recipient_type'       => $data['recipient_type'] ?? 'fixed',
+            'recipient_email'      => $data['recipient_email'] ?? null,
+            'recipient_field'      => $data['recipient_field'] ?? null,
+            'reply_to_field'       => $data['reply_to_field'] ?? null,
+            'subject'              => $data['subject'] ?? '',
+            'message'              => $data['message'] ?? '',
+            'email_template'       => $data['email_template'] ?? 'standard',
+            'custom_template_id'   => $data['custom_template_id'] ?? null,
+            'sender_name'          => $data['sender_name'] ?? null,
+            'sender_email'         => $data['sender_email'] ?? null,
+            'cc'                   => $data['cc'] ?? null,
+            'bcc'                  => $data['bcc'] ?? null,
+            'attach_uploads'       => (int)($data['attach_uploads'] ?? 0),
+            'conditional_logic_json' => $data['conditional_logic_json'] ?? null,
+            'sort_order'           => (int)($data['sort_order'] ?? 0),
+        ]);
     }
 
     public function update(int $id, array $data): void

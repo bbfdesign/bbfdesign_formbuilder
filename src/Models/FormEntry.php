@@ -82,25 +82,18 @@ class FormEntry
      */
     public function create(array $data): int
     {
-        $this->db->queryPrepared(
-            'INSERT INTO `' . self::TABLE . '` (form_id, values_json, is_encrypted, ip_address, user_agent, referrer_url, page_url, customer_id, lang_iso, status)
-             VALUES (:form_id, :values_json, :is_encrypted, :ip_address, :user_agent, :referrer_url, :page_url, :customer_id, :lang_iso, :status)',
-            [
-                'form_id'      => $data['form_id'],
-                'values_json'  => $data['values_json'],
-                'is_encrypted' => $data['is_encrypted'] ?? 0,
-                'ip_address'   => $data['ip_address'] ?? null,
-                'user_agent'   => $data['user_agent'] ?? null,
-                'referrer_url' => $data['referrer_url'] ?? null,
-                'page_url'     => $data['page_url'] ?? null,
-                'customer_id'  => $data['customer_id'] ?? null,
-                'lang_iso'     => $data['lang_iso'] ?? null,
-                'status'       => $data['status'] ?? 'unread',
-            ]
-        );
-
-        $result = $this->db->queryPrepared('SELECT LAST_INSERT_ID() as id', []);
-        return (int)($result[0]['id'] ?? 0);
+        return (int)$this->db->insert(self::TABLE, (object)[
+            'form_id'      => (int)$data['form_id'],
+            'values_json'  => $data['values_json'],
+            'is_encrypted' => (int)($data['is_encrypted'] ?? 0),
+            'ip_address'   => $data['ip_address'] ?? null,
+            'user_agent'   => $data['user_agent'] ?? null,
+            'referrer_url' => $data['referrer_url'] ?? null,
+            'page_url'     => $data['page_url'] ?? null,
+            'customer_id'  => $data['customer_id'] ?? null,
+            'lang_iso'     => $data['lang_iso'] ?? null,
+            'status'       => $data['status'] ?? 'unread',
+        ]);
     }
 
     /**
@@ -258,12 +251,14 @@ class FormEntry
      */
     public function saveFile(array $data): int
     {
-        $this->db->queryPrepared(
-            'INSERT INTO `' . self::TABLE_FILES . '` (entry_id, field_id, original_name, stored_name, file_path, mime_type, file_size)
-             VALUES (:entry_id, :field_id, :original_name, :stored_name, :file_path, :mime_type, :file_size)',
-            $data
-        );
-        $result = $this->db->queryPrepared('SELECT LAST_INSERT_ID() as id', []);
-        return (int)($result[0]['id'] ?? 0);
+        return (int)$this->db->insert(self::TABLE_FILES, (object)[
+            'entry_id'      => (int)$data['entry_id'],
+            'field_id'      => $data['field_id'],
+            'original_name' => $data['original_name'],
+            'stored_name'   => $data['stored_name'],
+            'file_path'     => $data['file_path'],
+            'mime_type'     => $data['mime_type'],
+            'file_size'     => (int)$data['file_size'],
+        ]);
     }
 }

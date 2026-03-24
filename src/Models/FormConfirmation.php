@@ -46,23 +46,17 @@ class FormConfirmation
 
     public function create(array $data): int
     {
-        $this->db->queryPrepared(
-            'INSERT INTO `' . self::TABLE . '` (form_id, name, type, message, redirect_url, page_id, is_default, conditional_logic_json, sort_order)
-             VALUES (:form_id, :name, :type, :message, :redirect_url, :page_id, :is_default, :conditional_logic_json, :sort_order)',
-            [
-                'form_id'              => $data['form_id'],
-                'name'                 => $data['name'],
-                'type'                 => $data['type'] ?? 'message',
-                'message'              => $data['message'] ?? null,
-                'redirect_url'         => $data['redirect_url'] ?? null,
-                'page_id'              => $data['page_id'] ?? null,
-                'is_default'           => $data['is_default'] ?? 0,
-                'conditional_logic_json' => $data['conditional_logic_json'] ?? null,
-                'sort_order'           => $data['sort_order'] ?? 0,
-            ]
-        );
-        $result = $this->db->queryPrepared('SELECT LAST_INSERT_ID() as id', []);
-        return (int)($result[0]['id'] ?? 0);
+        return (int)$this->db->insert(self::TABLE, (object)[
+            'form_id'              => (int)$data['form_id'],
+            'name'                 => $data['name'],
+            'type'                 => $data['type'] ?? 'message',
+            'message'              => $data['message'] ?? null,
+            'redirect_url'         => $data['redirect_url'] ?? null,
+            'page_id'              => $data['page_id'] ?? null,
+            'is_default'           => (int)($data['is_default'] ?? 0),
+            'conditional_logic_json' => $data['conditional_logic_json'] ?? null,
+            'sort_order'           => (int)($data['sort_order'] ?? 0),
+        ]);
     }
 
     public function update(int $id, array $data): void

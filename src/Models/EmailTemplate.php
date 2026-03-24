@@ -58,17 +58,12 @@ class EmailTemplate
 
     public function create(array $data): int
     {
-        $this->db->queryPrepared(
-            'INSERT INTO `' . self::TABLE . '` (name, type, html_template, is_system) VALUES (:name, :type, :html, :sys)',
-            [
-                'name' => $data['name'],
-                'type' => $data['type'] ?? 'custom',
-                'html' => $data['html_template'],
-                'sys'  => $data['is_system'] ?? 0,
-            ]
-        );
-        $result = $this->db->queryPrepared('SELECT LAST_INSERT_ID() as id', []);
-        return (int)($result[0]['id'] ?? 0);
+        return (int)$this->db->insert(self::TABLE, (object)[
+            'name'          => $data['name'],
+            'type'          => $data['type'] ?? 'custom',
+            'html_template' => $data['html_template'],
+            'is_system'     => (int)($data['is_system'] ?? 0),
+        ]);
     }
 
     public function update(int $id, array $data): void

@@ -102,25 +102,18 @@ class Form
      */
     public function create(array $data): int
     {
-        $this->db->queryPrepared(
-            'INSERT INTO `' . self::TABLE . '` (title, slug, description, fields_json, settings_json, css_classes, status, is_multi_step, submit_button_text, is_searchable)
-             VALUES (:title, :slug, :description, :fields_json, :settings_json, :css_classes, :status, :is_multi_step, :submit_button_text, :is_searchable)',
-            [
-                'title'              => $data['title'],
-                'slug'               => $data['slug'],
-                'description'        => $data['description'] ?? null,
-                'fields_json'        => $data['fields_json'] ?? '[]',
-                'settings_json'      => $data['settings_json'] ?? null,
-                'css_classes'        => $data['css_classes'] ?? null,
-                'status'             => $data['status'] ?? 'draft',
-                'is_multi_step'      => $data['is_multi_step'] ?? 0,
-                'submit_button_text' => $data['submit_button_text'] ?? 'Absenden',
-                'is_searchable'      => $data['is_searchable'] ?? 1,
-            ]
-        );
-
-        $result = $this->db->queryPrepared('SELECT LAST_INSERT_ID() as id', []);
-        return (int)($result[0]['id'] ?? 0);
+        return (int)$this->db->insert(self::TABLE, (object)[
+            'title'              => $data['title'],
+            'slug'               => $data['slug'],
+            'description'        => $data['description'] ?? null,
+            'fields_json'        => $data['fields_json'] ?? '[]',
+            'settings_json'      => $data['settings_json'] ?? null,
+            'css_classes'        => $data['css_classes'] ?? null,
+            'status'             => $data['status'] ?? 'draft',
+            'is_multi_step'      => (int)($data['is_multi_step'] ?? 0),
+            'submit_button_text' => $data['submit_button_text'] ?? 'Absenden',
+            'is_searchable'      => (int)($data['is_searchable'] ?? 1),
+        ]);
     }
 
     /**
