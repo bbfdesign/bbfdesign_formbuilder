@@ -412,16 +412,27 @@ class AdminController
             }
         }
 
-        $formId = $formModel->create([
-            'title'       => $title,
-            'slug'        => $slug,
-            'description' => $this->request['description'] ?? '',
-            'fields_json' => $fieldsJson,
-            'status'      => 'draft',
-        ]);
+        try {
+            $formId = $formModel->create([
+                'title'       => $title,
+                'slug'        => $slug,
+                'description' => $this->request['description'] ?? '',
+                'fields_json' => $fieldsJson,
+                'status'      => 'draft',
+            ]);
+        } catch (\Throwable $e) {
+            return ['flag' => false, 'errors' => ['DB-Fehler: ' . $e->getMessage()]];
+        }
 
         if ($formId <= 0) {
-            return ['flag' => false, 'errors' => ['Formular konnte nicht erstellt werden (ID: ' . $formId . ')']];
+            // Debug: Prüfe ob Tabelle existiert
+            $tableCheck = Shop::Container()->getDB()->queryPrepared(
+                "SHOW TABLES LIKE 'bbf_formbuilder_forms'", []
+            );
+            $tableExists = is_array($tableCheck) && !empty($tableCheck);
+            return ['flag' => false, 'errors' => [
+                'Formular konnte nicht erstellt werden (ID: ' . $formId . '). Tabelle existiert: ' . ($tableExists ? 'JA' : 'NEIN')
+            ]];
         }
 
         // Create default confirmation
