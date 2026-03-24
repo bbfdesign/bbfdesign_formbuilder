@@ -121,17 +121,23 @@ class Setting
      */
     public function getAll(array $keys = []): array
     {
-        if (!empty($keys)) {
-            $placeholders = implode(',', array_fill(0, count($keys), '?'));
-            return $this->db->queryPrepared(
-                'SELECT setting_key, setting_value FROM `' . self::TABLE . '` WHERE setting_key IN (' . $placeholders . ')',
-                $keys
-            );
+        try {
+            if (!empty($keys)) {
+                $placeholders = implode(',', array_fill(0, count($keys), '?'));
+                $result = $this->db->queryPrepared(
+                    'SELECT setting_key, setting_value FROM `' . self::TABLE . '` WHERE setting_key IN (' . $placeholders . ')',
+                    $keys
+                );
+            } else {
+                $result = $this->db->queryPrepared(
+                    'SELECT setting_key, setting_value FROM `' . self::TABLE . '`',
+                    []
+                );
+            }
+            return is_array($result) ? $result : [];
+        } catch (\Exception $e) {
+            return [];
         }
-        return $this->db->queryPrepared(
-            'SELECT setting_key, setting_value FROM `' . self::TABLE . '`',
-            []
-        );
     }
 
     /**
@@ -139,11 +145,15 @@ class Setting
      */
     public function get(string $key): ?string
     {
-        $row = $this->db->queryPrepared(
-            'SELECT setting_value FROM `' . self::TABLE . '` WHERE setting_key = :key LIMIT 1',
-            ['key' => $key]
-        );
-        return !empty($row) ? $row[0]['setting_value'] : null;
+        try {
+            $row = $this->db->queryPrepared(
+                'SELECT setting_value FROM `' . self::TABLE . '` WHERE setting_key = :key LIMIT 1',
+                ['key' => $key]
+            );
+            return is_array($row) && !empty($row) ? $row[0]['setting_value'] : null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
