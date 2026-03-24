@@ -11,6 +11,7 @@ use BbfdesignFormbuilder\Models\Setting;
 use BbfdesignFormbuilder\PluginHelper;
 use BbfdesignFormbuilder\Hooks\IncludeJsCssAssets;
 use BbfdesignFormbuilder\Hooks\AfterSmartyInitialize;
+use BbfdesignFormbuilder\Route;
 use JTL\Events\Dispatcher;
 use JTL\Plugin\Bootstrapper;
 use JTL\Shop;
@@ -43,6 +44,14 @@ class Bootstrap extends Bootstrapper
                     $hook->execute();
                 });
             }
+        }
+
+        // Register frontend routes (submit endpoint, ALTCHA challenge)
+        if (\defined('HOOK_ROUTER_PRE_DISPATCH')) {
+            $dispatcher->listen('shop.hook.' . \HOOK_ROUTER_PRE_DISPATCH, function (array $args) use ($plugin, $pluginSettings) {
+                $route = new Route($args, $plugin, $pluginSettings);
+                $route->register();
+            });
         }
     }
 

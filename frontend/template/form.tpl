@@ -4,7 +4,7 @@
          formId: {$bbfForm->id},
          fields: {$bbfFields|json_encode},
          csrfToken: '{$bbfCsrfToken}',
-         ajaxUrl: '{$bbfPluginUrl}submit'
+         ajaxUrl: '{$bbfSubmitUrl}'
      })">
 
     {* Success Message *}
@@ -124,6 +124,65 @@
                                x-model="values[field.id]">
                     </template>
 
+                    {* Date *}
+                    <template x-if="field.type === 'date'">
+                        <input type="date" :id="field.id" :name="field.id" x-model="values[field.id]"
+                               :required="field.required" :aria-invalid="errors[field.id] ? 'true' : 'false'" class="bbf-input">
+                    </template>
+
+                    {* Time *}
+                    <template x-if="field.type === 'time'">
+                        <input type="time" :id="field.id" :name="field.id" x-model="values[field.id]"
+                               :required="field.required" :aria-invalid="errors[field.id] ? 'true' : 'false'" class="bbf-input">
+                    </template>
+
+                    {* File Upload *}
+                    <template x-if="field.type === 'file_upload'">
+                        <div class="bbf-file-drop-zone">
+                            <input type="file" :id="field.id" :name="field.id"
+                                   :required="field.required" :aria-invalid="errors[field.id] ? 'true' : 'false'"
+                                   :accept="field.allowed_extensions ? '.' + field.allowed_extensions.split(',').join(',.') : ''">
+                            <p class="bbf-file-hint" x-show="field.max_file_size">
+                                Max. <span x-text="field.max_file_size"></span> MB
+                            </p>
+                        </div>
+                    </template>
+
+                    {* Rating *}
+                    <template x-if="field.type === 'rating'">
+                        <div class="bbf-rating" role="radiogroup" :aria-label="field.label">
+                            <template x-for="star in Array.from({length: field.max_stars || 5}, (_, i) => i + 1)" :key="star">
+                                <label class="bbf-rating-star" :class="{ 'is-active': values[field.id] >= star }">
+                                    <input type="radio" :name="field.id" :value="star" x-model.number="values[field.id]" class="sr-only">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </label>
+                            </template>
+                        </div>
+                    </template>
+
+                    {* Slider *}
+                    <template x-if="field.type === 'slider'">
+                        <div class="bbf-slider-wrap">
+                            <input type="range" :id="field.id" :name="field.id" x-model="values[field.id]"
+                                   :min="field.min_value || 0" :max="field.max_value || 100" :step="field.step_value || 1"
+                                   class="bbf-slider">
+                            <output class="bbf-slider-value" x-text="values[field.id] || (field.min_value || 0)"></output>
+                        </div>
+                    </template>
+
+                    {* Section Break *}
+                    <template x-if="field.type === 'section_break'">
+                        <div class="bbf-section-break">
+                            <h3 class="bbf-section-title" x-text="field.section_title || field.label"></h3>
+                            <hr>
+                        </div>
+                    </template>
+
+                    {* HTML Block *}
+                    <template x-if="field.type === 'html_block'">
+                        <div class="bbf-html-block" x-html="field.html_content || ''"></div>
+                    </template>
+
                     {* GDPR Consent *}
                     <template x-if="field.type === 'gdpr'">
                         <label class="bbf-gdpr-label">
@@ -133,7 +192,7 @@
                                    x-model="values[field.id]"
                                    :required="field.required"
                                    :aria-invalid="errors[field.id] ? 'true' : 'false'">
-                            <span x-html="field.label"></span>
+                            <span x-html="field.gdpr_text || field.label"></span>
                         </label>
                     </template>
 
@@ -146,6 +205,14 @@
                 </div>
             </template>
         </div>
+
+        {* Honeypot (hidden spam protection) *}
+        <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+            <input type="text" name="bbf_hp_field" value="" tabindex="-1" autocomplete="off">
+        </div>
+
+        {* Hidden page URL for tracking *}
+        <input type="hidden" name="_page_url" :value="window.location.href">
 
         {* Submit Button *}
         <div class="bbf-submit-row">

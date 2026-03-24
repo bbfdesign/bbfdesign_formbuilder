@@ -113,6 +113,7 @@ class FormRenderService
             'bbfCssClass'    => $cssClass,
             'bbfCsrfToken'   => $csrfToken,
             'bbfAjax'        => ($options['ajax'] ?? true) ? 'true' : 'false',
+            'bbfSubmitUrl'   => Shop::getURL() . '/bbf-formbuilder/submit',
             'bbfPluginUrl'   => $plugin->getPaths()->getFrontendURL(),
             'bbfFrontendPath' => $frontendPath,
         ]);
