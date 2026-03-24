@@ -62,6 +62,7 @@
 </div>
 
 <script>
+{literal}
 function bbfCreateFromTemplate(templateId) {
     bbfAjaxAction({
         action: 'createFromTemplate',
@@ -72,4 +73,5 @@ function bbfCreateFromTemplate(templateId) {
         }
     });
 }
+{/literal}
 </script>

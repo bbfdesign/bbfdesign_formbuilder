@@ -130,7 +130,7 @@
                 </div>
             </div>
             <div class="bbf-drop-zone-content"
-                 :class="{ 'is-empty': formFields.length === 0 }"
+                 :class="formFields.length === 0 ? 'is-empty' : ''"
                  id="bbf-drop-zone"
                  @dragover.prevent="onDragOver($event)"
                  @drop.prevent="onDrop($event)">
@@ -149,7 +149,7 @@
                 {* Field Cards *}
                 <template x-for="(field, index) in formFields" :key="field.id">
                     <div class="bbf-field-card"
-                         :class="{ 'is-selected': selectedFieldId === field.id }"
+                         :class="selectedFieldId === field.id ? 'is-selected' : ''"
                          :data-field-id="field.id"
                          @click="selectField(field.id)">
                         <div class="bbf-field-card-header">
@@ -270,7 +270,7 @@
                                 <div class="bbf-field-width-selector">
                                     <template x-for="wo in widthOptions" :key="wo.value">
                                         <div class="bbf-field-width-option"
-                                             :class="{ 'is-active': selectedField.width === wo.value }"
+                                             :class="selectedField.width === wo.value ? 'is-active' : ''"
                                              @click="setFieldWidth(wo.value)">
                                             <div class="bbf-field-width-preview">
                                                 <div class="bbf-width-fill" :style="'width:' + wo.percent + '%'"></div>

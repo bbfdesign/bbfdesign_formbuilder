@@ -145,6 +145,7 @@
 </div>
 
 <script>
+{literal}
 function bbfMarkEntryRead(entryId) {
     bbfAjaxAction({ action: 'markEntryRead', entry_id: entryId }, function() {
         bbfNavigate('entry-detail', { entry_id: entryId });
@@ -157,4 +158,5 @@ function bbfDeleteEntry(entryId) {
         bbfNavigate('entries');
     });
 }
+{/literal}
 </script>

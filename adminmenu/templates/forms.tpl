@@ -84,6 +84,7 @@
 </div>
 
 <script>
+{literal}
 function bbfDuplicateForm(formId) {
     if (!confirm('Formular wirklich duplizieren?')) return;
     bbfAjaxAction({ action: 'duplicateForm', form_id: formId }, function() {
@@ -97,4 +98,5 @@ function bbfDeleteForm(formId, formName) {
         bbfNavigate('forms');
     });
 }
+{/literal}
 </script>

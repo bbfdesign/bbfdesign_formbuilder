@@ -131,6 +131,7 @@
 </div>
 
 <script>
+{literal}
 function bbfFilterEntries() {
     var formId = document.getElementById('bbf-entry-form-filter').value;
     bbfNavigate('entries', { filter_form_id: formId });
@@ -203,4 +204,5 @@ function bbfExportEntries(formId) {
     form.submit();
     document.body.removeChild(form);
 }
+{/literal}
 </script>

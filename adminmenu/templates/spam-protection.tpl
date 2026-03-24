@@ -161,6 +161,7 @@
 </form>
 
 <script>
+{literal}
 function bbfUpdateCaptchaFields(provider) {
     document.querySelectorAll('.bbf-captcha-settings').forEach(function(el) {
         el.style.display = 'none';
@@ -170,4 +171,5 @@ function bbfUpdateCaptchaFields(provider) {
         if (el) el.style.display = 'block';
     }
 }
+{/literal}
 </script>

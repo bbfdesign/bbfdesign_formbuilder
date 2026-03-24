@@ -160,7 +160,9 @@
     <div class="bbf-msg bbf-msg-danger">Formular nicht gefunden.</div>
 {/if}
 
+<script>var bbfFormId = {$form->id};</script>
 <script>
+{literal}
 function bbfSwitchSettingsTab(tabName, btnEl) {
     document.querySelectorAll('.bbf-settings-tab-panel').forEach(function(el) {
         el.style.display = 'none';
@@ -180,4 +182,5 @@ function bbfSwitchSettingsTab(tabName, btnEl) {
 function bbfAddNotification(formId) {
     bbdNotify('Hinweis', 'Notification-Editor wird in einer zukünftigen Version verfügbar.', 'info', 'fa fa-info-circle');
 }
+{/literal}
 </script>
