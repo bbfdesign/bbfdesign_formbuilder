@@ -240,15 +240,22 @@ class Form
         $baseSlug = $slug;
         $counter = 1;
 
-        while (true) {
-            $sql = 'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE slug = :slug';
-            $params = ['slug' => $slug];
-            if ($excludeId !== null) {
-                $sql .= ' AND id != :id';
-                $params['id'] = $excludeId;
-            }
-            $result = $this->db->queryPrepared($sql, $params);
-            if ((int)$result[0]['cnt'] === 0) {
+        while ($counter < 100) {
+            try {
+                $sql = 'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE slug = :slug';
+                $params = ['slug' => $slug];
+                if ($excludeId !== null) {
+                    $sql .= ' AND id != :id';
+                    $params['id'] = $excludeId;
+                }
+                $result = $this->db->queryPrepared($sql, $params);
+                $count = (is_array($result) && !empty($result)) ? (int)($result[0]['cnt'] ?? 0) : 0;
+                if ($count === 0) {
+                    break;
+                }
+            } catch (\Throwable $e) {
+                // Table might not exist yet — use slug with timestamp as fallback
+                $slug = $baseSlug . '-' . time();
                 break;
             }
             $slug = $baseSlug . '-' . $counter;
