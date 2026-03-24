@@ -415,20 +415,28 @@ class AdminController
         $formId = $formModel->create([
             'title'       => $title,
             'slug'        => $slug,
-            'description' => $this->request['description'] ?? null,
+            'description' => $this->request['description'] ?? '',
             'fields_json' => $fieldsJson,
             'status'      => 'draft',
         ]);
 
+        if ($formId <= 0) {
+            return ['flag' => false, 'errors' => ['Formular konnte nicht erstellt werden (ID: ' . $formId . ')']];
+        }
+
         // Create default confirmation
-        $confirmationModel = new FormConfirmation();
-        $confirmationModel->create([
-            'form_id'    => $formId,
-            'name'       => 'Standard-Bestätigung',
-            'type'       => 'message',
-            'message'    => 'Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.',
-            'is_default' => 1,
-        ]);
+        try {
+            $confirmationModel = new FormConfirmation();
+            $confirmationModel->create([
+                'form_id'    => $formId,
+                'name'       => 'Standard-Bestätigung',
+                'type'       => 'message',
+                'message'    => 'Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.',
+                'is_default' => 1,
+            ]);
+        } catch (\Throwable $e) {
+            // Confirmation ist optional — Formular trotzdem zurückgeben
+        }
 
         return [
             'flag'    => true,
@@ -515,31 +523,43 @@ class AdminController
         $formId = $formModel->create([
             'title'         => $title,
             'slug'          => $slug,
-            'description'   => $template->description ?? null,
-            'fields_json'   => $template->fields_json,
-            'settings_json' => $template->settings_json ?? null,
+            'description'   => $template->description ?? '',
+            'fields_json'   => $template->fields_json ?? '[]',
+            'settings_json' => $template->settings_json ?? '',
             'status'        => 'draft',
         ]);
 
-        // Create default confirmation
-        $confirmationModel = new FormConfirmation();
-        $confirmationModel->create([
-            'form_id'    => $formId,
-            'name'       => 'Standard-Bestätigung',
-            'type'       => 'message',
-            'message'    => 'Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.',
-            'is_default' => 1,
-        ]);
+        if ($formId <= 0) {
+            return ['flag' => false, 'errors' => ['Formular konnte nicht erstellt werden.']];
+        }
+
+        // Create default confirmation (optional, don't fail if it doesn't work)
+        try {
+            $confirmationModel = new FormConfirmation();
+            $confirmationModel->create([
+                'form_id'    => $formId,
+                'name'       => 'Standard-Bestätigung',
+                'type'       => 'message',
+                'message'    => 'Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.',
+                'is_default' => 1,
+            ]);
+        } catch (\Throwable $e) {
+            // Non-critical
+        }
 
         // Create notifications from template if available
         if (!empty($template->notifications_json)) {
-            $notifications = json_decode($template->notifications_json, true);
-            if (is_array($notifications)) {
-                $notifModel = new FormNotification();
-                foreach ($notifications as $notif) {
-                    $notif['form_id'] = $formId;
-                    $notifModel->create($notif);
+            try {
+                $notifications = json_decode($template->notifications_json, true);
+                if (is_array($notifications)) {
+                    $notifModel = new FormNotification();
+                    foreach ($notifications as $notif) {
+                        $notif['form_id'] = $formId;
+                        $notifModel->create($notif);
+                    }
                 }
+            } catch (\Throwable $e) {
+                // Non-critical
             }
         }
 

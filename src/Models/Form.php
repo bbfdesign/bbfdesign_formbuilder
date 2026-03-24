@@ -102,18 +102,23 @@ class Form
      */
     public function create(array $data): int
     {
-        return (int)$this->db->insert(self::TABLE, (object)[
-            'title'              => $data['title'],
-            'slug'               => $data['slug'],
-            'description'        => $data['description'] ?? null,
-            'fields_json'        => $data['fields_json'] ?? '[]',
-            'settings_json'      => $data['settings_json'] ?? null,
-            'css_classes'        => $data['css_classes'] ?? null,
-            'status'             => $data['status'] ?? 'draft',
-            'is_multi_step'      => (int)($data['is_multi_step'] ?? 0),
-            'submit_button_text' => $data['submit_button_text'] ?? 'Absenden',
-            'is_searchable'      => (int)($data['is_searchable'] ?? 1),
-        ]);
+        try {
+            $id = $this->db->insert(self::TABLE, (object)[
+                'title'              => $data['title'] ?? '',
+                'slug'               => $data['slug'] ?? '',
+                'description'        => $data['description'] ?? '',
+                'fields_json'        => $data['fields_json'] ?? '[]',
+                'settings_json'      => $data['settings_json'] ?? '',
+                'css_classes'        => $data['css_classes'] ?? '',
+                'status'             => $data['status'] ?? 'draft',
+                'is_multi_step'      => (int)($data['is_multi_step'] ?? 0),
+                'submit_button_text' => $data['submit_button_text'] ?? 'Absenden',
+                'is_searchable'      => (int)($data['is_searchable'] ?? 1),
+            ]);
+            return (int)$id;
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     /**
