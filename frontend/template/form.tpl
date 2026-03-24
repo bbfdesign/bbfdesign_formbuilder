@@ -155,6 +155,7 @@
 
                     {* Rating *}
                     <template x-if="field.type === 'rating'">
+                        {literal}
                         <div class="bbf-rating" role="radiogroup" :aria-label="field.label">
                             <template x-for="star in Array.from({length: field.max_stars || 5}, (_, i) => i + 1)" :key="star">
                                 <label class="bbf-rating-star" :class="{ 'is-active': values[field.id] >= star }">
@@ -163,6 +164,7 @@
                                 </label>
                             </template>
                         </div>
+                        {/literal}
                     </template>
 
                     {* Slider *}
