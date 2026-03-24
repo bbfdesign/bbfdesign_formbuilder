@@ -33,6 +33,17 @@ class AdminController
         $this->adminTemplatePath = $this->plugin->getPaths()->getAdminPath();
     }
 
+    /**
+     * Render a Smarty template with variables properly assigned.
+     */
+    private function renderTemplate(string $template, array $vars = []): string
+    {
+        if (!empty($vars)) {
+            $this->smarty->assign($vars);
+        }
+        return $this->smarty->fetch($template);
+    }
+
     public function handleAjax(): array
     {
         $action = $this->request['action'] ?? '';
@@ -128,10 +139,10 @@ class AdminController
                 $content = $this->renderCssEditor();
                 break;
             case 'documentation':
-                $content = $this->smarty->fetch($this->adminTemplatePath . 'templates/documentation.tpl');
+                $content = $this->renderTemplate($this->adminTemplatePath . 'templates/documentation.tpl');
                 break;
             case 'changelog':
-                $content = $this->smarty->fetch($this->adminTemplatePath . 'templates/changelog.tpl');
+                $content = $this->renderTemplate($this->adminTemplatePath . 'templates/changelog.tpl');
                 break;
             default:
                 $content = '<div class="bbf-msg bbf-msg-danger">Seite nicht gefunden.</div>';
@@ -160,7 +171,7 @@ class AdminController
             $recentEntries = $entryModel->getRecent(10);
             $recentEntries = is_array($recentEntries) ? $this->addEntryPreviews($recentEntries) : [];
 
-            return $this->smarty->fetch(
+            return $this->renderTemplate(
                 $this->adminTemplatePath . 'templates/dashboard.tpl',
                 [
                     'totalForms'    => $formModel->getTotalCount(),
@@ -203,7 +214,7 @@ class AdminController
     private function renderForms(): string
     {
         $formModel = new Form();
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/forms.tpl',
             ['forms' => $formModel->getAll()]
         );
@@ -226,7 +237,7 @@ class AdminController
             $template = $templateModel->getById($templateId);
         }
 
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/form-builder.tpl',
             [
                 'form'     => $form,
@@ -245,7 +256,7 @@ class AdminController
         $notificationModel = new FormNotification();
         $confirmationModel = new FormConfirmation();
 
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/form-settings.tpl',
             [
                 'form'          => $form,
@@ -288,7 +299,7 @@ class AdminController
         }
         unset($entry);
 
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/entries.tpl',
             [
                 'entries'      => $entries,
@@ -317,7 +328,7 @@ class AdminController
         // Get field definitions
         $fields = json_decode($entry->fields_json ?? '[]', true);
 
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/entry-detail.tpl',
             [
                 'entry'       => $entry,
@@ -331,7 +342,7 @@ class AdminController
     private function renderTemplates(): string
     {
         $templateModel = new FormTemplate();
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/templates.tpl',
             ['templates' => $templateModel->getAll()]
         );
@@ -339,7 +350,7 @@ class AdminController
 
     private function renderSettings(): string
     {
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/settings.tpl',
             ['settings' => PluginHelper::getSettings()]
         );
@@ -347,7 +358,7 @@ class AdminController
 
     private function renderSpamProtection(): string
     {
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/spam-protection.tpl',
             ['settings' => PluginHelper::getSettings()]
         );
@@ -355,7 +366,7 @@ class AdminController
 
     private function renderGdpr(): string
     {
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/gdpr.tpl',
             ['settings' => PluginHelper::getSettings()]
         );
@@ -364,7 +375,7 @@ class AdminController
     private function renderEmailTemplates(): string
     {
         $emailTemplateModel = new EmailTemplate();
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/email-templates.tpl',
             ['emailTemplates' => $emailTemplateModel->getAll()]
         );
@@ -372,7 +383,7 @@ class AdminController
 
     private function renderCssEditor(): string
     {
-        return $this->smarty->fetch(
+        return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/css-editor.tpl',
             ['customCss' => PluginHelper::getSetting(Setting::CUSTOM_CSS) ?? '']
         );

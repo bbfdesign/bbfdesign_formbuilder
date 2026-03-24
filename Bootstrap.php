@@ -98,9 +98,11 @@ class Bootstrap extends Bootstrapper
 
         if ($tabName === 'Einstellungen') {
             if (isset($_REQUEST['is_ajax']) && (int)$_REQUEST['is_ajax'] === 1) {
+                \ob_start();
                 try {
                     $csrf = $_REQUEST['jtl_token'] ?? '';
                     if (empty($csrf) || !Form::validateToken($csrf)) {
+                        \ob_end_clean();
                         \header('Content-Type: application/json');
                         die(\json_encode([
                             'flag'   => false,
@@ -109,9 +111,12 @@ class Bootstrap extends Bootstrapper
                     }
 
                     $controller = new AdminController($this->getPlugin());
+                    $result = $controller->handleAjax();
+                    \ob_end_clean();
                     \header('Content-Type: application/json');
-                    die(\json_encode($controller->handleAjax(), JSON_THROW_ON_ERROR));
-                } catch (Exception $ex) {
+                    die(\json_encode($result, JSON_THROW_ON_ERROR));
+                } catch (\Throwable $ex) {
+                    \ob_end_clean();
                     \header('Content-Type: application/json');
                     die(\json_encode([
                         'flag'   => false,
