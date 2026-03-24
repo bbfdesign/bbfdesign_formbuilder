@@ -34,10 +34,31 @@ class Setting
     public const GDPR_CHECKBOX_TEXT       = 'gdpr_checkbox_text';
 
     private $db;
+    private static ?bool $tableExists = null;
 
     public function __construct()
     {
         $this->db = Shop::Container()->getDB();
+    }
+
+    /**
+     * Check if the settings table exists (cached).
+     */
+    private function tableExists(): bool
+    {
+        if (self::$tableExists !== null) {
+            return self::$tableExists;
+        }
+        try {
+            $result = $this->db->queryPrepared(
+                "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :tbl LIMIT 1",
+                ['tbl' => self::TABLE]
+            );
+            self::$tableExists = is_array($result) && !empty($result);
+        } catch (\Throwable $e) {
+            self::$tableExists = false;
+        }
+        return self::$tableExists;
     }
 
     /**
@@ -121,6 +142,9 @@ class Setting
      */
     public function getAll(array $keys = []): array
     {
+        if (!$this->tableExists()) {
+            return [];
+        }
         try {
             if (!empty($keys)) {
                 $placeholders = implode(',', array_fill(0, count($keys), '?'));
@@ -135,7 +159,7 @@ class Setting
                 );
             }
             return is_array($result) ? $result : [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -145,13 +169,16 @@ class Setting
      */
     public function get(string $key): ?string
     {
+        if (!$this->tableExists()) {
+            return null;
+        }
         try {
             $row = $this->db->queryPrepared(
                 'SELECT setting_value FROM `' . self::TABLE . '` WHERE setting_key = :key LIMIT 1',
                 ['key' => $key]
             );
             return is_array($row) && !empty($row) ? $row[0]['setting_value'] : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }
