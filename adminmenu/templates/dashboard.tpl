@@ -67,7 +67,7 @@
                 <thead>
                     <tr>
                         <th>Formular</th>
-                        <th>Absender</th>
+                        <th>Vorschau</th>
                         <th>Datum</th>
                         <th>Status</th>
                         <th>Aktionen</th>
@@ -76,9 +76,9 @@
                 <tbody>
                     {if $recentEntries && $recentEntries|@count > 0}
                         {foreach $recentEntries as $entry}
-                            <tr>
-                                <td>{$entry.form_name|escape:'html'}</td>
-                                <td>{$entry.sender|escape:'html'}</td>
+                            <tr {if !$entry.is_read}style="font-weight: bold;"{/if}>
+                                <td>{$entry.form_title|escape:'html'}</td>
+                                <td>{$entry.first_value|escape:'html'|truncate:60:'...'}</td>
                                 <td>{$entry.created_at|date_format:"%d.%m.%Y %H:%M"}</td>
                                 <td>
                                     {if $entry.is_read}

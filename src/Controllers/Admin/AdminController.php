@@ -64,8 +64,10 @@ class AdminController
                 return $this->toggleEntryStar();
             case 'trashEntry':
                 return $this->trashEntry();
-            case 'exportEntries':
-                return $this->exportEntries();
+            case 'bulkEntryAction':
+                return $this->bulkEntryAction();
+            case 'exportEntriesCsv':
+                return $this->exportEntriesCsv();
             default:
                 throw new Exception('Unrecognized action "' . Text::filterXSS($action) . '"');
         }
@@ -155,9 +157,34 @@ class AdminController
                 'totalEntries'  => $entryModel->getTotalCount(),
                 'unreadEntries' => $entryModel->getUnreadCount(),
                 'spamBlocked'   => (int)($spamCount[0]['cnt'] ?? 0),
-                'recentEntries' => $entryModel->getRecent(10),
+                'recentEntries' => $this->addEntryPreviews($entryModel->getRecent(10)),
             ]
         );
+    }
+
+    /**
+     * Add first_value preview text to entry arrays.
+     */
+    private function addEntryPreviews(array $entries): array
+    {
+        $entryService = new \BbfdesignFormbuilder\Services\EntryService();
+        foreach ($entries as &$entry) {
+            $values = $entryService->getDecryptedValues((object)$entry);
+            $preview = '';
+            foreach ($values as $val) {
+                if (is_array($val)) {
+                    $val = implode(', ', $val);
+                }
+                $val = trim((string)$val);
+                if (!empty($val) && mb_strlen($val) > 2) {
+                    $preview = mb_substr($val, 0, 60);
+                    break;
+                }
+            }
+            $entry['first_value'] = $preview;
+        }
+        unset($entry);
+        return $entries;
     }
 
     private function renderForms(): string
@@ -226,10 +253,32 @@ class AdminController
             $filters['form_id'] = $formId;
         }
 
+        $entries = $entryModel->getAll($filters);
+
+        // Add first_value preview to each entry
+        $entryService = new \BbfdesignFormbuilder\Services\EntryService();
+        foreach ($entries as &$entry) {
+            $entryObj = (object)$entry;
+            $values = $entryService->getDecryptedValues($entryObj);
+            $preview = '';
+            foreach ($values as $val) {
+                if (is_array($val)) {
+                    $val = implode(', ', $val);
+                }
+                $val = trim((string)$val);
+                if (!empty($val) && mb_strlen($val) > 2) {
+                    $preview = mb_substr($val, 0, 60);
+                    break;
+                }
+            }
+            $entry['first_value'] = $preview;
+        }
+        unset($entry);
+
         return $this->smarty->fetch(
             $this->adminTemplatePath . 'templates/entries.tpl',
             [
-                'entries'      => $entryModel->getAll($filters),
+                'entries'      => $entries,
                 'forms'        => $formModel->getAll(),
                 'filterFormId' => $formId,
             ]
@@ -242,15 +291,26 @@ class AdminController
         $entryModel = new FormEntry();
         $entry = $entryModel->getById($entryId);
 
-        if ($entry !== null) {
-            $entryModel->markRead($entryId);
+        if ($entry === null) {
+            return '<div class="bbf-msg bbf-msg-danger">Eintrag nicht gefunden.</div>';
         }
+
+        $entryModel->markRead($entryId);
+
+        // Decode field values
+        $entryService = new \BbfdesignFormbuilder\Services\EntryService();
+        $entryValues = $entryService->getDecryptedValues($entry);
+
+        // Get field definitions
+        $fields = json_decode($entry->fields_json ?? '[]', true);
 
         return $this->smarty->fetch(
             $this->adminTemplatePath . 'templates/entry-detail.tpl',
             [
-                'entry' => $entry,
-                'files' => $entry !== null ? $entryModel->getFiles($entryId) : [],
+                'entry'       => $entry,
+                'entryValues' => $entryValues,
+                'entryFields' => $fields,
+                'files'       => $entryModel->getFiles($entryId),
             ]
         );
     }
@@ -539,10 +599,57 @@ class AdminController
         return ['flag' => true, 'message' => 'Eintrag in den Papierkorb verschoben.'];
     }
 
-    public function exportEntries(): array
+    public function bulkEntryAction(): array
     {
-        // Will be fully implemented in Phase 4
-        return ['flag' => false, 'errors' => ['Export wird in einer zukünftigen Version implementiert.']];
+        $action = $this->request['bulk_action'] ?? '';
+        $idsStr = $this->request['entry_ids'] ?? '';
+        $ids = array_filter(array_map('intval', explode(',', $idsStr)));
+
+        if (empty($ids)) {
+            return ['flag' => false, 'errors' => ['Keine Einträge ausgewählt.']];
+        }
+
+        $entryModel = new FormEntry();
+
+        switch ($action) {
+            case 'mark_read':
+                foreach ($ids as $id) {
+                    $entryModel->markRead($id);
+                }
+                return ['flag' => true, 'message' => count($ids) . ' Einträge als gelesen markiert.'];
+
+            case 'delete':
+                foreach ($ids as $id) {
+                    $entryModel->trash($id);
+                }
+                return ['flag' => true, 'message' => count($ids) . ' Einträge gelöscht.'];
+
+            default:
+                return ['flag' => false, 'errors' => ['Unbekannte Aktion.']];
+        }
+    }
+
+    public function exportEntriesCsv(): array
+    {
+        $formId = (int)($this->request['form_id'] ?? 0);
+
+        if ($formId <= 0) {
+            return ['flag' => false, 'errors' => ['Bitte ein Formular zum Export auswählen.']];
+        }
+
+        $entryService = new \BbfdesignFormbuilder\Services\EntryService();
+        $csv = $entryService->exportCsv($formId);
+
+        $formModel = new Form();
+        $form = $formModel->getById($formId);
+        $filename = 'formbuilder-' . ($form->slug ?? $formId) . '-' . date('Y-m-d') . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        echo "\xEF\xBB\xBF"; // UTF-8 BOM for Excel
+        echo $csv;
+        exit;
     }
 
     // ─── Settings ───
