@@ -20,19 +20,28 @@ class FormNotification
 
     public function getByFormId(int $formId): array
     {
-        return $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE form_id = :fid ORDER BY sort_order ASC',
-            ['fid' => $formId]
-        );
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE form_id = :fid ORDER BY sort_order ASC',
+                ['fid' => $formId]
+            );
+            return is_array($result) ? $result : [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getById(int $id): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
-            ['id' => $id]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
+                ['id' => $id]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     public function create(array $data): int

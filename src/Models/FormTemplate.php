@@ -19,26 +19,40 @@ class FormTemplate
 
     public function getAll(): array
     {
-        return $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` ORDER BY sort_order ASC, name ASC',
-            []
-        );
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` ORDER BY sort_order ASC, name ASC',
+                []
+            );
+            return is_array($result) ? $result : [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getById(int $id): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
-            ['id' => $id]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
+                ['id' => $id]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     public function getByCategory(string $category): array
     {
-        return $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE category = :cat ORDER BY sort_order ASC',
-            ['cat' => $category]
-        );
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE category = :cat ORDER BY sort_order ASC',
+                ['cat' => $category]
+            );
+            return is_array($result) ? $result : [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 }

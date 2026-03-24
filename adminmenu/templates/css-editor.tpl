@@ -2,30 +2,20 @@
 
 <form id="bbf-css-settings" action="savePluginSetting">
 
-    <div class="bbf-card">
-        <div class="bbf-card-header">
-            <h4 class="bbf-card-title">Benutzerdefiniertes CSS</h4>
-            <p class="bbf-card-subtitle">Eigene CSS-Regeln hinzuf&uuml;gen, um das Aussehen der Formulare anzupassen.</p>
-        </div>
-        <div class="bbf-card-body">
-            <div class="bbf-form-group">
-                <textarea class="custom-code-editor" id="bbf-custom-css" name="custom_css" rows="25" spellcheck="false">{$customCss|default:''}</textarea>
-            </div>
+    <div style="background:#fff;border-radius:8px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="font-weight:700;margin:0 0 4px;">Benutzerdefiniertes CSS</h4>
+        <p style="font-size:13px;color:var(--bbf-text-light);margin:0 0 20px;">Eigene CSS-Regeln um das Aussehen der Formulare anzupassen.</p>
 
-            <div class="bbf-alert bbf-alert-info" style="margin-bottom: 16px;">
-                <strong>Tipp:</strong> Verwende die Klasse <code>.bbf-form</code> als Pr&auml;fix f&uuml;r deine CSS-Regeln, um nur Formulare dieses Plugins zu stylen.<br>
-                Beispiel: <code>.bbf-form .bbf-field-input {literal}{ border-color: #333; }{/literal}</code>
-            </div>
+        <textarea class="custom-code-editor" id="bbf-custom-css" name="custom_css" spellcheck="false" style="width:100%;min-height:450px;font-size:14px;">{$customCss|default:''}</textarea>
 
-            <button type="button" class="bbf-btn bbf-btn-primary" onclick="saveSetting('bbf-css-settings', 'css-editor');">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                    <polyline points="7 3 7 8 15 8"></polyline>
-                </svg>
-                CSS speichern
-            </button>
+        <div style="margin:16px 0;padding:12px 16px;background:#eef6fc;border:1px solid #b8d8f0;border-radius:6px;color:#1a3a5c;font-size:13px;">
+            <strong>Tipp:</strong> Verwende <code>.bbf-form</code> als Prefix.
+            Beispiel: <code>.bbf-form .bbf-input {literal}{ border-color: #333; }{/literal}</code>
         </div>
+
+        <button type="button" class="bbf-btn-primary" style="padding:10px 24px;border-radius:8px;border:none;font-size:14px;cursor:pointer;" onclick="saveSetting('bbf-css-settings', 'css-editor');">
+            CSS speichern
+        </button>
     </div>
 
 </form>

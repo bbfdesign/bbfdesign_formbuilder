@@ -50,7 +50,12 @@ class FormEntry
 
         $sql .= ' ORDER BY e.created_at DESC LIMIT ' . (int)$limit . ' OFFSET ' . (int)$offset;
 
-        return $this->db->queryPrepared($sql, $params);
+        try {
+            $result = $this->db->queryPrepared($sql, $params);
+            return is_array($result) ? $result : [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     /**
@@ -58,14 +63,18 @@ class FormEntry
      */
     public function getById(int $id): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT e.*, f.title as form_title, f.fields_json
-             FROM `' . self::TABLE . '` e
-             LEFT JOIN `bbf_formbuilder_forms` f ON e.form_id = f.id
-             WHERE e.id = :id LIMIT 1',
-            ['id' => $id]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT e.*, f.title as form_title, f.fields_json
+                 FROM `' . self::TABLE . '` e
+                 LEFT JOIN `bbf_formbuilder_forms` f ON e.form_id = f.id
+                 WHERE e.id = :id LIMIT 1',
+                ['id' => $id]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**
@@ -233,10 +242,15 @@ class FormEntry
      */
     public function getFiles(int $entryId): array
     {
-        return $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE_FILES . '` WHERE entry_id = :eid',
-            ['eid' => $entryId]
-        );
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE_FILES . '` WHERE entry_id = :eid',
+                ['eid' => $entryId]
+            );
+            return is_array($result) ? $result : [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     /**

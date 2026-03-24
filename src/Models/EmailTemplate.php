@@ -19,28 +19,41 @@ class EmailTemplate
 
     public function getAll(): array
     {
-        return $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` ORDER BY is_system DESC, name ASC',
-            []
-        );
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` ORDER BY is_system DESC, name ASC',
+                []
+            );
+            return is_array($result) ? $result : [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     public function getById(int $id): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
-            ['id' => $id]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
+                ['id' => $id]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     public function getByType(string $type): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE type = :type AND is_system = 1 LIMIT 1',
-            ['type' => $type]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE type = :type AND is_system = 1 LIMIT 1',
+                ['type' => $type]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     public function create(array $data): int

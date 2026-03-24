@@ -50,7 +50,6 @@ body #content_wrapper {
     margin-bottom: 0;
     line-height: 27px;
     font-weight: var(--bbf-font-weight-bold);
-    text-transform: uppercase;
 }
 
 #content .card .card-footer,
@@ -302,7 +301,6 @@ body #content_wrapper {
     font-weight: var(--bbf-font-weight-bold);
     color: var(--bbf-primary);
     margin-bottom: var(--bbf-spacing-lg);
-    text-transform: uppercase;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -714,7 +712,6 @@ div.dt-container .dt-search input {
     font-weight: var(--bbf-font-weight-bold);
     color: var(--bbf-primary);
     font-size: var(--bbf-font-size-xl);
-    text-transform: uppercase;
 }
 
 /* ═══════════════════════════════════════════════════════════

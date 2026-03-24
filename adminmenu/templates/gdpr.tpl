@@ -2,77 +2,61 @@
 
 <form id="bbf-gdpr-settings" action="savePluginSetting">
 
-    <div class="bbf-card">
-        <div class="bbf-card-header">
-            <h4 class="bbf-card-title">DSGVO / Datenschutz</h4>
+    <div style="background:#fff;border-radius:8px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <h4 style="font-weight:700;margin:0 0 16px;">DSGVO / Datenschutz</h4>
+
+        <div style="padding:12px 16px;background:#eef6fc;border:1px solid #b8d8f0;border-radius:6px;color:#1a3a5c;font-size:13px;margin-bottom:24px;">
+            Diese Einstellungen helfen bei der Einhaltung der DSGVO. Bitte konsultieren Sie Ihren Datenschutzbeauftragten für eine vollständige Compliance-Prüfung.
         </div>
-        <div class="bbf-card-body">
 
-            <div class="bbf-alert bbf-alert-info" style="margin-bottom: 24px;">
-                <strong>Hinweis:</strong> Diese Einstellungen helfen Ihnen, die Anforderungen der DSGVO zu erf&uuml;llen.
-                Bitte konsultieren Sie Ihren Datenschutzbeauftragten f&uuml;r eine vollst&auml;ndige Compliance-Pr&uuml;fung.
+        {* IP Anonymisierung *}
+        <div style="margin-bottom:20px;">
+            <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px;">IP-Anonymisierung</label>
+            <select name="ip_anonymization" class="form-control" style="max-width:300px;">
+                <option value="none" {if $settings.ip_anonymization == 'none'}selected{/if}>Keine Anonymisierung</option>
+                <option value="last_octet" {if $settings.ip_anonymization == 'last_octet' || !$settings.ip_anonymization}selected{/if}>Letztes Oktett entfernen (empfohlen)</option>
+                <option value="hash" {if $settings.ip_anonymization == 'hash'}selected{/if}>IP-Adresse hashen</option>
+            </select>
+            <p style="font-size:12px;color:var(--bbf-text-light);margin:4px 0 0;">Bestimmt, wie IP-Adressen in der Datenbank gespeichert werden.</p>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--bbf-border-light);margin:16px 0;">
+
+        {* Auto-Löschung *}
+        <div style="margin-bottom:20px;">
+            <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px;">Automatische Löschung nach Tagen</label>
+            <input type="number" name="auto_delete_days" value="{$settings.auto_delete_days|default:365}" min="0" max="3650" class="form-control" style="max-width:150px;">
+            <p style="font-size:12px;color:var(--bbf-text-light);margin:4px 0 0;">Einträge werden automatisch gelöscht. 0 = keine automatische Löschung. Cron-Job erforderlich.</p>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--bbf-border-light);margin:16px 0;">
+
+        {* DSGVO Checkbox Text *}
+        <div style="margin-bottom:20px;">
+            <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px;">DSGVO-Checkbox Text</label>
+            <textarea name="gdpr_checkbox_text" class="form-control" rows="3" style="font-family:monospace;font-size:13px;">{$settings.gdpr_checkbox_text|default:''}</textarea>
+            <p style="font-size:12px;color:var(--bbf-text-light);margin:4px 0 0;">Wird neben der DSGVO-Checkbox angezeigt. HTML ist erlaubt (z.B. Links zur Datenschutzerklärung).</p>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--bbf-border-light);margin:16px 0;">
+
+        {* Verschlüsselung *}
+        <div style="margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <label class="switch">
+                    <input type="checkbox" name="encryption_enabled" value="1" {if $settings.encryption_enabled == '1'}checked{/if}>
+                    <span class="slider"></span>
+                </label>
+                <span style="font-weight:500;">Formular-Einträge verschlüsseln</span>
             </div>
-
-            {* IP Anonymization *}
-            <div class="bbf-form-group">
-                <label class="bbf-label" for="ip_anonymization">IP-Anonymisierung</label>
-                <select class="bbf-select" id="ip_anonymization" name="ip_anonymization" style="max-width: 300px;">
-                    <option value="none" {if ($settings.ip_anonymization|default:'last_octet') == 'none'}selected{/if}>Keine Anonymisierung</option>
-                    <option value="last_octet" {if ($settings.ip_anonymization|default:'last_octet') == 'last_octet'}selected{/if}>Letztes Oktett entfernen (empfohlen)</option>
-                    <option value="hash" {if ($settings.ip_anonymization|default:'last_octet') == 'hash'}selected{/if}>IP-Adresse hashen</option>
-                </select>
-                <small class="bbf-help-text">Bestimmt, wie IP-Adressen in der Datenbank gespeichert werden.</small>
+            <div style="padding:12px 16px;background:#fefbf0;border:1px solid #f0dca0;border-radius:6px;color:#5c4a1a;font-size:13px;margin-left:54px;">
+                <strong>Warnung:</strong> Bei Verlust des Verschlüsselungsschlüssels sind alle verschlüsselten Daten unwiederbringlich verloren. Erstellen Sie vorher ein Backup. Bereits vorhandene Einträge werden nicht nachträglich verschlüsselt.
             </div>
-
-            <hr class="bbf-divider">
-
-            {* Auto-Delete *}
-            <div class="bbf-form-group">
-                <label class="bbf-label" for="auto_delete_days">Automatische L&ouml;schung nach Tagen</label>
-                <input type="number" class="bbf-input" id="auto_delete_days" name="auto_delete_days" value="{$settings.auto_delete_days|default:0}" min="0" max="3650" style="max-width: 150px;">
-                <small class="bbf-help-text">Eintr&auml;ge werden nach dieser Anzahl Tagen automatisch gel&ouml;scht. 0 = keine automatische L&ouml;schung.</small>
-            </div>
-
-            <hr class="bbf-divider">
-
-            {* GDPR Checkbox Text *}
-            <div class="bbf-form-group">
-                <label class="bbf-label" for="gdpr_checkbox_text">DSGVO-Checkbox Text</label>
-                <textarea class="bbf-textarea" id="gdpr_checkbox_text" name="gdpr_checkbox_text" rows="4">{$settings.gdpr_checkbox_text|default:'Ich stimme der Verarbeitung meiner Daten gem&auml;&szlig; der <a href="/datenschutz" target="_blank">Datenschutzerkl&auml;rung</a> zu.'}</textarea>
-                <small class="bbf-help-text">Dieser Text wird neben der DSGVO-Checkbox in Formularen angezeigt. HTML ist erlaubt.</small>
-            </div>
-
-            <hr class="bbf-divider">
-
-            {* Encryption *}
-            <div class="bbf-form-group">
-                <label class="bbf-label">Daten-Verschl&uuml;sselung</label>
-                <div class="bbf-toggle-switch">
-                    <label class="switch">
-                        <input type="checkbox" name="encryption_enabled" value="1" {if $settings.encryption_enabled == '1'}checked{/if}>
-                        <span class="slider"></span>
-                    </label>
-                    <span class="bbf-toggle-text">Formular-Eintr&auml;ge verschl&uuml;sseln</span>
-                </div>
-                <div class="bbf-alert bbf-alert-warning" style="margin-top: 12px;">
-                    <strong>WARNUNG:</strong> Wenn die Verschl&uuml;sselung aktiviert ist, werden alle neuen Formular-Eintr&auml;ge verschl&uuml;sselt in der Datenbank gespeichert.
-                    Bereits vorhandene Eintr&auml;ge werden nicht nachtr&auml;glich verschl&uuml;sselt.
-                    Stellen Sie sicher, dass der Verschl&uuml;sselungsschl&uuml;ssel sicher aufbewahrt wird &mdash; bei Verlust k&ouml;nnen die Daten nicht wiederhergestellt werden.
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <div style="margin-top: 24px;">
-        <button type="button" class="bbf-btn bbf-btn-primary" onclick="saveSetting('bbf-gdpr-settings', 'gdpr');">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-            </svg>
-            Einstellungen speichern
-        </button>
-    </div>
+    <button type="button" class="bbf-btn-primary" style="padding:10px 24px;border-radius:8px;border:none;font-size:14px;cursor:pointer;" onclick="saveSetting('bbf-gdpr-settings', 'gdpr');">
+        Einstellungen speichern
+    </button>
 
 </form>

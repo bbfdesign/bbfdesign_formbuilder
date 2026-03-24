@@ -35,7 +35,12 @@ class Form
 
         $sql .= ' ORDER BY f.created_at DESC';
 
-        return $this->db->queryPrepared($sql, $params);
+        try {
+            $result = $this->db->queryPrepared($sql, $params);
+            return is_array($result) ? $result : [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     /**
@@ -43,11 +48,15 @@ class Form
      */
     public function getById(int $id): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
-            ['id' => $id]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE id = :id LIMIT 1',
+                ['id' => $id]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**
@@ -55,11 +64,15 @@ class Form
      */
     public function getBySlug(string $slug): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT * FROM `' . self::TABLE . '` WHERE slug = :slug LIMIT 1',
-            ['slug' => $slug]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT * FROM `' . self::TABLE . '` WHERE slug = :slug LIMIT 1',
+                ['slug' => $slug]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**
@@ -67,17 +80,21 @@ class Form
      */
     public function getWithLang(int $id, string $langIso): ?object
     {
-        $result = $this->db->queryPrepared(
-            'SELECT f.*, fl.title AS lang_title, fl.description AS lang_description,
-                    fl.submit_button_text AS lang_submit_button_text,
-                    fl.success_message AS lang_success_message,
-                    fl.fields_lang_json
-             FROM `' . self::TABLE . '` f
-             LEFT JOIN `' . self::TABLE_LANG . '` fl ON f.id = fl.form_id AND fl.lang_iso = :lang
-             WHERE f.id = :id LIMIT 1',
-            ['id' => $id, 'lang' => $langIso]
-        );
-        return !empty($result) ? (object)$result[0] : null;
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT f.*, fl.title AS lang_title, fl.description AS lang_description,
+                        fl.submit_button_text AS lang_submit_button_text,
+                        fl.success_message AS lang_success_message,
+                        fl.fields_lang_json
+                 FROM `' . self::TABLE . '` f
+                 LEFT JOIN `' . self::TABLE_LANG . '` fl ON f.id = fl.form_id AND fl.lang_iso = :lang
+                 WHERE f.id = :id LIMIT 1',
+                ['id' => $id, 'lang' => $langIso]
+            );
+            return !empty($result) && is_array($result) ? (object)$result[0] : null;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**
