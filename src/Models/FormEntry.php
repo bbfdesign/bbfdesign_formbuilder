@@ -166,11 +166,15 @@ class FormEntry
      */
     public function getTotalCount(): int
     {
-        $result = $this->db->queryPrepared(
-            'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE is_trash = 0',
-            []
-        );
-        return (int)($result[0]['cnt'] ?? 0);
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE is_trash = 0',
+                []
+            );
+            return is_array($result) && !empty($result) ? (int)($result[0]['cnt'] ?? 0) : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     /**
@@ -178,11 +182,15 @@ class FormEntry
      */
     public function getUnreadCount(): int
     {
-        $result = $this->db->queryPrepared(
-            'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE is_read = 0 AND is_trash = 0 AND is_spam = 0',
-            []
-        );
-        return (int)($result[0]['cnt'] ?? 0);
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE is_read = 0 AND is_trash = 0 AND is_spam = 0',
+                []
+            );
+            return is_array($result) && !empty($result) ? (int)($result[0]['cnt'] ?? 0) : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     /**
@@ -190,15 +198,20 @@ class FormEntry
      */
     public function getRecent(int $limit = 10): array
     {
-        return $this->db->queryPrepared(
-            'SELECT e.*, f.title as form_title
-             FROM `' . self::TABLE . '` e
-             LEFT JOIN `bbf_formbuilder_forms` f ON e.form_id = f.id
-             WHERE e.is_trash = 0 AND e.is_spam = 0
-             ORDER BY e.created_at DESC
-             LIMIT ' . (int)$limit,
-            []
-        );
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT e.*, f.title as form_title
+                 FROM `' . self::TABLE . '` e
+                 LEFT JOIN `bbf_formbuilder_forms` f ON e.form_id = f.id
+                 WHERE e.is_trash = 0 AND e.is_spam = 0
+                 ORDER BY e.created_at DESC
+                 LIMIT ' . (int)$limit,
+                []
+            );
+            return is_array($result) ? $result : [];
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**

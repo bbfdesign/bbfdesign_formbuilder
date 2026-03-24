@@ -80,7 +80,7 @@ body #content_wrapper {
 #content .form-control:focus {
     border-color: var(--bbf-primary);
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+    box-shadow: 0 0 0 3px rgba(219, 46, 135, 0.1);
 }
 
 #content label {
@@ -215,14 +215,14 @@ body #content_wrapper {
 .bbf-sidebar-nav a:hover {
     background: var(--bbf-primary);
     color: #fff;
-    box-shadow: 0 17px 20px -8px rgba(232, 66, 10, 0.23);
+    box-shadow: 0 17px 20px -8px rgba(219, 46, 135, 0.23);
 }
 
 .bbf-sidebar-nav a.bbf-nav-active {
     background: var(--bbf-primary);
     color: #fff;
     font-weight: var(--bbf-font-weight-medium);
-    box-shadow: 0 17px 20px -8px rgba(232, 66, 10, 0.23);
+    box-shadow: 0 17px 20px -8px rgba(219, 46, 135, 0.23);
 }
 
 .bbf-sidebar-nav a svg {
@@ -362,7 +362,7 @@ body #content_wrapper {
 
 .bbf-btn-primary:hover {
     background-color: var(--bbf-primary-hover);
-    box-shadow: 0 8px 20px -6px rgba(232, 66, 10, 0.4);
+    box-shadow: 0 8px 20px -6px rgba(219, 46, 135, 0.4);
 }
 
 .bbf-btn-secondary {

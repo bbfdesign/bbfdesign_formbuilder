@@ -54,7 +54,7 @@
 
 .bbf-palette-search input:focus {
     border-color: var(--bbf-primary);
-    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+    box-shadow: 0 0 0 3px rgba(219, 46, 135, 0.1);
 }
 
 .bbf-palette-content {
@@ -212,7 +212,7 @@
 
 .bbf-field-card.is-selected {
     border-color: var(--bbf-primary);
-    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+    box-shadow: 0 0 0 3px rgba(219, 46, 135, 0.1);
 }
 
 .bbf-field-card:active {
@@ -450,7 +450,7 @@
 .bbf-settings-field select:focus {
     border-color: var(--bbf-primary);
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(232, 66, 10, 0.1);
+    box-shadow: 0 0 0 3px rgba(219, 46, 135, 0.1);
 }
 
 .bbf-settings-field textarea {
@@ -531,7 +531,7 @@
 .bbf-field-width-option.is-active {
     border-color: var(--bbf-primary);
     background: var(--bbf-primary-light);
-    box-shadow: 0 0 0 2px rgba(232, 66, 10, 0.15);
+    box-shadow: 0 0 0 2px rgba(219, 46, 135, 0.15);
 }
 
 .bbf-field-width-preview {
@@ -551,7 +551,7 @@
 }
 
 .bbf-field-width-option.is-active .bbf-field-width-preview {
-    background: rgba(232, 66, 10, 0.15);
+    background: rgba(219, 46, 135, 0.15);
 }
 
 .bbf-field-width-label {

@@ -142,24 +142,37 @@ class AdminController
 
     private function renderDashboard(): string
     {
-        $formModel = new Form();
-        $entryModel = new FormEntry();
+        try {
+            $formModel = new Form();
+            $entryModel = new FormEntry();
 
-        $spamCount = Shop::Container()->getDB()->queryPrepared(
-            'SELECT COUNT(*) as cnt FROM bbf_formbuilder_spam_log',
-            []
-        );
+            $spamCount = 0;
+            try {
+                $result = Shop::Container()->getDB()->queryPrepared(
+                    'SELECT COUNT(*) as cnt FROM bbf_formbuilder_spam_log',
+                    []
+                );
+                $spamCount = is_array($result) && !empty($result) ? (int)($result[0]['cnt'] ?? 0) : 0;
+            } catch (\Exception $e) {
+                $spamCount = 0;
+            }
 
-        return $this->smarty->fetch(
-            $this->adminTemplatePath . 'templates/dashboard.tpl',
-            [
-                'totalForms'    => $formModel->getTotalCount(),
-                'totalEntries'  => $entryModel->getTotalCount(),
-                'unreadEntries' => $entryModel->getUnreadCount(),
-                'spamBlocked'   => (int)($spamCount[0]['cnt'] ?? 0),
-                'recentEntries' => $this->addEntryPreviews($entryModel->getRecent(10)),
-            ]
-        );
+            $recentEntries = $entryModel->getRecent(10);
+            $recentEntries = is_array($recentEntries) ? $this->addEntryPreviews($recentEntries) : [];
+
+            return $this->smarty->fetch(
+                $this->adminTemplatePath . 'templates/dashboard.tpl',
+                [
+                    'totalForms'    => $formModel->getTotalCount(),
+                    'totalEntries'  => $entryModel->getTotalCount(),
+                    'unreadEntries' => $entryModel->getUnreadCount(),
+                    'spamBlocked'   => $spamCount,
+                    'recentEntries' => $recentEntries,
+                ]
+            );
+        } catch (\Exception $e) {
+            return '<div class="bbf-msg bbf-msg-danger">Dashboard konnte nicht geladen werden: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        }
     }
 
     /**

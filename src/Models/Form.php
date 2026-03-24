@@ -237,11 +237,15 @@ class Form
      */
     public function getActiveCount(): int
     {
-        $result = $this->db->queryPrepared(
-            'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE status = :status',
-            ['status' => 'active']
-        );
-        return (int)($result[0]['cnt'] ?? 0);
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '` WHERE status = :status',
+                ['status' => 'active']
+            );
+            return is_array($result) && !empty($result) ? (int)($result[0]['cnt'] ?? 0) : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     /**
@@ -249,10 +253,14 @@ class Form
      */
     public function getTotalCount(): int
     {
-        $result = $this->db->queryPrepared(
-            'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '`',
-            []
-        );
-        return (int)($result[0]['cnt'] ?? 0);
+        try {
+            $result = $this->db->queryPrepared(
+                'SELECT COUNT(*) as cnt FROM `' . self::TABLE . '`',
+                []
+            );
+            return is_array($result) && !empty($result) ? (int)($result[0]['cnt'] ?? 0) : 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }
