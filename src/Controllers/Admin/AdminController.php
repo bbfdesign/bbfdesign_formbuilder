@@ -54,6 +54,8 @@ class AdminController
                 return $this->getFormData();
             case 'saveFormFields':
                 return $this->saveFormFields();
+            case 'createFromTemplate':
+                return $this->createFromTemplate();
             case 'deleteEntry':
                 return $this->deleteEntry();
             case 'markEntryRead':
@@ -407,6 +409,61 @@ class AdminController
         ]);
 
         return ['flag' => true, 'message' => 'Formularfelder gespeichert.'];
+    }
+
+    public function createFromTemplate(): array
+    {
+        $templateId = (int)($this->request['template_id'] ?? 0);
+        if ($templateId <= 0) {
+            return ['flag' => false, 'errors' => ['Keine Vorlage ausgewählt.']];
+        }
+
+        $templateModel = new FormTemplate();
+        $template = $templateModel->getById($templateId);
+        if ($template === null) {
+            return ['flag' => false, 'errors' => ['Vorlage nicht gefunden.']];
+        }
+
+        $formModel = new Form();
+        $title = $template->name;
+        $slug = $formModel->generateSlug($title);
+
+        $formId = $formModel->create([
+            'title'         => $title,
+            'slug'          => $slug,
+            'description'   => $template->description ?? null,
+            'fields_json'   => $template->fields_json,
+            'settings_json' => $template->settings_json ?? null,
+            'status'        => 'draft',
+        ]);
+
+        // Create default confirmation
+        $confirmationModel = new FormConfirmation();
+        $confirmationModel->create([
+            'form_id'    => $formId,
+            'name'       => 'Standard-Bestätigung',
+            'type'       => 'message',
+            'message'    => 'Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet.',
+            'is_default' => 1,
+        ]);
+
+        // Create notifications from template if available
+        if (!empty($template->notifications_json)) {
+            $notifications = json_decode($template->notifications_json, true);
+            if (is_array($notifications)) {
+                $notifModel = new FormNotification();
+                foreach ($notifications as $notif) {
+                    $notif['form_id'] = $formId;
+                    $notifModel->create($notif);
+                }
+            }
+        }
+
+        return [
+            'flag'    => true,
+            'message' => 'Formular aus Vorlage erstellt.',
+            'form_id' => $formId,
+        ];
     }
 
     public function deleteForm(): array

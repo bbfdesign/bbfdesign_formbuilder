@@ -1,228 +1,223 @@
 /**
- * BBF Formbuilder – Admin JavaScript
- * jQuery-based AJAX navigation with sidebar
+ * BBF Formbuilder – Admin JS
+ * Navigation, AJAX Page Loading, Notifications
  */
 
 $(document).ready(function () {
     // Sidebar toggle
     $('#bbf-sidebar-toggle').on('click', function () {
-        $('.bbf-sidebar').toggleClass('collapsed');
-        $('.bbf-content-area').toggleClass('expanded');
+        $('#bbf-sidebar').toggleClass('bbf-sidebar-collapsed');
     });
 
-    // Initial page load
+    // Load initial page
     bbfNavigate('dashboard');
 });
 
-/**
- * Page title mapping (German)
- */
+// Page title mapping
 var bbfPageTitles = {
-    'dashboard':        'Dashboard',
-    'forms':            'Alle Formulare',
-    'form-builder':     'Formular-Builder',
-    'form-settings':    'Formular-Einstellungen',
-    'templates':        'Vorlagen',
-    'entries':          'Einträge',
-    'entry-detail':     'Eintrags-Details',
-    'settings':         'Einstellungen',
-    'spam-protection':  'Spam-Schutz',
-    'gdpr':             'DSGVO',
-    'email-templates':  'E-Mail-Templates',
-    'css-editor':       'CSS-Editor',
-    'documentation':    'Dokumentation',
-    'changelog':        'Changelog'
+    'dashboard':       'Dashboard',
+    'forms':           'Alle Formulare',
+    'form-builder':    'Formular-Builder',
+    'form-settings':   'Formular-Einstellungen',
+    'templates':       'Vorlagen',
+    'entries':         'Einträge',
+    'entry-detail':    'Eintrags-Details',
+    'settings':        'Einstellungen',
+    'spam-protection': 'Spam-Schutz',
+    'gdpr':            'DSGVO',
+    'email-templates': 'E-Mail-Templates',
+    'css-editor':      'CSS-Editor',
+    'documentation':   'Dokumentation',
+    'changelog':       'Changelog'
 };
 
-/**
- * Navigate to a page via AJAX
- *
- * @param {string} page   - Page identifier
- * @param {object} params - Optional extra parameters
- */
-function bbfNavigate(page, params) {
-    var title = bbfPageTitles[page] || page;
+// Tab switching for Bootstrap nav-links
+$(document).on("click", "a.nav-link", function () {
+    if (typeof bootstrap !== "undefined") {
+        var tab = new bootstrap.Tab(this);
+        tab.show();
+    } else {
+        $(this).tab("show");
+    }
+});
 
+// Auto-save on parent-setting change
+$(document).on("change", ".parent-setting", function () {
+    $(this).closest("form").find(".save-btn").click();
+});
+
+/**
+ * Navigate to a page (AJAX)
+ * @param {string} page
+ * @param {object} extraParams
+ */
+function bbfNavigate(page, extraParams) {
     // Update active nav item
-    $('.bbf-nav-item').removeClass('active');
-    $('.bbf-nav-item[data-page="' + page + '"]').addClass('active');
+    $('.bbf-sidebar-nav a').removeClass('bbf-nav-active');
+    $('.bbf-sidebar-nav a[data-page="' + page + '"]').addClass('bbf-nav-active');
 
     // Update header title
-    $('.bbf-header-title').text('BBF Formbuilder: ' + title);
+    var title = bbfPageTitles[page] || 'BBF Formbuilder';
+    $('#bbf-page-title').text('BBF Formbuilder: ' + title);
 
     // Show loading spinner
     $('#bbf-page-content').html(
-        '<div class="bbf-loading text-center p-5">' +
-        '<div class="spinner-border text-primary" role="status">' +
-        '<span class="sr-only">Laden...</span>' +
-        '</div></div>'
+        '<div class="text-center" style="padding: 60px 0;">' +
+        '<div class="bbf-spinner" style="width:40px; height:40px; border-width:3px; margin: 0 auto 16px;"></div>' +
+        '<p style="color: var(--bbf-text-light);">Lade...</p>' +
+        '</div>'
     );
 
-    // Build AJAX data
-    var data = $.extend({
-        action:    'getPage',
-        page:      page,
-        is_ajax:   1,
-        jtl_token: typeof jtl_token !== 'undefined' ? jtl_token : ''
-    }, params || {});
+    // Build request data
+    var requestData = $.extend({
+        action: "getPage",
+        page: page,
+        is_ajax: 1,
+        jtl_token: document.querySelector('[name="jtl_token"]').value,
+    }, extraParams || {});
 
+    // AJAX load page
     $.ajax({
-        url:      postURL,
-        type:     'POST',
-        data:     data,
-        dataType: 'html',
+        url: postURL,
+        data: requestData,
+        method: "POST",
+        dataType: "json",
         success: function (response) {
-            $('#bbf-page-content').html(response);
-
-            // Try to initialise select2 on any select elements
-            try {
-                $('#bbf-page-content select.select2').select2();
-            } catch (e) {
-                // select2 not available – silently ignore
+            if (response && response.errors && response.errors.length) {
+                response.errors.forEach(function (error) {
+                    bbdNotify("Fehler", error, "danger", "fa fa-exclamation-triangle");
+                });
+                return;
+            }
+            if (response && response.content) {
+                $('#bbf-page-content').html(response.content);
+                try { $(".select2").select2(); } catch(e) {}
             }
         },
-        error: function (xhr, status, error) {
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error("BBF getPage error:", textStatus, errorThrown, (jqXHR.responseText||'').substring(0,300));
             $('#bbf-page-content').html(
-                '<div class="alert alert-danger m-3">' +
-                '<strong>Fehler:</strong> Die Seite konnte nicht geladen werden.<br>' +
-                '<small>' + error + '</small>' +
-                '</div>'
+                '<div class="bbf-msg bbf-msg-danger" style="margin: 24px;">' +
+                '<i class="fa fa-exclamation-triangle"></i> Laden fehlgeschlagen: ' +
+                (errorThrown || textStatus) + '</div>'
             );
         }
     });
 }
 
 /**
- * Legacy wrapper
- *
- * @param {string} page
- * @param {string} type
+ * Legacy getPage function
  */
 function getPage(page, type) {
-    bbfNavigate(page, type ? { type: type } : {});
+    type = type || "page";
+    if (type === "page") {
+        bbfNavigate(page);
+    }
 }
 
 /**
- * Save a settings form via AJAX
- *
- * @param {string} formId     - The ID / selector of the form element
- * @param {string} calledPage - Page to reload after save
+ * Save settings via AJAX
  */
 function saveSetting(formId, calledPage) {
-    var $form = $(formId);
-    var formData = new FormData($form[0]);
+    calledPage = calledPage || "settings";
+    var form = $("#" + formId);
+    var postsData = new FormData();
+    postsData.append("action", form.attr("action") || "savePluginSetting");
+    postsData.append("is_ajax", 1);
+    postsData.append("jtl_token", document.querySelector('[name="jtl_token"]').value);
 
-    // Ensure unchecked checkboxes are sent as 0
-    $form.find('input[type="checkbox"]').each(function () {
-        var name = $(this).attr('name');
-        if (name) {
-            formData.set(name, this.checked ? '1' : '0');
+    var checkboxNames = {};
+    form.find('input[type="checkbox"]').each(function () {
+        checkboxNames[this.name] = true;
+        postsData.append(this.name, this.checked ? 1 : 0);
+    });
+
+    form.serializeArray().forEach(function (field) {
+        if (!checkboxNames[field.name]) {
+            postsData.append(field.name, field.value);
         }
     });
 
-    // Append file inputs
-    $form.find('input[type="file"]').each(function () {
-        var name = $(this).attr('name');
-        if (name && this.files.length > 0) {
-            formData.append(name, this.files[0]);
+    form.find('input[type="file"]').each(function () {
+        var fileInput = this;
+        if (fileInput.files.length > 0) {
+            Array.from(fileInput.files).forEach(function (file) {
+                postsData.append(fileInput.name, file);
+            });
         }
     });
-
-    // Append token
-    if (typeof jtl_token !== 'undefined') {
-        formData.append('jtl_token', jtl_token);
-    }
 
     $.ajax({
-        url:         postURL,
-        type:        'POST',
-        data:        formData,
-        processData: false,
+        url: postURL,
+        method: "POST",
+        data: postsData,
         contentType: false,
+        processData: false,
+        dataType: "json",
         success: function (response) {
-            try {
-                var res = typeof response === 'string' ? JSON.parse(response) : response;
-                if (res.success) {
-                    bbdNotify('Erfolg', res.message || 'Einstellungen gespeichert.', 'success', 'fa fa-check');
-                } else {
-                    bbdNotify('Fehler', res.message || 'Beim Speichern ist ein Fehler aufgetreten.', 'danger', 'fa fa-exclamation-triangle');
+            if (response && response.flag) {
+                if (response.message) {
+                    bbdNotify("Erfolg", response.message, "success", "fa fa-check-circle");
+                    if (calledPage) {
+                        setTimeout(function () { bbfNavigate(calledPage); }, 1000);
+                    }
                 }
-            } catch (e) {
-                bbdNotify('Erfolg', 'Einstellungen gespeichert.', 'success', 'fa fa-check');
-            }
-
-            // Reload the originating page
-            if (calledPage) {
-                setTimeout(function () {
-                    bbfNavigate(calledPage);
-                }, 800);
+            } else {
+                if (response && response.errors && response.errors.length) {
+                    response.errors.forEach(function (error) {
+                        bbdNotify("Fehler", error, "danger", "fa fa-exclamation-triangle");
+                    });
+                }
             }
         },
-        error: function (xhr, status, error) {
-            bbdNotify('Fehler', 'Beim Speichern ist ein Fehler aufgetreten: ' + error, 'danger', 'fa fa-exclamation-triangle');
-        }
+        error: function (jqXHR, textStatus, errorThrown) {
+            bbdNotify("Fehler", "Speichern fehlgeschlagen: " + (errorThrown || textStatus), "danger", "fa fa-exclamation-triangle");
+        },
     });
 }
 
 /**
- * Show a notification via bootstrap-notify
- *
- * @param {string} title
- * @param {string} message
- * @param {string} type   - Bootstrap alert type (success, danger, warning, info)
- * @param {string} icon   - Icon class
- * @param {string} from   - Notification origin (top, bottom)
- * @param {string} align  - Notification alignment (left, center, right)
+ * Generic AJAX action helper
+ */
+function bbfAjaxAction(actionData, successCallback) {
+    var data = $.extend({
+        is_ajax: 1,
+        jtl_token: document.querySelector('[name="jtl_token"]').value,
+    }, actionData);
+
+    $.ajax({
+        url: postURL,
+        method: "POST",
+        data: data,
+        dataType: "json",
+        success: function (response) {
+            if (response && response.flag) {
+                if (response.message) {
+                    bbdNotify("Erfolg", response.message, "success", "fa fa-check-circle");
+                }
+                if (successCallback) successCallback(response);
+            } else if (response && response.errors) {
+                response.errors.forEach(function (error) {
+                    bbdNotify("Fehler", error, "danger", "fa fa-exclamation-triangle");
+                });
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            bbdNotify("Fehler", "Aktion fehlgeschlagen: " + (errorThrown || textStatus), "danger", "fa fa-exclamation-triangle");
+        },
+    });
+}
+
+/**
+ * Bootstrap Notify wrapper
  */
 function bbdNotify(title, message, type, icon, from, align) {
-    from  = from  || 'top';
-    align = align || 'right';
-    type  = type  || 'info';
-    icon  = icon  || 'fa fa-info-circle';
-
-    $.notify({
-        icon:    icon,
-        title:   '<strong>' + title + '</strong> ',
-        message: message
-    }, {
-        type:   type,
-        timer:  3000,
-        placement: {
-            from:  from,
-            align: align
-        },
-        animate: {
-            enter: 'animated fadeInDown',
-            exit:  'animated fadeOutUp'
-        }
-    });
+    type = type || "primary";
+    icon = icon || "fa fa-bell";
+    from = from || "top";
+    align = align || "right";
+    $.notify(
+        { icon: icon, title: title, message: message },
+        { type: type, placement: { from: from, align: align }, time: 1000, delay: 2000 }
+    );
 }
-
-/**
- * Bootstrap tab switching via nav-links
- */
-$(document).on('click', '.nav-link[data-toggle="tab"], .nav-link[data-bs-toggle="tab"]', function (e) {
-    e.preventDefault();
-    var target = $(this).attr('href') || $(this).data('target') || $(this).data('bs-target');
-    if (!target) return;
-
-    // Deactivate siblings
-    $(this).closest('.nav').find('.nav-link').removeClass('active');
-    $(this).addClass('active');
-
-    // Show target pane
-    $(target).closest('.tab-content').find('.tab-pane').removeClass('show active');
-    $(target).addClass('show active');
-});
-
-/**
- * Auto-save when a parent-setting field changes
- */
-$(document).on('change', '.parent-setting', function () {
-    var $form = $(this).closest('form');
-    if ($form.length) {
-        var formId     = '#' + $form.attr('id');
-        var calledPage = $form.data('page') || null;
-        saveSetting(formId, calledPage);
-    }
-});
