@@ -425,14 +425,7 @@ class AdminController
         }
 
         if ($formId <= 0) {
-            // Debug: Prüfe ob Tabelle existiert
-            $tableCheck = Shop::Container()->getDB()->queryPrepared(
-                "SHOW TABLES LIKE 'bbf_formbuilder_forms'", []
-            );
-            $tableExists = is_array($tableCheck) && !empty($tableCheck);
-            return ['flag' => false, 'errors' => [
-                'Formular konnte nicht erstellt werden (ID: ' . $formId . '). Tabelle existiert: ' . ($tableExists ? 'JA' : 'NEIN')
-            ]];
+            return ['flag' => false, 'errors' => ['Formular konnte nicht erstellt werden. Bitte JTL-Systemlog prüfen.']];
         }
 
         // Create default confirmation

@@ -23,9 +23,8 @@ class Form
      */
     public function getAll(string $status = ''): array
     {
-        $sql = 'SELECT f.*,
-                    (SELECT COUNT(*) FROM bbf_formbuilder_entries e WHERE e.form_id = f.id AND e.is_trash = 0) as entry_count
-                FROM `' . self::TABLE . '` f';
+        // Simple query without subquery to avoid failures if entries table is missing
+        $sql = 'SELECT f.* FROM `' . self::TABLE . '` f';
         $params = [];
 
         if (!empty($status)) {
@@ -37,7 +36,23 @@ class Form
 
         try {
             $result = $this->db->queryPrepared($sql, $params);
-            return is_array($result) ? $result : [];
+            if (!is_array($result)) {
+                return [];
+            }
+            // Add entry_count separately (safe if entries table missing)
+            foreach ($result as &$form) {
+                try {
+                    $cnt = $this->db->queryPrepared(
+                        'SELECT COUNT(*) as cnt FROM bbf_formbuilder_entries WHERE form_id = :fid AND is_trash = 0',
+                        ['fid' => $form['id']]
+                    );
+                    $form['entry_count'] = is_array($cnt) && !empty($cnt) ? (int)$cnt[0]['cnt'] : 0;
+                } catch (\Throwable $e) {
+                    $form['entry_count'] = 0;
+                }
+            }
+            unset($form);
+            return $result;
         } catch (\Throwable $e) {
             return [];
         }

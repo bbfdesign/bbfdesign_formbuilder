@@ -32,8 +32,36 @@ body #content_wrapper {
 }
 
 [data-notify="container"] {
-    background-color: var(--bbf-bg-card) !important;
     z-index: 1054 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    padding: 12px 20px !important;
+    border: none !important;
+}
+
+[data-notify="container"].alert-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+}
+
+[data-notify="container"].alert-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+}
+
+[data-notify="container"].alert-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+}
+
+[data-notify="container"].alert-info {
+    background-color: #d1ecf1 !important;
+    color: #0c5460 !important;
+}
+
+[data-notify="container"].alert-primary {
+    background-color: #f9e8f1 !important;
+    color: #8b1a5a !important;
 }
 
 /* ─── Cards ─── */
