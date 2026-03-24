@@ -402,12 +402,94 @@
                                 </div>
                             </div>
 
-                            {* Conditional Logic Placeholder *}
+                            {* Conditional Logic Editor *}
                             <div class="bbf-settings-group">
                                 <div class="bbf-settings-group-title">Bedingte Logik</div>
-                                <p style="font-size:12px;color:var(--bbf-text-light);">
-                                    Die bedingte Logik wird in einer zukünftigen Version verfügbar sein.
-                                </p>
+
+                                <div x-data="conditionalLogicEditor({
+                                    fieldLogic: selectedField.conditional_logic || null,
+                                    formFields: formFields,
+                                    currentFieldId: selectedField.id,
+                                    onChange(cfg) {
+                                        selectedField.conditional_logic = cfg;
+                                        markDirty();
+                                    }
+                                })" x-effect="
+                                    /* Re-init when selected field changes */
+                                    let fl = selectedField.conditional_logic;
+                                    if (fl) { enabled = true; action = fl.action || 'show'; matchType = fl.match || 'all'; rules = JSON.parse(JSON.stringify(fl.rules || [])); }
+                                    else { enabled = false; action = 'show'; matchType = 'all'; rules = []; }
+                                ">
+
+                                    {* Enable toggle *}
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                                        <label class="switch" style="margin:0;">
+                                            <input type="checkbox" x-model="enabled" @change="emitChange()">
+                                            <span class="slider"></span>
+                                        </label>
+                                        <span style="font-size:13px;">Aktivieren</span>
+                                    </div>
+
+                                    {* Logic configuration (shown only when enabled) *}
+                                    <template x-if="enabled">
+                                        <div>
+                                            {* Action & Match type *}
+                                            <div style="display:flex;gap:8px;margin-bottom:10px;">
+                                                <select x-model="action" @change="emitChange()" style="flex:1;padding:6px 8px;border:1px solid var(--bbf-border);border-radius:6px;font-size:12px;">
+                                                    <option value="show">Feld anzeigen wenn</option>
+                                                    <option value="hide">Feld ausblenden wenn</option>
+                                                </select>
+                                                <select x-model="matchType" @change="emitChange()" style="flex:1;padding:6px 8px;border:1px solid var(--bbf-border);border-radius:6px;font-size:12px;">
+                                                    <option value="all">Alle Bedingungen</option>
+                                                    <option value="any">Mind. eine Bedingung</option>
+                                                </select>
+                                            </div>
+
+                                            {* Rule rows *}
+                                            <template x-for="(rule, ri) in rules" :key="ri">
+                                                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;padding:8px;background:var(--bbf-bg-light, #f8f9fa);border-radius:6px;align-items:center;">
+                                                    {* Field selector *}
+                                                    <select x-model="rule.field_id" @change="onRuleFieldChange(ri)" style="flex:2;min-width:0;padding:6px 8px;border:1px solid var(--bbf-border);border-radius:4px;font-size:12px;">
+                                                        <option value="">– Feld wählen –</option>
+                                                        <template x-for="af in availableFields" :key="af.id">
+                                                            <option :value="af.id" x-text="af.label + ' (' + af.type + ')'"></option>
+                                                        </template>
+                                                    </select>
+
+                                                    {* Operator selector *}
+                                                    <select x-model="rule.operator" @change="onOperatorChange(ri)" style="flex:2;min-width:0;padding:6px 8px;border:1px solid var(--bbf-border);border-radius:4px;font-size:12px;">
+                                                        <template x-for="op in operators" :key="op.value">
+                                                            <option :value="op.value" x-text="op.label"></option>
+                                                        </template>
+                                                    </select>
+
+                                                    {* Value input – show dropdown if target field has choices, otherwise text *}
+                                                    <template x-if="operatorNeedsValue(rule.operator) && getChoicesForField(rule.field_id).length > 0">
+                                                        <select x-model="rule.value" @change="emitChange()" style="flex:2;min-width:0;padding:6px 8px;border:1px solid var(--bbf-border);border-radius:4px;font-size:12px;">
+                                                            <option value="">– Wert –</option>
+                                                            <template x-for="ch in getChoicesForField(rule.field_id)" :key="ch.value">
+                                                                <option :value="ch.value" x-text="ch.label"></option>
+                                                            </template>
+                                                        </select>
+                                                    </template>
+                                                    <template x-if="operatorNeedsValue(rule.operator) && getChoicesForField(rule.field_id).length === 0">
+                                                        <input type="text" x-model="rule.value" @input="emitChange()" placeholder="Wert" style="flex:2;min-width:0;padding:6px 8px;border:1px solid var(--bbf-border);border-radius:4px;font-size:12px;">
+                                                    </template>
+
+                                                    {* Remove rule *}
+                                                    <button type="button" @click="removeRule(ri)" style="background:none;border:none;color:var(--bbf-danger);cursor:pointer;padding:4px;flex-shrink:0;" title="Bedingung entfernen">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                                    </button>
+                                                </div>
+                                            </template>
+
+                                            {* Add rule button *}
+                                            <button type="button" class="bbf-btn-secondary" style="width:100%;padding:6px;font-size:12px;" @click="addRule()">
+                                                + Bedingung hinzufügen
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -438,4 +520,5 @@
 
 <script src="{$adminUrl}js/vendor/sortable.min.js"></script>
 <script src="{$adminUrl}js/vendor/alpine.min.js" defer></script>
+<script src="{$adminUrl}js/conditional-logic-editor.js" defer></script>
 <script src="{$adminUrl}js/form-builder.js" defer></script>

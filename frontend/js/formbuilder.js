@@ -13,6 +13,7 @@ document.addEventListener('alpine:init', () => {
         successMessage: '',
         currentStep: 0,
         totalSteps: 1,
+        _steps: [],
         csrfToken: config.csrfToken,
         ajaxUrl: config.ajaxUrl,
 
@@ -21,9 +22,51 @@ document.addEventListener('alpine:init', () => {
             this.fields.forEach(field => {
                 this.values[field.id] = field.default_value || '';
             });
-            // Calculate total steps
-            const steps = this.fields.map(f => (f.step || 0) + 1);
-            this.totalSteps = steps.length > 0 ? Math.max(...steps) : 1;
+
+            // Multi-step detection via BbfMultiStep utility
+            this.initMultiStep();
+        },
+
+        /**
+         * Detect page_break fields and compute step structure.
+         * Assigns a _step index to every field so the template
+         * can filter fields per step.
+         */
+        initMultiStep() {
+            if (typeof BbfMultiStep === 'undefined') {
+                this.totalSteps = 1;
+                return;
+            }
+
+            this._steps = BbfMultiStep.computeSteps(this.fields);
+            this.totalSteps = this._steps.length;
+
+            // Tag each field with its step index for easy template filtering
+            for (var s = 0; s < this._steps.length; s++) {
+                var stepFields = this._steps[s].fields;
+                for (var f = 0; f < stepFields.length; f++) {
+                    stepFields[f]._step = s;
+                }
+            }
+
+            // Also tag page_break fields so they can be hidden
+            this.fields.forEach(field => {
+                if (field.type === 'page_break') {
+                    field._step = -1; // never shown
+                }
+            });
+        },
+
+        /**
+         * Navigate directly to a specific step (only if allowed)
+         */
+        goToStep(stepIndex) {
+            if (typeof BbfMultiStep === 'undefined') return;
+            if (BbfMultiStep.canGoToStep(stepIndex, this.currentStep, this._steps, this.values, (f) => this.isFieldVisible(f))) {
+                this.currentStep = stepIndex;
+                // Scroll to top of form on step change
+                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         },
 
         /**
@@ -84,6 +127,9 @@ document.addEventListener('alpine:init', () => {
          * Get fields for current step
          */
         get currentStepFields() {
+            if (this._steps.length > 0) {
+                return BbfMultiStep.stepFields(this._steps, this.currentStep);
+            }
             return this.fields.filter(f => (f.step || 0) === this.currentStep);
         },
 
@@ -93,6 +139,7 @@ document.addEventListener('alpine:init', () => {
         nextStep() {
             if (this.validateCurrentStep()) {
                 this.currentStep = Math.min(this.currentStep + 1, this.totalSteps - 1);
+                this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         },
 
@@ -101,6 +148,7 @@ document.addEventListener('alpine:init', () => {
          */
         prevStep() {
             this.currentStep = Math.max(this.currentStep - 1, 0);
+            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
 
         /**

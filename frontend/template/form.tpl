@@ -24,9 +24,14 @@
           novalidate
           aria-label="{$bbfFormTitle}">
 
+        {* Multi-Step Progress *}
+        {if $bbfForm->is_multi_step}
+            {include file="frontend/template/multi-step-progress.tpl"}
+        {/if}
+
         <div class="bbf-fields-row">
             <template x-for="(field, index) in fields" :key="field.id">
-                <div x-show="isFieldVisible(field)"
+                <div x-show="isFieldVisible(field) && field.type !== 'page_break' && (totalSteps <= 1 || field._step === currentStep)"
                      class="bbf-field"
                      :class="'bbf-field--' + (field.width || 'full') + (errors[field.id] ? ' bbf-field--error' : '')"
                      role="group"
@@ -214,8 +219,29 @@
         {* Hidden page URL for tracking *}
         <input type="hidden" name="_page_url" :value="window.location.href">
 
+        {* Step Navigation (multi-step forms) *}
+        {if $bbfForm->is_multi_step}
+        <div class="bbf-step-nav" x-show="totalSteps > 1">
+            <button type="button"
+                    class="bbf-step-nav__prev bbf-btn bbf-btn--secondary"
+                    x-show="currentStep > 0"
+                    @click="prevStep()"
+                    aria-label="Zurück zum vorherigen Schritt">
+                &larr; Zurück
+            </button>
+
+            <button type="button"
+                    class="bbf-step-nav__next bbf-btn bbf-btn--primary"
+                    x-show="currentStep < totalSteps - 1"
+                    @click="nextStep()"
+                    aria-label="Weiter zum nächsten Schritt">
+                Weiter &rarr;
+            </button>
+        </div>
+        {/if}
+
         {* Submit Button *}
-        <div class="bbf-submit-row">
+        <div class="bbf-submit-row" {if $bbfForm->is_multi_step}x-show="currentStep === totalSteps - 1"{/if}>
             <button type="submit"
                     class="bbf-submit-btn"
                     :disabled="isSubmitting">
