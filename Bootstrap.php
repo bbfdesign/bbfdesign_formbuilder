@@ -29,27 +29,31 @@ class Bootstrap extends Bootstrapper
         parent::boot($dispatcher);
         $plugin = $this->getPlugin();
 
-        $pluginHelper = new PluginHelper($plugin);
-        $pluginSettings = $pluginHelper->getSettings();
-
+        // Frontend hooks — settings loaded lazily inside the hook closures
+        // to avoid querying the DB before tables exist (pre-install)
         if (Shop::isFrontend()) {
-            if (!empty($pluginSettings[Setting::PLUGIN_STATUS])) {
-                $dispatcher->listen('shop.hook.' . \HOOK_LETZTERINCLUDE_CSS_JS, static function (array $args) use ($plugin, $pluginSettings) {
-                    $hook = new IncludeJsCssAssets($args, $plugin, $pluginSettings);
+            $dispatcher->listen('shop.hook.' . \HOOK_LETZTERINCLUDE_CSS_JS, static function (array $args) use ($plugin) {
+                $settings = PluginHelper::getSettings();
+                if (!empty($settings[Setting::PLUGIN_STATUS])) {
+                    $hook = new IncludeJsCssAssets($args, $plugin, $settings);
                     $hook->execute();
-                });
+                }
+            });
 
-                $dispatcher->listen('shop.hook.' . \HOOK_SMARTY_INC, static function (array $args) use ($plugin, $pluginSettings) {
-                    $hook = new AfterSmartyInitialize($args, $plugin, $pluginSettings);
+            $dispatcher->listen('shop.hook.' . \HOOK_SMARTY_INC, static function (array $args) use ($plugin) {
+                $settings = PluginHelper::getSettings();
+                if (!empty($settings[Setting::PLUGIN_STATUS])) {
+                    $hook = new AfterSmartyInitialize($args, $plugin, $settings);
                     $hook->execute();
-                });
-            }
+                }
+            });
         }
 
         // Register frontend routes (submit endpoint, ALTCHA challenge)
         if (\defined('HOOK_ROUTER_PRE_DISPATCH')) {
-            $dispatcher->listen('shop.hook.' . \HOOK_ROUTER_PRE_DISPATCH, function (array $args) use ($plugin, $pluginSettings) {
-                $route = new Route($args, $plugin, $pluginSettings);
+            $dispatcher->listen('shop.hook.' . \HOOK_ROUTER_PRE_DISPATCH, function (array $args) use ($plugin) {
+                $settings = PluginHelper::getSettings();
+                $route = new Route($args, $plugin, $settings);
                 $route->register();
             });
         }
