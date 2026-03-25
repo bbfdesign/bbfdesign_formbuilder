@@ -1,0 +1,15 @@
+{
+    "name": "bbfdesign-formbuilder",
+    "private": true,
+    "scripts": {
+        "dev": "vite build --mode development --watch",
+        "build": "vite build --mode production"
+    },
+    "dependencies": {
+        "grapesjs": "^0.21.13",
+        "grapesjs-plugin-forms": "^2.0.6"
+    },
+    "devDependencies": {
+        "vite": "^5.0.0"
+    }
+}

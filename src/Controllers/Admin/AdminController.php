@@ -65,6 +65,8 @@ class AdminController
                 return $this->getFormData();
             case 'saveFormFields':
                 return $this->saveFormFields();
+            case 'saveFormBuilder':
+                return $this->saveFormBuilder();
             case 'createFromTemplate':
                 return $this->createFromTemplate();
             case 'deleteEntry':
@@ -237,12 +239,15 @@ class AdminController
             $template = $templateModel->getById($templateId);
         }
 
+        $plugin = $this->plugin;
         return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/form-builder.tpl',
             [
-                'form'     => $form,
-                'template' => $template,
-                'formId'   => $formId,
+                'form'              => $form,
+                'template'          => $template,
+                'formId'            => $formId,
+                'postURL'           => $plugin->getPaths()->getBackendURL(),
+                'pluginFrontendUrl' => $plugin->getPaths()->getFrontendURL(),
             ]
         );
     }
@@ -611,6 +616,58 @@ class AdminController
         }
 
         return ['flag' => true, 'form' => $form];
+    }
+
+    // ─── GrapesJS Builder ───
+
+    public function saveFormBuilder(): array
+    {
+        $formId = (int)($this->request['form_id'] ?? 0);
+        $formModel = new Form();
+
+        // If no form yet, create one
+        if ($formId <= 0) {
+            $title = trim($this->request['title'] ?? 'Neues Formular');
+            $formId = $formModel->create([
+                'title'       => $title,
+                'slug'        => $formModel->generateSlug($title),
+                'description' => '',
+                'fields_json' => $this->request['fields_json'] ?? '[]',
+                'status'      => 'draft',
+            ]);
+            if ($formId <= 0) {
+                return ['flag' => false, 'errors' => ['Formular konnte nicht erstellt werden.']];
+            }
+        }
+
+        // Update GrapesJS data
+        try {
+            $db = Shop::Container()->getDB();
+            $db->queryPrepared(
+                'UPDATE `bbf_formbuilder_forms` SET
+                    gjs_data = :gjs_data,
+                    html_rendered = :html,
+                    css_rendered = :css,
+                    fields_json = :fields_json
+                 WHERE id = :id',
+                [
+                    'gjs_data'    => $this->request['gjs_data'] ?? '',
+                    'html'        => $this->request['html_rendered'] ?? '',
+                    'css'         => $this->request['css_rendered'] ?? '',
+                    'fields_json' => $this->request['fields_json'] ?? '[]',
+                    'id'          => $formId,
+                ]
+            );
+
+            // Update title if provided
+            if (!empty($this->request['title'])) {
+                $formModel->update($formId, ['title' => trim($this->request['title'])]);
+            }
+        } catch (\Throwable $e) {
+            return ['flag' => false, 'errors' => ['Speichern fehlgeschlagen: ' . $e->getMessage()]];
+        }
+
+        return ['flag' => true, 'message' => 'Formular gespeichert.', 'form_id' => $formId];
     }
 
     // ─── Entry Actions ───

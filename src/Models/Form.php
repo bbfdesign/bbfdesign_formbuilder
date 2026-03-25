@@ -143,6 +143,7 @@ class Form
         $allowedFields = [
             'title', 'slug', 'description', 'fields_json', 'settings_json',
             'css_classes', 'status', 'is_multi_step', 'submit_button_text', 'is_searchable',
+            'gjs_data', 'html_rendered', 'css_rendered',
         ];
 
         foreach ($allowedFields as $field) {
