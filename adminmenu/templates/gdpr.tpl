@@ -34,7 +34,7 @@
         {* DSGVO Checkbox Text *}
         <div style="margin-bottom:20px;">
             <label style="font-size:12px;font-weight:500;display:block;margin-bottom:4px;">DSGVO-Checkbox Text</label>
-            <textarea name="gdpr_checkbox_text" class="form-control" rows="3" style="font-family:monospace;font-size:13px;">{$settings.gdpr_checkbox_text|default:''}</textarea>
+            <textarea name="gdpr_checkbox_text" class="form-control" rows="3" style="font-family:monospace;font-size:13px;">{$settings.gdpr_checkbox_text|default:'Ich stimme der Verarbeitung meiner Daten gemäß der <a href="/datenschutz">Datenschutzerklärung</a> zu.'}</textarea>
             <p style="font-size:12px;color:var(--bbf-text-light);margin:4px 0 0;">Wird neben der DSGVO-Checkbox angezeigt. HTML ist erlaubt (z.B. Links zur Datenschutzerklärung).</p>
         </div>
 

@@ -310,6 +310,8 @@ class AdminController
                 'entries'      => $entries,
                 'forms'        => $formModel->getAll(),
                 'filterFormId' => $formId,
+                'totalPages'   => 0,
+                'currentPage'  => 1,
             ]
         );
     }
@@ -357,7 +359,7 @@ class AdminController
     {
         return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/settings.tpl',
-            ['settings' => PluginHelper::getSettings()]
+            ['settings' => PluginHelper::getSettingsWithDefaults()]
         );
     }
 
@@ -365,7 +367,7 @@ class AdminController
     {
         return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/spam-protection.tpl',
-            ['settings' => PluginHelper::getSettings()]
+            ['settings' => PluginHelper::getSettingsWithDefaults()]
         );
     }
 
@@ -373,7 +375,7 @@ class AdminController
     {
         return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/gdpr.tpl',
-            ['settings' => PluginHelper::getSettings()]
+            ['settings' => PluginHelper::getSettingsWithDefaults()]
         );
     }
 

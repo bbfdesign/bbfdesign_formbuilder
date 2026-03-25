@@ -38,6 +38,21 @@ class PluginHelper
     }
 
     /**
+     * Get all settings with guaranteed defaults for every known key.
+     * Prevents Smarty "Undefined array key" warnings.
+     */
+    public static function getSettingsWithDefaults(): array
+    {
+        $stored = self::getSettings();
+        $defaults = Setting::getDefaults();
+        $result = [];
+        foreach ($defaults as $key => $config) {
+            $result[$key] = $stored[$key] ?? $config['value'] ?? '';
+        }
+        return $result;
+    }
+
+    /**
      * Get a single setting by key.
      */
     public static function getSetting(string $key): ?string

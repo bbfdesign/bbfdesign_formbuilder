@@ -59,7 +59,7 @@
 
 {* Quick Action + Letzte Einträge *}
 <div style="margin-bottom: 16px;">
-    <button type="button" onclick="bbfNavigate('form-editor', {ldelim}form_id: 'new'{rdelim});" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #6366f1; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+    <button type="button" onclick="bbfNavigate('form-builder');" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--bbf-primary); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
