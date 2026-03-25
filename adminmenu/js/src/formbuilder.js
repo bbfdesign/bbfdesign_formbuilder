@@ -86,18 +86,18 @@ window.BbfFormbuilder = {
 
             plugins: [
                 grapesjsPluginForms,
+                bbfFormTraits,   // Register component types BEFORE blocks use them
                 bbfFormBlocks,
-                bbfFormTraits,
             ],
             pluginsOpts: {
                 [grapesjsPluginForms]: {},
-                [bbfFormBlocks]: {},
                 [bbfFormTraits]: {},
+                [bbfFormBlocks]: {},
             },
         });
 
-        // ── Toolbar ───────────────────────────────────────────
-        setupToolbar(editor);
+        // ── Connect HTML Toolbar Buttons to GrapesJS ──────────
+        setupHtmlToolbar(editor);
 
         // ── Keyboard Shortcuts ────────────────────────────────
         document.addEventListener('keydown', (e) => {
@@ -108,7 +108,7 @@ window.BbfFormbuilder = {
         });
 
         // ── Save Button ───────────────────────────────────────
-        const saveBtn = document.getElementById('bbf-save-form');
+        const saveBtn = document.getElementById('bbf-btn-save');
         if (saveBtn) {
             saveBtn.addEventListener('click', () => saveForm());
         }
@@ -121,9 +121,13 @@ window.BbfFormbuilder = {
             const fields = extractFieldDefinitions(editor);
 
             try {
+                const titleEl = document.getElementById('bbf-form-title');
+                const title = titleEl ? titleEl.value : '';
+
                 const formData = new FormData();
                 formData.append('action', 'saveFormBuilder');
-                formData.append('form_id', formId);
+                formData.append('form_id', formId || '');
+                formData.append('title', title);
                 formData.append('gjs_data', gjsData);
                 formData.append('html_rendered', html);
                 formData.append('css_rendered', css);
@@ -135,6 +139,7 @@ window.BbfFormbuilder = {
                 const data = await response.json();
 
                 if (data.flag) {
+                    if (data.form_id) formId = data.form_id;
                     showNotification('Formular gespeichert', 'success');
                 } else {
                     const msg = data.errors ? data.errors.join(', ') : 'Unbekannter Fehler';
@@ -210,44 +215,35 @@ window.BbfFormbuilder = {
     },
 };
 
-// ── Toolbar Setup ─────────────────────────────────────────────
-function setupToolbar(editor) {
-    // Main toolbar
-    editor.Panels.addPanel({
-        id: 'bbf-toolbar',
-        el: '#bbf-toolbar',
-        buttons: [
-            { id: 'undo', className: 'fa fa-undo', command: 'core:undo', attributes: { title: 'Rückgängig' } },
-            { id: 'redo', className: 'fa fa-redo', command: 'core:redo', attributes: { title: 'Wiederholen' } },
-            { id: 'preview', className: 'fa fa-eye', command: 'core:preview', attributes: { title: 'Vorschau' } },
-            { id: 'code', className: 'fa fa-code', command: 'bbf:open-code', attributes: { title: 'HTML-Editor' } },
-            { id: 'fullscreen', className: 'fa fa-expand', command: 'core:fullscreen', attributes: { title: 'Vollbild' } },
-            { id: 'clear', className: 'fa fa-trash', command: 'core:canvas-clear', attributes: { title: 'Canvas leeren' } },
-        ],
-    });
-
-    // Responsive toggle
-    editor.Panels.addPanel({
-        id: 'bbf-devices',
-        el: '#bbf-devices',
-        buttons: [
-            { id: 'desktop', command: 'set-device-desktop', active: true, className: 'fa fa-desktop', attributes: { title: 'Desktop' } },
-            { id: 'tablet', command: 'set-device-tablet', className: 'fa fa-tablet-alt', attributes: { title: 'Tablet' } },
-            { id: 'mobile', command: 'set-device-mobile', className: 'fa fa-mobile-alt', attributes: { title: 'Mobile' } },
-        ],
-    });
-
+// ── HTML Toolbar → GrapesJS Commands ─────────────────────────
+function setupHtmlToolbar(editor) {
+    // Register device commands
     editor.Commands.add('set-device-desktop', { run: (ed) => ed.setDevice('Desktop') });
     editor.Commands.add('set-device-tablet', { run: (ed) => ed.setDevice('Tablet') });
     editor.Commands.add('set-device-mobile', { run: (ed) => ed.setDevice('Mobile') });
 
-    // HTML/CSS Code Editor
+    // Register code editor command
     editor.Commands.add('bbf:open-code', {
         run(editor) {
-            const html = editor.getHtml();
-            const css = editor.getCss();
-            openCodeEditorModal(editor, html, css);
+            openCodeEditorModal(editor, editor.getHtml(), editor.getCss());
         },
+    });
+
+    // Bind HTML buttons to GrapesJS commands
+    const bindings = {
+        'bbf-btn-undo':    () => editor.runCommand('core:undo'),
+        'bbf-btn-redo':    () => editor.runCommand('core:redo'),
+        'bbf-btn-preview': () => editor.runCommand('core:preview'),
+        'bbf-btn-code':    () => editor.runCommand('bbf:open-code'),
+        'bbf-btn-clear':   () => { if (confirm('Canvas wirklich leeren?')) editor.runCommand('core:canvas-clear'); },
+        'bbf-btn-desktop': () => editor.runCommand('set-device-desktop'),
+        'bbf-btn-tablet':  () => editor.runCommand('set-device-tablet'),
+        'bbf-btn-mobile':  () => editor.runCommand('set-device-mobile'),
+    };
+
+    Object.entries(bindings).forEach(([id, handler]) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', handler);
     });
 }
 

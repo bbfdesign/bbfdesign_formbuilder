@@ -3,7 +3,7 @@
     "private": true,
     "scripts": {
         "dev": "vite build --mode development --watch",
-        "build": "vite build --mode production"
+        "build": "vite build --mode production && cp node_modules/grapesjs/dist/css/grapes.min.css adminmenu/js/dist/grapes.min.css"
     },
     "dependencies": {
         "grapesjs": "^0.21.13",

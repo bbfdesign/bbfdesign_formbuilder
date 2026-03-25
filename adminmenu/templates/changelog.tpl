@@ -1,89 +1,35 @@
 {* Changelog *}
 
-<div class="bbf-changelog">
+<div style="background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; overflow: hidden;">
+    <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb;">
+        <h4 style="margin: 0; font-size: 15px; font-weight: 600; color: #1f2937;">Changelog</h4>
+    </div>
+    <div style="padding: 24px;">
 
-    <div class="bbf-card">
-        <div class="bbf-card-header">
-            <h4 class="bbf-card-title">Changelog</h4>
-        </div>
-        <div class="bbf-card-body">
-
-            {* Version 1.0.0 *}
-            <div class="bbf-changelog-entry">
-                <div class="bbf-changelog-version">
-                    <span class="bbf-badge bbf-badge-primary">v1.0.0</span>
-                    <span class="bbf-changelog-date">März 2026</span>
-                </div>
-                <h5 class="bbf-changelog-title">Erstveröffentlichung</h5>
-
-                <div class="bbf-changelog-section">
-                    <h6 class="bbf-changelog-section-title">Formular-Builder</h6>
-                    <ul class="bbf-changelog-list">
-                        <li>Drag & Drop Formular-Editor mit Echtzeit-Vorschau</li>
-                        <li>15+ Feldtypen: Text, E-Mail, Textarea, Select, Checkbox, Radio, Nummer, Telefon, Datum, Datei-Upload, Passwort, Verstecktes Feld, Rating, Slider, Farbauswahl</li>
-                        <li>Layout-Elemente: Überschrift, Absatz, Trennlinie, Abstandhalter, Spalten (2-4)</li>
-                        <li>Feld-Einstellungen: Label, Platzhalter, Standardwert, CSS-Klassen, Pflichtfeld</li>
-                        <li>Validierungsregeln: Min/Max Länge, Pattern (Regex), benutzerdefinierte Fehlermeldungen</li>
-                        <li>Bedingte Logik (Conditional Logic) zum Ein-/Ausblenden von Feldern</li>
-                        <li>Formular-Vorlagen: Kontakt, Rückruf, Newsletter, Support, Feedback</li>
-                    </ul>
-                </div>
-
-                <div class="bbf-changelog-section">
-                    <h6 class="bbf-changelog-section-title">E-Mail & Benachrichtigungen</h6>
-                    <ul class="bbf-changelog-list">
-                        <li>E-Mail-Benachrichtigungen an Administratoren</li>
-                        <li>Benutzer-Bestätigungs-E-Mails</li>
-                        <li>Anpassbare E-Mail-Templates mit Platzhaltern</li>
-                        <li>Auto-Responder-Funktion</li>
-                    </ul>
-                </div>
-
-                <div class="bbf-changelog-section">
-                    <h6 class="bbf-changelog-section-title">Einträge & Daten</h6>
-                    <ul class="bbf-changelog-list">
-                        <li>Einträge-Verwaltung im Admin-Backend</li>
-                        <li>Filterung nach Formular, Status und Datum</li>
-                        <li>Detailansicht für einzelne Einträge</li>
-                        <li>Massenaktionen: Als gelesen markieren, exportieren, löschen</li>
-                        <li>CSV-Export</li>
-                    </ul>
-                </div>
-
-                <div class="bbf-changelog-section">
-                    <h6 class="bbf-changelog-section-title">Spam-Schutz</h6>
-                    <ul class="bbf-changelog-list">
-                        <li>Honeypot-Feld (unsichtbar für echte Nutzer)</li>
-                        <li>Zeitbasierter Schutz (Mindestausfüllzeit)</li>
-                        <li>Rate Limiting (Einsendungen pro IP begrenzen)</li>
-                        <li>CAPTCHA-Integration: ALTCHA, Google reCAPTCHA v2/v3, Cloudflare Turnstile, Friendly Captcha</li>
-                    </ul>
-                </div>
-
-                <div class="bbf-changelog-section">
-                    <h6 class="bbf-changelog-section-title">DSGVO & Datenschutz</h6>
-                    <ul class="bbf-changelog-list">
-                        <li>IP-Anonymisierung (letztes Oktett entfernen oder Hash)</li>
-                        <li>Automatische Löschung alter Einträge</li>
-                        <li>Konfigurierbarer DSGVO-Checkbox-Text</li>
-                        <li>Optionale Verschlüsselung der Formulardaten</li>
-                    </ul>
-                </div>
-
-                <div class="bbf-changelog-section">
-                    <h6 class="bbf-changelog-section-title">Integration</h6>
-                    <ul class="bbf-changelog-list">
-                        <li>Smarty-Tag zur Einbindung in Templates: <code>{literal}{bbf_form slug="..."}{/literal}</code></li>
-                        <li>OPC-Portlet (OnPage Composer) für visuelle Platzierung</li>
-                        <li>AJAX-Formularversand ohne Seitenneuladen</li>
-                        <li>Benutzerdefiniertes CSS über den integrierten CSS-Editor</li>
-                        <li>Responsive Design für alle Formulare</li>
-                    </ul>
-                </div>
-
+        {* Version 1.0.0 *}
+        <div style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <span style="display: inline-block; padding: 4px 12px; font-size: 13px; font-weight: 700; border-radius: 9999px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff;">v1.0.0</span>
+                <span style="font-size: 13px; color: #9ca3af;">März 2026 -- Erstveröffentlichung</span>
             </div>
 
+            <div style="margin-bottom: 20px;">
+                <h5 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 600; color: #10b981;">Neu</h5>
+                <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #4b5563; line-height: 2;">
+                    <li>GrapesJS Formular-Editor mit Drag &amp; Drop</li>
+                    <li>24 Feldtypen (Text, E-Mail, Textarea, Select, Checkbox, Radio, Nummer, Telefon, Datum, Passwort, URL, Datei-Upload, Verstecktes Feld, Rating, Slider, Signature, DSGVO-Checkbox, CAPTCHA, Multi-Step, Überschrift, Absatz, Trennlinie, Abstandhalter, Spalten)</li>
+                    <li>Multi-Step Formulare</li>
+                    <li>Conditional Logic zum Ein-/Ausblenden von Feldern</li>
+                    <li>Spam-Schutz (Honeypot, Timing, Rate Limiting, ALTCHA, reCAPTCHA, Turnstile, Friendly Captcha)</li>
+                    <li>DSGVO-Konformität (IP-Anonymisierung, Auto-Löschung, Verschlüsselung)</li>
+                    <li>E-Mail-Benachrichtigungen mit Merge-Tags</li>
+                    <li>CSV-Export der Einträge</li>
+                    <li>OPC Portlet + Smarty <code>{literal}{bbf_form}{/literal}</code></li>
+                    <li>Suchplugin-Integration</li>
+                    <li>10 Formular-Vorlagen</li>
+                </ul>
+            </div>
         </div>
-    </div>
 
+    </div>
 </div>

@@ -1,129 +1,103 @@
 {* E-Mail-Templates *}
 
-<div class="bbf-card">
-    <div class="bbf-card-header">
-        <h4 class="bbf-card-title">E-Mail-Templates</h4>
-        <p class="bbf-card-subtitle">Verwalte die E-Mail-Vorlagen für Benachrichtigungen und Bestätigungen.</p>
+<div style="background: #fff; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; overflow: hidden;">
+    <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb;">
+        <h4 style="margin: 0; font-size: 15px; font-weight: 600; color: #1f2937;">E-Mail-Templates</h4>
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #6b7280;">Verwalte die E-Mail-Vorlagen für Benachrichtigungen und Bestätigungen.</p>
     </div>
-    <div class="bbf-card-body p-0">
-        <div class="table-responsive">
-            <table class="bbf-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Beschreibung</th>
-                        <th>Typ</th>
-                        <th>Aktionen</th>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="background: #f8f9fa; padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Name</th>
+                    <th style="background: #f8f9fa; padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Typ</th>
+                    <th style="background: #f8f9fa; padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                {if $emailTemplates && $emailTemplates|@count > 0}
+                    {foreach $emailTemplates as $template}
+                        <tr style="border-bottom: 1px solid #f3f4f6;">
+                            <td style="padding: 12px 16px; font-size: 13px; color: #1f2937; font-weight: 600;">{$template.name|escape:'html'}</td>
+                            <td style="padding: 12px 16px;">
+                                {if $template.type == 'standard'}
+                                    <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 9999px; background: rgba(99,102,241,0.1); color: #6366f1;">standard</span>
+                                {elseif $template.type == 'fancy'}
+                                    <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 9999px; background: rgba(139,92,246,0.1); color: #8b5cf6;">fancy</span>
+                                {elseif $template.type == 'custom'}
+                                    <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 9999px; background: rgba(16,185,129,0.1); color: #059669;">custom</span>
+                                {else}
+                                    <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 9999px; background: rgba(107,114,128,0.1); color: #6b7280;">{$template.type|escape:'html'}</span>
+                                {/if}
+                            </td>
+                            <td style="padding: 12px 16px;">
+                                <button type="button" onclick="bbfEditEmailTemplate('{$template.id}');" title="Bearbeiten" style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; font-size: 12px; font-weight: 500; color: #6366f1; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 5px; cursor: pointer;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                    Bearbeiten
+                                </button>
+                            </td>
+                        </tr>
+                    {/foreach}
+                {else}
+                    {* Default Templates *}
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 12px 16px; font-size: 13px; color: #1f2937; font-weight: 600;">Admin-Benachrichtigung</td>
+                        <td style="padding: 12px 16px;">
+                            <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 9999px; background: rgba(99,102,241,0.1); color: #6366f1;">standard</span>
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            <button type="button" onclick="bbfEditEmailTemplate('admin_notification');" title="Bearbeiten" style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; font-size: 12px; font-weight: 500; color: #6366f1; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 5px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Bearbeiten
+                            </button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {if $emailTemplates && $emailTemplates|@count > 0}
-                        {foreach $emailTemplates as $template}
-                            <tr>
-                                <td><strong>{$template.name|escape:'html'}</strong></td>
-                                <td>{$template.description|escape:'html'}</td>
-                                <td>
-                                    {if $template.type == 'admin'}
-                                        <span class="bbf-badge bbf-badge-info">Admin</span>
-                                    {else}
-                                        <span class="bbf-badge bbf-badge-success">Benutzer</span>
-                                    {/if}
-                                </td>
-                                <td>
-                                    <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-outline" onclick="bbfEditEmailTemplate('{$template.id}');" title="Bearbeiten">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                        Bearbeiten
-                                    </button>
-                                </td>
-                            </tr>
-                        {/foreach}
-                    {else}
-                        {* Default Templates *}
-                        <tr>
-                            <td><strong>Admin-Benachrichtigung</strong></td>
-                            <td>E-Mail an den Administrator bei neuen Formular-Einsendungen</td>
-                            <td><span class="bbf-badge bbf-badge-info">Admin</span></td>
-                            <td>
-                                <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-outline" onclick="bbfEditEmailTemplate('admin_notification');">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                    </svg>
-                                    Bearbeiten
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Benutzer-Bestätigung</strong></td>
-                            <td>Bestätigungs-E-Mail an den Absender des Formulars</td>
-                            <td><span class="bbf-badge bbf-badge-success">Benutzer</span></td>
-                            <td>
-                                <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-outline" onclick="bbfEditEmailTemplate('user_confirmation');">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                    </svg>
-                                    Bearbeiten
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>Auto-Responder</strong></td>
-                            <td>Automatische Antwort mit benutzerdefinierbarem Inhalt</td>
-                            <td><span class="bbf-badge bbf-badge-success">Benutzer</span></td>
-                            <td>
-                                <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-outline" onclick="bbfEditEmailTemplate('auto_responder');">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                    </svg>
-                                    Bearbeiten
-                                </button>
-                            </td>
-                        </tr>
-                    {/if}
-                </tbody>
-            </table>
-        </div>
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 12px 16px; font-size: 13px; color: #1f2937; font-weight: 600;">Benutzer-Bestätigung</td>
+                        <td style="padding: 12px 16px;">
+                            <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 9999px; background: rgba(99,102,241,0.1); color: #6366f1;">standard</span>
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            <button type="button" onclick="bbfEditEmailTemplate('user_confirmation');" title="Bearbeiten" style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; font-size: 12px; font-weight: 500; color: #6366f1; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 5px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Bearbeiten
+                            </button>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                        <td style="padding: 12px 16px; font-size: 13px; color: #1f2937; font-weight: 600;">Auto-Responder</td>
+                        <td style="padding: 12px 16px;">
+                            <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600; border-radius: 9999px; background: rgba(99,102,241,0.1); color: #6366f1;">standard</span>
+                        </td>
+                        <td style="padding: 12px 16px;">
+                            <button type="button" onclick="bbfEditEmailTemplate('auto_responder');" title="Bearbeiten" style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; font-size: 12px; font-weight: 500; color: #6366f1; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 5px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Bearbeiten
+                            </button>
+                        </td>
+                    </tr>
+                {/if}
+            </tbody>
+        </table>
     </div>
 </div>
 
-{* Email Template Editor Modal *}
-<div class="bbf-modal" id="bbf-email-template-modal" style="display: none;">
-    <div class="bbf-modal-backdrop" onclick="bbfCloseEmailTemplateModal();"></div>
-    <div class="bbf-modal-dialog bbf-modal-lg">
-        <div class="bbf-modal-header">
-            <h4 class="bbf-modal-title" id="bbf-email-template-modal-title">E-Mail-Template bearbeiten</h4>
-            <button type="button" class="bbf-btn-icon-sm" onclick="bbfCloseEmailTemplateModal();">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        <div class="bbf-modal-body">
-            <div class="bbf-form-group">
-                <label class="bbf-label">Betreff</label>
-                <input type="text" class="bbf-input" id="email_template_subject">
-            </div>
-            <div class="bbf-form-group">
-                <label class="bbf-label">Inhalt (HTML)</label>
-                <textarea class="bbf-textarea custom-code-editor" id="email_template_body" rows="15"></textarea>
-            </div>
-            <div class="bbf-alert bbf-alert-info">
-                <strong>Verfügbare Platzhalter:</strong><br>
-                <code>{literal}{form_name}{/literal}</code> - Formularname,
-                <code>{literal}{entry_data}{/literal}</code> - Alle Felddaten,
-                <code>{literal}{entry_id}{/literal}</code> - Eintrags-ID,
-                <code>{literal}{sender_name}{/literal}</code> - Name des Absenders,
-                <code>{literal}{sender_email}{/literal}</code> - E-Mail des Absenders,
-                <code>{literal}{shop_name}{/literal}</code> - Shopname,
-                <code>{literal}{shop_url}{/literal}</code> - Shop-URL
-            </div>
-        </div>
-        <div class="bbf-modal-footer">
-            <button type="button" class="bbf-btn bbf-btn-outline" onclick="bbfCloseEmailTemplateModal();">Abbrechen</button>
-            <button type="button" class="bbf-btn bbf-btn-primary" onclick="bbfSaveEmailTemplate();">Speichern</button>
-        </div>
-    </div>
-</div>
+{literal}
+<script>
+function bbfEditEmailTemplate(templateId) {
+    alert('E-Mail-Template Editor wird in einer zukünftigen Version verfügbar.');
+}
+</script>
+{/literal}
