@@ -27,9 +27,14 @@ window.BbfFormbuilder = {
             return null;
         }
 
-        // Ensure container has minimum height
+        // Ensure container AND parents have explicit height
+        containerEl.style.height = '100%';
+        if (containerEl.parentElement) {
+            containerEl.parentElement.style.height = '100%';
+        }
+        // Force a minimum height if layout is broken
         if (containerEl.offsetHeight < 100) {
-            containerEl.style.minHeight = '500px';
+            containerEl.style.height = '600px';
         }
 
         // Destroy previous instance if exists
@@ -105,6 +110,46 @@ window.BbfFormbuilder = {
 
             traitManager: {
                 appendTo: '#bbf-gjs-traits',
+            },
+
+            i18n: {
+                locale: 'de',
+                detectLocale: false,
+                messages: {
+                    de: {
+                        styleManager: {
+                            empty: 'Element auswählen um Styles zu bearbeiten',
+                            sectors: { general: 'Allgemein', layout: 'Layout', typography: 'Typografie', decorations: 'Dekorationen', extra: 'Erweitert', flex: 'Flex', dimension: 'Abmessungen' },
+                            properties: {
+                                'width': 'Breite', 'min-width': 'Min. Breite', 'max-width': 'Max. Breite',
+                                'height': 'Höhe', 'min-height': 'Min. Höhe', 'max-height': 'Max. Höhe',
+                                'padding': 'Innenabstand', 'padding-top': 'Oben', 'padding-right': 'Rechts', 'padding-bottom': 'Unten', 'padding-left': 'Links',
+                                'margin': 'Außenabstand', 'margin-top': 'Oben', 'margin-right': 'Rechts', 'margin-bottom': 'Unten', 'margin-left': 'Links',
+                                'font-family': 'Schriftart', 'font-size': 'Schriftgröße', 'font-weight': 'Schriftstärke',
+                                'letter-spacing': 'Zeichenabstand', 'line-height': 'Zeilenhöhe', 'text-align': 'Textausrichtung',
+                                'color': 'Textfarbe', 'background-color': 'Hintergrundfarbe', 'background': 'Hintergrund',
+                                'border': 'Rahmen', 'border-radius': 'Eckenradius', 'box-shadow': 'Schatten', 'opacity': 'Deckkraft',
+                            },
+                        },
+                        traitManager: {
+                            empty: 'Element auswählen um Optionen zu bearbeiten',
+                            label: 'Einstellungen',
+                        },
+                        blockManager: {
+                            labels: {},
+                            categories: {
+                                'Forms': 'Formular-Elemente',
+                                'BBF Standard-Felder': 'Standard-Felder',
+                                'BBF Erweiterte Felder': 'Erweiterte Felder',
+                                'BBF Layout': 'Layout',
+                                'BBF Spezial': 'Spezial',
+                            },
+                        },
+                        domComponents: {
+                            names: { '': 'Box', wrapper: 'Body', text: 'Text', image: 'Bild', video: 'Video', label: 'Label', link: 'Link' },
+                        },
+                    },
+                },
             },
 
             plugins: [

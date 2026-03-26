@@ -21,11 +21,26 @@
 .bbf-sidebar-panel {ldelim} display:none; {rdelim}
 .bbf-sidebar-panel.active {ldelim} display:block; {rdelim}
 
-/* GrapesJS Canvas Overrides */
+/* GrapesJS Canvas */
 #bbf-gjs-editor {ldelim} height:100% !important; {rdelim}
 #bbf-gjs-editor .gjs-editor {ldelim} height:100% !important; {rdelim}
 #bbf-gjs-editor .gjs-cv-canvas {ldelim} width:100% !important; height:100% !important; top:0 !important; {rdelim}
 #bbf-gjs-editor .gjs-frame-wrapper {ldelim} height:100% !important; {rdelim}
+.gjs-frame {ldelim} height:100% !important; width:100% !important; {rdelim}
+
+/* GrapesJS bbfdesign Theme */
+.gjs-one-bg {ldelim} background-color:#f8f9fa !important; {rdelim}
+.gjs-two-color {ldelim} color:#1f2937 !important; {rdelim}
+.gjs-three-bg {ldelim} background-color:#fff !important; {rdelim}
+.gjs-four-color, .gjs-four-color-h:hover {ldelim} color:var(--bbf-primary) !important; {rdelim}
+.gjs-block {ldelim} border:1px solid #e5e7eb !important; border-radius:6px !important; padding:10px !important; margin:4px !important; font-size:12px !important; transition:all 0.15s !important; min-height:auto !important; {rdelim}
+.gjs-block:hover {ldelim} border-color:var(--bbf-primary) !important; box-shadow:0 2px 8px rgba(219,46,135,0.12) !important; {rdelim}
+.gjs-block-category .gjs-title {ldelim} background:#f1f3f5 !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; text-transform:none !important; letter-spacing:0 !important; border-bottom:1px solid #e5e7eb !important; {rdelim}
+.gjs-sm-sector .gjs-sm-sector-title {ldelim} background:#f1f3f5 !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; border-bottom:1px solid #e5e7eb !important; {rdelim}
+.gjs-selected {ldelim} outline:2px solid var(--bbf-primary) !important; outline-offset:-2px !important; {rdelim}
+.gjs-hovered {ldelim} outline:1px dashed var(--bbf-primary) !important; {rdelim}
+.gjs-toolbar {ldelim} background:var(--bbf-primary) !important; border-radius:4px !important; {rdelim}
+.gjs-toolbar .gjs-toolbar-item {ldelim} color:#fff !important; {rdelim}
 </style>
 
 <div class="bbf-builder-wrap" id="bbf-builder-wrap">
