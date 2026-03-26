@@ -1,7 +1,7 @@
 {* GrapesJS Form Builder *}
 
 <style>
-.bbf-builder-wrap {ldelim} display:flex; flex-direction:column; height:calc(100vh - 200px); min-height:500px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); {rdelim}
+.bbf-builder-wrap {ldelim} display:flex; flex-direction:column; height:700px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); {rdelim}
 .bbf-builder-toolbar {ldelim} display:flex; align-items:center; gap:8px; padding:8px 16px; background:#f8f9fa; border-bottom:1px solid #dee2e6; flex-shrink:0; flex-wrap:wrap; {rdelim}
 .bbf-builder-toolbar-left {ldelim} display:flex; align-items:center; gap:8px; {rdelim}
 .bbf-builder-toolbar-center {ldelim} display:flex; align-items:center; gap:4px; {rdelim}
@@ -11,15 +11,21 @@
 .bbf-tb {ldelim} background:none; border:1px solid #dee2e6; border-radius:4px; padding:6px 10px; cursor:pointer; color:#495057; font-size:13px; display:inline-flex; align-items:center; gap:4px; transition:all 0.15s; {rdelim}
 .bbf-tb:hover {ldelim} background:#e9ecef; {rdelim}
 .bbf-tb.active {ldelim} background:var(--bbf-primary); color:#fff; border-color:var(--bbf-primary); {rdelim}
-.bbf-builder-main {ldelim} display:flex; flex:1; overflow:hidden; {rdelim}
-.bbf-builder-sidebar {ldelim} width:280px; flex-shrink:0; border-right:1px solid #dee2e6; overflow-y:auto; background:#fff; {rdelim}
-.bbf-builder-canvas {ldelim} flex:1; overflow:hidden; position:relative; {rdelim}
+.bbf-builder-main {ldelim} display:flex; flex:1; min-height:0; {rdelim}
+.bbf-builder-sidebar {ldelim} width:280px; flex-shrink:0; border-right:1px solid #dee2e6; overflow-y:auto; background:#fff; height:100%; {rdelim}
+.bbf-builder-canvas {ldelim} flex:1; position:relative; height:100%; overflow:hidden; {rdelim}
 .bbf-sidebar-tabs {ldelim} display:flex; border-bottom:2px solid #dee2e6; position:sticky; top:0; background:#fff; z-index:1; {rdelim}
 .bbf-sidebar-tab {ldelim} flex:1; padding:10px 8px; text-align:center; font-size:11px; font-weight:600; border:none; background:none; cursor:pointer; color:#6c757d; border-bottom:2px solid transparent; margin-bottom:-2px; {rdelim}
 .bbf-sidebar-tab:hover {ldelim} color:#333; {rdelim}
 .bbf-sidebar-tab.active {ldelim} color:var(--bbf-primary); border-bottom-color:var(--bbf-primary); {rdelim}
 .bbf-sidebar-panel {ldelim} display:none; {rdelim}
 .bbf-sidebar-panel.active {ldelim} display:block; {rdelim}
+
+/* GrapesJS Canvas Overrides */
+#bbf-gjs-editor {ldelim} height:100% !important; {rdelim}
+#bbf-gjs-editor .gjs-editor {ldelim} height:100% !important; {rdelim}
+#bbf-gjs-editor .gjs-cv-canvas {ldelim} width:100% !important; height:100% !important; top:0 !important; {rdelim}
+#bbf-gjs-editor .gjs-frame-wrapper {ldelim} height:100% !important; {rdelim}
 </style>
 
 <div class="bbf-builder-wrap" id="bbf-builder-wrap">
