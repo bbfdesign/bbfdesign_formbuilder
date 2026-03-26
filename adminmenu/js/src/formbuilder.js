@@ -14,11 +14,13 @@ window.BbfFormbuilder = {
     init(config) {
         const {
             container = '#bbf-gjs-editor',
-            formId,
+            formId: initialFormId,
             csrfToken = '',
             postURL = '',
             canvasStyles = [],
         } = config;
+
+        let formId = initialFormId;
 
         // Verify container exists
         const containerEl = document.querySelector(container);
@@ -27,25 +29,23 @@ window.BbfFormbuilder = {
             return null;
         }
 
-        // Ensure container AND parents have explicit height
+        // Force explicit height on container chain
         containerEl.style.height = '100%';
-        if (containerEl.parentElement) {
-            containerEl.parentElement.style.height = '100%';
-        }
-        // Force a minimum height if layout is broken
-        if (containerEl.offsetHeight < 100) {
-            containerEl.style.height = '600px';
-        }
+        const parent = containerEl.parentElement;
+        if (parent) parent.style.height = '100%';
+        const grandparent = parent?.parentElement;
+        if (grandparent) grandparent.style.height = '100%';
 
-        // Destroy previous instance if exists
+        // Destroy previous instance
         if (this.editor) {
             try { this.editor.destroy(); } catch(e) {}
             this.editor = null;
         }
 
-        console.log('BBF FormBuilder: Initializing GrapesJS in', container);
+        console.log('BBF FormBuilder: Initializing in', container, 'height:', containerEl.offsetHeight);
 
         try {
+
         const editor = grapesjs.init({
             container,
             fromElement: false,
@@ -54,11 +54,10 @@ window.BbfFormbuilder = {
             storageManager: false,
 
             canvas: {
-                styles: [
-                    ...canvasStyles,
-                ],
+                styles: [...canvasStyles],
             },
 
+            // No default panels — we use our own toolbar
             panels: { defaults: [] },
 
             deviceManager: {
@@ -78,31 +77,70 @@ window.BbfFormbuilder = {
                 sectors: [
                     {
                         name: 'Abmessungen',
+                        open: true,
                         properties: [
-                            'width', 'min-width', 'max-width',
-                            'height', 'min-height',
-                            'padding', 'margin',
+                            { property: 'width', label: 'Breite' },
+                            { property: 'min-width', label: 'Min. Breite' },
+                            { property: 'max-width', label: 'Max. Breite' },
+                            { property: 'height', label: 'Höhe' },
+                            { property: 'min-height', label: 'Min. Höhe' },
+                            {
+                                property: 'padding', label: 'Innenabstand',
+                                properties: [
+                                    { property: 'padding-top', label: 'Oben' },
+                                    { property: 'padding-right', label: 'Rechts' },
+                                    { property: 'padding-bottom', label: 'Unten' },
+                                    { property: 'padding-left', label: 'Links' },
+                                ],
+                            },
+                            {
+                                property: 'margin', label: 'Außenabstand',
+                                properties: [
+                                    { property: 'margin-top', label: 'Oben' },
+                                    { property: 'margin-right', label: 'Rechts' },
+                                    { property: 'margin-bottom', label: 'Unten' },
+                                    { property: 'margin-left', label: 'Links' },
+                                ],
+                            },
                         ],
                     },
                     {
                         name: 'Typografie',
+                        open: false,
                         properties: [
-                            'font-family', 'font-size', 'font-weight',
-                            'letter-spacing', 'line-height',
-                            'color', 'text-align', 'text-transform',
+                            { property: 'font-family', label: 'Schriftart' },
+                            { property: 'font-size', label: 'Schriftgröße' },
+                            { property: 'font-weight', label: 'Schriftstärke' },
+                            { property: 'letter-spacing', label: 'Zeichenabstand' },
+                            { property: 'color', label: 'Textfarbe' },
+                            { property: 'line-height', label: 'Zeilenhöhe' },
+                            {
+                                property: 'text-align', label: 'Ausrichtung', type: 'radio', defaults: 'left',
+                                list: [
+                                    { value: 'left', name: 'Links', className: 'fa fa-align-left' },
+                                    { value: 'center', name: 'Mitte', className: 'fa fa-align-center' },
+                                    { value: 'right', name: 'Rechts', className: 'fa fa-align-right' },
+                                    { value: 'justify', name: 'Blocksatz', className: 'fa fa-align-justify' },
+                                ],
+                            },
                         ],
                     },
                     {
-                        name: 'Hintergrund',
+                        name: 'Dekoration',
+                        open: false,
                         properties: [
-                            'background-color', 'background-image',
-                            'background-size', 'background-position',
-                        ],
-                    },
-                    {
-                        name: 'Rahmen & Ecken',
-                        properties: [
-                            'border', 'border-radius', 'box-shadow',
+                            { property: 'background-color', label: 'Hintergrundfarbe' },
+                            { property: 'border-radius', label: 'Eckenradius' },
+                            {
+                                property: 'border', label: 'Rahmen',
+                                properties: [
+                                    { property: 'border-width', label: 'Breite' },
+                                    { property: 'border-style', label: 'Stil' },
+                                    { property: 'border-color', label: 'Farbe' },
+                                ],
+                            },
+                            { property: 'box-shadow', label: 'Schatten' },
+                            { property: 'opacity', label: 'Deckkraft' },
                         ],
                     },
                 ],
@@ -119,17 +157,6 @@ window.BbfFormbuilder = {
                     de: {
                         styleManager: {
                             empty: 'Element auswählen um Styles zu bearbeiten',
-                            sectors: { general: 'Allgemein', layout: 'Layout', typography: 'Typografie', decorations: 'Dekorationen', extra: 'Erweitert', flex: 'Flex', dimension: 'Abmessungen' },
-                            properties: {
-                                'width': 'Breite', 'min-width': 'Min. Breite', 'max-width': 'Max. Breite',
-                                'height': 'Höhe', 'min-height': 'Min. Höhe', 'max-height': 'Max. Höhe',
-                                'padding': 'Innenabstand', 'padding-top': 'Oben', 'padding-right': 'Rechts', 'padding-bottom': 'Unten', 'padding-left': 'Links',
-                                'margin': 'Außenabstand', 'margin-top': 'Oben', 'margin-right': 'Rechts', 'margin-bottom': 'Unten', 'margin-left': 'Links',
-                                'font-family': 'Schriftart', 'font-size': 'Schriftgröße', 'font-weight': 'Schriftstärke',
-                                'letter-spacing': 'Zeichenabstand', 'line-height': 'Zeilenhöhe', 'text-align': 'Textausrichtung',
-                                'color': 'Textfarbe', 'background-color': 'Hintergrundfarbe', 'background': 'Hintergrund',
-                                'border': 'Rahmen', 'border-radius': 'Eckenradius', 'box-shadow': 'Schatten', 'opacity': 'Deckkraft',
-                            },
                         },
                         traitManager: {
                             empty: 'Element auswählen um Optionen zu bearbeiten',
@@ -146,7 +173,7 @@ window.BbfFormbuilder = {
                             },
                         },
                         domComponents: {
-                            names: { '': 'Box', wrapper: 'Body', text: 'Text', image: 'Bild', video: 'Video', label: 'Label', link: 'Link' },
+                            names: { '': 'Box', wrapper: 'Body', text: 'Text', image: 'Bild', label: 'Label', link: 'Link' },
                         },
                     },
                 },
@@ -154,7 +181,7 @@ window.BbfFormbuilder = {
 
             plugins: [
                 grapesjsPluginForms,
-                bbfFormTraits,   // Register component types BEFORE blocks use them
+                bbfFormTraits,
                 bbfFormBlocks,
             ],
             pluginsOpts: {
@@ -164,10 +191,22 @@ window.BbfFormbuilder = {
             },
         });
 
-        // ── Connect HTML Toolbar Buttons to GrapesJS ──────────
+        // ── Translate Forms plugin blocks ─────────────────────
+        const bm = editor.BlockManager;
+        const formBlockLabels = {
+            'form': 'Formular', 'input': 'Eingabefeld', 'textarea': 'Textbereich',
+            'select': 'Auswahl', 'button': 'Button', 'label': 'Label',
+            'checkbox': 'Checkbox', 'radio': 'Radio',
+        };
+        Object.entries(formBlockLabels).forEach(([id, label]) => {
+            const block = bm.get(id);
+            if (block) block.set('label', label);
+        });
+
+        // ── Toolbar ──────────────────────────────────────────
         setupHtmlToolbar(editor);
 
-        // ── Keyboard Shortcuts ────────────────────────────────
+        // ── Keyboard Shortcut: Ctrl+S ────────────────────────
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
@@ -175,13 +214,11 @@ window.BbfFormbuilder = {
             }
         });
 
-        // ── Save Button ───────────────────────────────────────
+        // ── Save Button ──────────────────────────────────────
         const saveBtn = document.getElementById('bbf-btn-save');
-        if (saveBtn) {
-            saveBtn.addEventListener('click', () => saveForm());
-        }
+        if (saveBtn) saveBtn.addEventListener('click', () => saveForm());
 
-        // ── Save ──────────────────────────────────────────────
+        // ── Save ─────────────────────────────────────────────
         async function saveForm() {
             const gjsData = JSON.stringify(editor.getProjectData());
             const html = editor.getHtml();
@@ -192,99 +229,88 @@ window.BbfFormbuilder = {
                 const titleEl = document.getElementById('bbf-form-title');
                 const title = titleEl ? titleEl.value : '';
 
-                const formData = new FormData();
-                formData.append('action', 'saveFormBuilder');
-                formData.append('form_id', formId || '');
-                formData.append('title', title);
-                formData.append('gjs_data', gjsData);
-                formData.append('html_rendered', html);
-                formData.append('css_rendered', css);
-                formData.append('fields_json', JSON.stringify(fields));
-                formData.append('is_ajax', '1');
-                formData.append('jtl_token', csrfToken);
+                const fd = new FormData();
+                fd.append('action', 'saveFormBuilder');
+                fd.append('form_id', formId || '');
+                fd.append('title', title);
+                fd.append('gjs_data', gjsData);
+                fd.append('html_rendered', html);
+                fd.append('css_rendered', css);
+                fd.append('fields_json', JSON.stringify(fields));
+                fd.append('is_ajax', '1');
+                fd.append('jtl_token', csrfToken);
 
-                const response = await fetch(postURL, { method: 'POST', body: formData });
-                const data = await response.json();
+                const resp = await fetch(postURL, { method: 'POST', body: fd });
+                const data = await resp.json();
 
                 if (data.flag) {
                     if (data.form_id) formId = data.form_id;
                     showNotification('Formular gespeichert', 'success');
                 } else {
-                    const msg = data.errors ? data.errors.join(', ') : 'Unbekannter Fehler';
-                    showNotification('Fehler beim Speichern: ' + msg, 'error');
+                    showNotification('Fehler: ' + (data.errors ? data.errors.join(', ') : '?'), 'error');
                 }
             } catch (err) {
                 showNotification('Fehler beim Speichern', 'error');
-                console.error('BBF Formbuilder: Save failed', err);
+                console.error('BBF Save failed', err);
             }
         }
 
-        // ── Load ──────────────────────────────────────────────
+        // ── Load ─────────────────────────────────────────────
         async function loadForm() {
             try {
-                const formData = new FormData();
-                formData.append('action', 'getFormData');
-                formData.append('form_id', formId);
-                formData.append('is_ajax', '1');
-                formData.append('jtl_token', csrfToken);
+                const fd = new FormData();
+                fd.append('action', 'getFormData');
+                fd.append('form_id', formId);
+                fd.append('is_ajax', '1');
+                fd.append('jtl_token', csrfToken);
 
-                const response = await fetch(postURL, { method: 'POST', body: formData });
-                const data = await response.json();
+                const resp = await fetch(postURL, { method: 'POST', body: fd });
+                const data = await resp.json();
 
                 if (data.flag && data.form) {
                     if (data.form.gjs_data) {
                         editor.loadProjectData(JSON.parse(data.form.gjs_data));
                     }
+                    const titleEl = document.getElementById('bbf-form-title');
+                    if (titleEl && data.form.title) titleEl.value = data.form.title;
                 }
             } catch (err) {
-                console.warn('BBF Formbuilder: Could not load form data', err);
+                console.warn('BBF: Could not load form', err);
             }
         }
 
-        // ── Extract Field Definitions ─────────────────────────
+        // ── Extract Fields ───────────────────────────────────
         function extractFieldDefinitions(ed) {
             const fields = [];
-            const wrapper = ed.getWrapper();
-
-            function traverse(component) {
-                const type = component.get('type');
+            function traverse(comp) {
+                const type = comp.get('type');
                 if (type === 'bbf-field' || type === 'bbf-compound-field' || type === 'bbf-submit') {
-                    const attrs = component.getAttributes();
+                    const a = comp.getAttributes();
                     fields.push({
-                        field_id: attrs['data-field-id'] || '',
-                        field_type: attrs['data-field-type'] || type,
-                        label: attrs['data-label'] || '',
-                        placeholder: attrs['data-placeholder'] || '',
-                        description: attrs['data-description'] || '',
-                        required: attrs['data-required'] === 'true' || attrs['data-required'] === true,
-                        width: attrs['data-width'] || 'full',
-                        css_class: attrs['data-css-class'] || '',
-                        default_value: attrs['data-default-value'] || '',
-                        min_length: attrs['data-min-length'] || '',
-                        max_length: attrs['data-max-length'] || '',
-                        pattern: attrs['data-pattern'] || '',
-                        error_message: attrs['data-error-message'] || '',
+                        field_id: a['data-field-id'] || '',
+                        field_type: a['data-field-type'] || type,
+                        label: a['data-label'] || '',
+                        placeholder: a['data-placeholder'] || '',
+                        description: a['data-description'] || '',
+                        required: a['data-required'] === 'true',
+                        width: a['data-width'] || 'full',
                     });
                 }
-
-                component.components().each((child) => traverse(child));
+                comp.components().each(c => traverse(c));
             }
-
-            traverse(wrapper);
+            traverse(ed.getWrapper());
             return fields;
         }
 
         // Initial load
-        if (formId) {
-            loadForm();
-        }
+        if (formId) loadForm();
 
         this.editor = editor;
-        console.log('BBF FormBuilder: GrapesJS initialized successfully');
+        console.log('BBF FormBuilder: Initialized OK');
         return editor;
 
         } catch (err) {
-            console.error('BBF FormBuilder: GrapesJS init failed:', err);
+            console.error('BBF FormBuilder init failed:', err);
             containerEl.innerHTML =
                 '<div style="padding:40px;text-align:center;color:#dc3545;">' +
                 '<p><strong>Editor-Fehler</strong></p>' +
@@ -301,118 +327,67 @@ window.BbfFormbuilder = {
     },
 };
 
-// ── HTML Toolbar → GrapesJS Commands ─────────────────────────
+// ── Toolbar ──────────────────────────────────────────────────
 function setupHtmlToolbar(editor) {
-    // Register device commands
     editor.Commands.add('set-device-desktop', { run: (ed) => ed.setDevice('Desktop') });
     editor.Commands.add('set-device-tablet', { run: (ed) => ed.setDevice('Tablet') });
     editor.Commands.add('set-device-mobile', { run: (ed) => ed.setDevice('Mobile') });
-
-    // Register code editor command
     editor.Commands.add('bbf:open-code', {
-        run(editor) {
-            openCodeEditorModal(editor, editor.getHtml(), editor.getCss());
-        },
+        run(editor) { openCodeEditorModal(editor, editor.getHtml(), editor.getCss()); },
     });
 
-    // Bind HTML buttons to GrapesJS commands
     const bindings = {
         'bbf-btn-undo':    () => editor.runCommand('core:undo'),
         'bbf-btn-redo':    () => editor.runCommand('core:redo'),
         'bbf-btn-preview': () => editor.runCommand('core:preview'),
         'bbf-btn-code':    () => editor.runCommand('bbf:open-code'),
-        'bbf-btn-clear':   () => { if (confirm('Canvas wirklich leeren?')) editor.runCommand('core:canvas-clear'); },
+        'bbf-btn-clear':   () => { if (confirm('Canvas leeren?')) editor.runCommand('core:canvas-clear'); },
         'bbf-btn-desktop': () => editor.runCommand('set-device-desktop'),
         'bbf-btn-tablet':  () => editor.runCommand('set-device-tablet'),
         'bbf-btn-mobile':  () => editor.runCommand('set-device-mobile'),
     };
-
-    Object.entries(bindings).forEach(([id, handler]) => {
+    Object.entries(bindings).forEach(([id, fn]) => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('click', handler);
+        if (el) el.addEventListener('click', fn);
     });
 }
 
-// ── Code Editor Modal ─────────────────────────────────────────
+// ── Code Editor Modal ────────────────────────────────────────
 function openCodeEditorModal(editor, html, css) {
     const modal = editor.Modal;
-    modal.setTitle('HTML & CSS Editor');
-
-    const content = document.createElement('div');
-    content.className = 'bbf-code-editor';
-    content.innerHTML = `
-        <div class="bbf-code-editor__tabs" style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+    modal.setTitle('HTML & CSS');
+    const c = document.createElement('div');
+    c.innerHTML = `
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem;">
             <button class="btn btn-sm btn-primary active" data-tab="html">HTML</button>
             <button class="btn btn-sm btn-outline-secondary" data-tab="css">CSS</button>
         </div>
-        <div class="bbf-code-editor__panel" data-panel="html">
-            <textarea id="bbf-code-html" style="width:100%;height:400px;font-family:monospace;font-size:13px;border:1px solid #dee2e6;border-radius:4px;padding:0.75rem;">${escapeHtml(html)}</textarea>
-        </div>
-        <div class="bbf-code-editor__panel" data-panel="css" style="display:none;">
-            <textarea id="bbf-code-css" style="width:100%;height:400px;font-family:monospace;font-size:13px;border:1px solid #dee2e6;border-radius:4px;padding:0.75rem;">${escapeHtml(css)}</textarea>
-        </div>
-        <div style="margin-top:1rem;display:flex;gap:0.5rem;">
+        <div data-panel="html"><textarea id="bbf-code-html" style="width:100%;height:400px;font-family:monospace;font-size:13px;border:1px solid #dee2e6;border-radius:4px;padding:.75rem;">${escapeHtml(html)}</textarea></div>
+        <div data-panel="css" style="display:none;"><textarea id="bbf-code-css" style="width:100%;height:400px;font-family:monospace;font-size:13px;border:1px solid #dee2e6;border-radius:4px;padding:.75rem;">${escapeHtml(css)}</textarea></div>
+        <div style="margin-top:1rem;display:flex;gap:.5rem;">
             <button class="btn btn-primary" id="bbf-code-apply">Übernehmen</button>
             <button class="btn btn-secondary" id="bbf-code-cancel">Abbrechen</button>
-        </div>
-    `;
-
-    modal.setContent(content);
+        </div>`;
+    modal.setContent(c);
     modal.open();
 
-    // Tab switching
-    content.querySelectorAll('[data-tab]').forEach((btn) => {
+    c.querySelectorAll('[data-tab]').forEach(btn => {
         btn.addEventListener('click', () => {
-            content.querySelectorAll('[data-tab]').forEach((b) => {
-                b.classList.remove('btn-primary', 'active');
-                b.classList.add('btn-outline-secondary');
-            });
-            btn.classList.add('btn-primary', 'active');
-            btn.classList.remove('btn-outline-secondary');
-
-            content.querySelectorAll('[data-panel]').forEach((p) => {
-                p.style.display = p.dataset.panel === btn.dataset.tab ? '' : 'none';
-            });
+            c.querySelectorAll('[data-tab]').forEach(b => { b.classList.remove('btn-primary','active'); b.classList.add('btn-outline-secondary'); });
+            btn.classList.add('btn-primary','active'); btn.classList.remove('btn-outline-secondary');
+            c.querySelectorAll('[data-panel]').forEach(p => { p.style.display = p.dataset.panel === btn.dataset.tab ? '' : 'none'; });
         });
     });
-
-    content.querySelector('#bbf-code-apply').addEventListener('click', () => {
-        const newHtml = content.querySelector('#bbf-code-html').value;
-        const newCss = content.querySelector('#bbf-code-css').value;
-        editor.setComponents(newHtml);
-        editor.setStyle(newCss);
-        modal.close();
-    });
-
-    content.querySelector('#bbf-code-cancel').addEventListener('click', () => {
-        modal.close();
-    });
+    c.querySelector('#bbf-code-apply').addEventListener('click', () => { editor.setComponents(c.querySelector('#bbf-code-html').value); editor.setStyle(c.querySelector('#bbf-code-css').value); modal.close(); });
+    c.querySelector('#bbf-code-cancel').addEventListener('click', () => modal.close());
 }
 
-// ── Helpers ───────────────────────────────────────────────────
-function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-function showNotification(message, type = 'info') {
-    const container = document.getElementById('bbf-notifications') || document.body;
+function showNotification(msg, type = 'info') {
     const el = document.createElement('div');
-    el.className = `bbf-notification bbf-notification--${type}`;
-    el.style.cssText = `
-        position: fixed; bottom: 1rem; right: 1rem; z-index: 10000;
-        padding: 0.75rem 1.25rem; border-radius: 0.5rem;
-        font-size: 0.875rem; font-weight: 500;
-        background: ${type === 'success' ? '#059669' : type === 'error' ? '#DC2626' : '#2563EB'};
-        color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        transition: opacity 0.3s; opacity: 1;
-    `;
-    el.textContent = message;
-    container.appendChild(el);
-
-    setTimeout(() => {
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 300);
-    }, 3000);
+    el.style.cssText = `position:fixed;bottom:1rem;right:1rem;z-index:10000;padding:.75rem 1.25rem;border-radius:.5rem;font-size:.875rem;font-weight:500;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.2);opacity:1;transition:opacity .3s;background:${type==='success'?'#059669':type==='error'?'#DC2626':'#2563EB'};`;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 3000);
 }

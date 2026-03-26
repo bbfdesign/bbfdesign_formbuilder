@@ -1,7 +1,7 @@
 {* GrapesJS Form Builder *}
 
 <style>
-.bbf-builder-wrap {ldelim} display:flex; flex-direction:column; height:700px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); {rdelim}
+.bbf-builder-wrap {ldelim} display:flex; flex-direction:column; height:calc(100vh - 160px); min-height:600px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); {rdelim}
 .bbf-builder-toolbar {ldelim} display:flex; align-items:center; gap:8px; padding:8px 16px; background:#f8f9fa; border-bottom:1px solid #dee2e6; flex-shrink:0; flex-wrap:wrap; {rdelim}
 .bbf-builder-toolbar-left {ldelim} display:flex; align-items:center; gap:8px; {rdelim}
 .bbf-builder-toolbar-center {ldelim} display:flex; align-items:center; gap:4px; {rdelim}
@@ -21,12 +21,21 @@
 .bbf-sidebar-panel {ldelim} display:none; {rdelim}
 .bbf-sidebar-panel.active {ldelim} display:block; {rdelim}
 
-/* GrapesJS Canvas */
+/* GrapesJS Canvas — height chain must be unbroken */
 #bbf-gjs-editor {ldelim} height:100% !important; {rdelim}
-#bbf-gjs-editor .gjs-editor {ldelim} height:100% !important; {rdelim}
-#bbf-gjs-editor .gjs-cv-canvas {ldelim} width:100% !important; height:100% !important; top:0 !important; {rdelim}
+#bbf-gjs-editor .gjs-editor {ldelim} height:100% !important; position:relative !important; {rdelim}
+#bbf-gjs-editor .gjs-cv-canvas {ldelim} width:100% !important; height:100% !important; top:0 !important; left:0 !important; {rdelim}
 #bbf-gjs-editor .gjs-frame-wrapper {ldelim} height:100% !important; {rdelim}
 .gjs-frame {ldelim} height:100% !important; width:100% !important; {rdelim}
+
+/* Drag & Drop must not be blocked */
+.gjs-cv-canvas {ldelim} pointer-events:all !important; z-index:1 !important; {rdelim}
+.gjs-frame-wrapper {ldelim} pointer-events:all !important; {rdelim}
+.gjs-drag-helper {ldelim} z-index:10000 !important; pointer-events:none !important; {rdelim}
+
+/* Hide default GrapesJS panels (we use our own sidebar) */
+.gjs-pn-panels {ldelim} display:none !important; {rdelim}
+.gjs-pn-views-container {ldelim} display:none !important; {rdelim}
 
 /* GrapesJS bbfdesign Theme */
 .gjs-one-bg {ldelim} background-color:#f8f9fa !important; {rdelim}
