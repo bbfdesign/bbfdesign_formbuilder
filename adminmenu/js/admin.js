@@ -45,6 +45,11 @@ function bbfNavigate(page, extraParams) {
         '</div>'
     );
 
+    // Cleanup previous page (destroy GrapesJS if active)
+    if (window.BbfFormbuilder && window.BbfFormbuilder.destroy) {
+        window.BbfFormbuilder.destroy();
+    }
+
     var requestData = $.extend({
         action: "getPage",
         page: page,

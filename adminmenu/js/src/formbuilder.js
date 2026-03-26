@@ -9,6 +9,8 @@ import bbfFormBlocks from './plugins/bbf-form-blocks.js';
 import bbfFormTraits from './plugins/bbf-form-traits.js';
 
 window.BbfFormbuilder = {
+    editor: null,
+
     init(config) {
         const {
             container = '#bbf-gjs-editor',
@@ -18,10 +20,31 @@ window.BbfFormbuilder = {
             canvasStyles = [],
         } = config;
 
+        // Verify container exists
+        const containerEl = document.querySelector(container);
+        if (!containerEl) {
+            console.error('BBF FormBuilder: Container not found:', container);
+            return null;
+        }
+
+        // Ensure container has minimum height
+        if (containerEl.offsetHeight < 100) {
+            containerEl.style.minHeight = '500px';
+        }
+
+        // Destroy previous instance if exists
+        if (this.editor) {
+            try { this.editor.destroy(); } catch(e) {}
+            this.editor = null;
+        }
+
+        console.log('BBF FormBuilder: Initializing GrapesJS in', container);
+
+        try {
         const editor = grapesjs.init({
             container,
             fromElement: false,
-            height: '100vh',
+            height: '100%',
             width: 'auto',
             storageManager: false,
 
@@ -211,7 +234,25 @@ window.BbfFormbuilder = {
             loadForm();
         }
 
+        this.editor = editor;
+        console.log('BBF FormBuilder: GrapesJS initialized successfully');
         return editor;
+
+        } catch (err) {
+            console.error('BBF FormBuilder: GrapesJS init failed:', err);
+            containerEl.innerHTML =
+                '<div style="padding:40px;text-align:center;color:#dc3545;">' +
+                '<p><strong>Editor-Fehler</strong></p>' +
+                '<p style="font-size:13px;">' + err.message + '</p></div>';
+            return null;
+        }
+    },
+
+    destroy() {
+        if (this.editor) {
+            try { this.editor.destroy(); } catch(e) {}
+            this.editor = null;
+        }
     },
 };
 
