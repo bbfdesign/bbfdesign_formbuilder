@@ -185,7 +185,9 @@ window.BbfFormbuilder = {
                 bbfFormBlocks,
             ],
             pluginsOpts: {
-                [grapesjsPluginForms]: {},
+                [grapesjsPluginForms]: {
+                    blocks: [],  // No sidebar blocks — we have our own BBF blocks
+                },
                 [bbfFormTraits]: {},
                 [bbfFormBlocks]: {},
             },
@@ -212,17 +214,7 @@ window.BbfFormbuilder = {
             }
         });
 
-        // ── Translate Forms plugin blocks ─────────────────────
-        const bm = editor.BlockManager;
-        const formBlockLabels = {
-            'form': 'Formular', 'input': 'Eingabefeld', 'textarea': 'Textbereich',
-            'select': 'Auswahl', 'button': 'Button', 'label': 'Label',
-            'checkbox': 'Checkbox', 'radio': 'Radio',
-        };
-        Object.entries(formBlockLabels).forEach(([id, label]) => {
-            const block = bm.get(id);
-            if (block) block.set('label', label);
-        });
+        // (Forms plugin blocks disabled via blocks:[] config — only BBF blocks shown)
 
         // ── Toolbar ──────────────────────────────────────────
         setupHtmlToolbar(editor);

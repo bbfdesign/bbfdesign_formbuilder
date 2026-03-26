@@ -42,7 +42,12 @@
 .gjs-two-color {ldelim} color:#1f2937 !important; {rdelim}
 .gjs-three-bg {ldelim} background-color:#fff !important; {rdelim}
 .gjs-four-color, .gjs-four-color-h:hover {ldelim} color:var(--bbf-primary) !important; {rdelim}
-.gjs-block {ldelim} border:1px solid #e5e7eb !important; border-radius:6px !important; padding:10px !important; margin:4px !important; font-size:12px !important; transition:all 0.15s !important; min-height:auto !important; {rdelim}
+/* Block Grid */
+.gjs-blocks-c {ldelim} display:grid !important; grid-template-columns:1fr 1fr !important; gap:6px !important; padding:8px !important; {rdelim}
+.gjs-block {ldelim} border:1px solid #e5e7eb !important; border-radius:6px !important; padding:10px 4px !important; margin:0 !important; font-size:11px !important; transition:all 0.15s !important; min-height:70px !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:auto !important; {rdelim}
+.gjs-block .fa, .gjs-block [class*="fa-"] {ldelim} font-size:20px !important; color:#6b7280 !important; {rdelim}
+.gjs-block:hover .fa, .gjs-block:hover [class*="fa-"] {ldelim} color:var(--bbf-primary) !important; {rdelim}
+.gjs-block-label {ldelim} font-size:11px !important; font-weight:500 !important; text-align:center !important; line-height:1.2 !important; {rdelim}
 .gjs-block:hover {ldelim} border-color:var(--bbf-primary) !important; box-shadow:0 2px 8px rgba(219,46,135,0.12) !important; {rdelim}
 .gjs-block-category .gjs-title {ldelim} background:#f1f3f5 !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; text-transform:none !important; letter-spacing:0 !important; border-bottom:1px solid #e5e7eb !important; {rdelim}
 .gjs-sm-sector .gjs-sm-sector-title {ldelim} background:#f1f3f5 !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; border-bottom:1px solid #e5e7eb !important; {rdelim}
