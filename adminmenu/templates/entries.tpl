@@ -7,9 +7,9 @@
             {* Filter by form *}
             <select class="bbf-select bbf-select-sm" id="bbf-entry-form-filter" onchange="bbfFilterEntries();">
                 <option value="">Alle Formulare</option>
-                {if $forms}
+                {if $forms|default:null}
                     {foreach $forms as $form}
-                        <option value="{$form.id}" {if $filterFormId == $form.id}selected{/if}>{$form.title|escape:'html'}</option>
+                        <option value="{$form.id|default:''|escape}" {if ($filterFormId|default:'') == $form.id|default:''}selected{/if}>{$form.title|default:''|escape}</option>
                     {/foreach}
                 {/if}
             </select>
@@ -67,34 +67,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {if $entries && $entries|@count > 0}
+                    {if $entries|default:null && $entries|@count > 0}
                         {foreach $entries as $entry}
-                            <tr class="{if !$entry.is_read}bbf-row-unread{/if}" {if !$entry.is_read}style="font-weight: bold;"{/if}>
+                            <tr class="{if !$entry.is_read|default:0}bbf-row-unread{/if}" {if !$entry.is_read|default:0}style="font-weight: bold;"{/if}>
                                 <td>
-                                    <input type="checkbox" class="bbf-entry-checkbox" value="{$entry.id}" onchange="bbfUpdateBulkActions();">
+                                    <input type="checkbox" class="bbf-entry-checkbox" value="{$entry.id|default:''|escape}" onchange="bbfUpdateBulkActions();">
                                 </td>
-                                <td>{$entry.form_title|escape:'html'}</td>
-                                <td>{$entry.first_value|escape:'html'|truncate:80:'...'}</td>
-                                <td>{$entry.created_at|date_format:"%d.%m.%Y %H:%M"}</td>
+                                <td>{$entry.form_title|default:''|escape}</td>
+                                <td>{$entry.first_value|default:''|escape|truncate:80:'...'}</td>
+                                <td>{$entry.created_at|default:''|date_format:"%d.%m.%Y %H:%M"}</td>
                                 <td>
-                                    {if $entry.is_read}
+                                    {if $entry.is_read|default:0}
                                         <span class="bbf-badge bbf-badge-success">Gelesen</span>
                                     {else}
                                         <span class="bbf-badge bbf-badge-warning">Ungelesen</span>
                                     {/if}
-                                    {if $entry.is_spam}
+                                    {if $entry.is_spam|default:0}
                                         <span class="bbf-badge bbf-badge-danger">Spam</span>
                                     {/if}
                                 </td>
                                 <td>
                                     <div class="bbf-btn-group">
-                                        <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-icon" onclick="bbfNavigate('entry-detail', {ldelim}entry_id: {$entry.id}{rdelim});" title="Anzeigen">
+                                        <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-icon" onclick="bbfNavigate('entry-detail', {ldelim}entry_id: {$entry.id|default:0}{rdelim});" title="Anzeigen">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
                                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                 <circle cx="12" cy="12" r="3"></circle>
                                             </svg>
                                         </button>
-                                        <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-icon bbf-btn-danger" onclick="bbfDeleteEntry({$entry.id});" title="Löschen">
+                                        <button type="button" class="bbf-btn bbf-btn-sm bbf-btn-icon bbf-btn-danger" onclick="bbfDeleteEntry({$entry.id|default:0});" title="Löschen">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
                                                 <polyline points="3 6 5 6 21 6"></polyline>
                                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -117,11 +117,11 @@
     </div>
 
     {* Pagination *}
-    {if $totalPages > 1}
+    {if ($totalPages|default:0) > 1}
         <div class="bbf-card-footer">
             <div class="bbf-pagination">
                 {for $p=1 to $totalPages}
-                    <button type="button" class="bbf-btn bbf-btn-sm {if $currentPage == $p}bbf-btn-primary{else}bbf-btn-outline{/if}" onclick="bbfNavigate('entries', {ldelim}page: {$p}, filter_form_id: '{$filterFormId}'{rdelim});">
+                    <button type="button" class="bbf-btn bbf-btn-sm {if ($currentPage|default:1) == $p}bbf-btn-primary{else}bbf-btn-outline{/if}" onclick="bbfNavigate('entries', {ldelim}page: {$p}, filter_form_id: '{$filterFormId|default:''|escape}'{rdelim});">
                         {$p}
                     </button>
                 {/for}
