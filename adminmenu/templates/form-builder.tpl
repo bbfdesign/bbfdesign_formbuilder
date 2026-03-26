@@ -78,20 +78,33 @@ function bbfSwitchTab(btn, panel) {
     document.getElementById('bbf-gjs-' + panel).classList.add('active');
 }
 
-// Init immediately — this script runs AFTER the IIFE is loaded by admin.js
+// Init — runs after IIFE loaded by admin.js, with retry
 (function() {
     var editorEl = document.getElementById('bbf-gjs-editor');
     if (!editorEl) return;
 
-    if (typeof BbfFormbuilder === 'undefined') {
+    var attempts = 0;
+    function tryInit() {
+        if (typeof BbfFormbuilder !== 'undefined') {
+            doInit();
+            return;
+        }
+        attempts++;
+        if (attempts < 20) {
+            // IIFE may still be loading — retry in 250ms
+            setTimeout(tryInit, 250);
+            return;
+        }
+        // After 5 seconds: show error
         editorEl.innerHTML =
             '<div style="padding:60px 20px;text-align:center;color:#6c757d;">' +
-            '<i class="fa fa-puzzle-piece fa-3x" style="margin-bottom:16px;display:block;opacity:0.3;"></i>' +
-            '<p style="font-size:15px;font-weight:600;">GrapesJS Editor</p>' +
-            '<p style="font-size:13px;">Das Build wurde noch nicht erstellt.<br>' +
-            '<code style="background:#f1f3f5;padding:2px 6px;border-radius:3px;">npm install && npm run build</code></p></div>';
-        return;
+            '<i class="fa fa-exclamation-triangle fa-3x" style="margin-bottom:16px;display:block;opacity:0.3;"></i>' +
+            '<p style="font-size:15px;font-weight:600;">Editor konnte nicht geladen werden</p>' +
+            '<p style="font-size:13px;">Bitte laden Sie die Seite neu.</p>' +
+            '<button onclick="location.reload()" style="padding:8px 20px;border-radius:6px;border:1px solid #ccc;background:#fff;cursor:pointer;margin-top:8px;">Seite neu laden</button></div>';
     }
+
+    function doInit() {
 {/literal}
 
     BbfFormbuilder.init({ldelim}
@@ -103,6 +116,9 @@ function bbfSwitchTab(btn, panel) {
     {rdelim});
 
 {literal}
+    }
+
+    tryInit();
 })();
 {/literal}
 </script>
