@@ -80,10 +80,8 @@ window.BbfFormbuilder = {
                         open: true,
                         properties: [
                             { property: 'width', label: 'Breite' },
-                            { property: 'min-width', label: 'Min. Breite' },
                             { property: 'max-width', label: 'Max. Breite' },
                             { property: 'height', label: 'Höhe' },
-                            { property: 'min-height', label: 'Min. Höhe' },
                             {
                                 property: 'padding', label: 'Innenabstand',
                                 properties: [
@@ -108,25 +106,21 @@ window.BbfFormbuilder = {
                         name: 'Typografie',
                         open: false,
                         properties: [
-                            { property: 'font-family', label: 'Schriftart' },
                             { property: 'font-size', label: 'Schriftgröße' },
                             { property: 'font-weight', label: 'Schriftstärke' },
-                            { property: 'letter-spacing', label: 'Zeichenabstand' },
                             { property: 'color', label: 'Textfarbe' },
-                            { property: 'line-height', label: 'Zeilenhöhe' },
                             {
-                                property: 'text-align', label: 'Ausrichtung', type: 'radio', defaults: 'left',
+                                property: 'text-align', label: 'Ausrichtung', type: 'radio',
                                 list: [
-                                    { value: 'left', name: 'Links', className: 'fa fa-align-left' },
-                                    { value: 'center', name: 'Mitte', className: 'fa fa-align-center' },
-                                    { value: 'right', name: 'Rechts', className: 'fa fa-align-right' },
-                                    { value: 'justify', name: 'Blocksatz', className: 'fa fa-align-justify' },
+                                    { value: 'left', className: 'fa fa-align-left' },
+                                    { value: 'center', className: 'fa fa-align-center' },
+                                    { value: 'right', className: 'fa fa-align-right' },
                                 ],
                             },
                         ],
                     },
                     {
-                        name: 'Dekoration',
+                        name: 'Darstellung',
                         open: false,
                         properties: [
                             { property: 'background-color', label: 'Hintergrundfarbe' },
@@ -139,8 +133,7 @@ window.BbfFormbuilder = {
                                     { property: 'border-color', label: 'Farbe' },
                                 ],
                             },
-                            { property: 'box-shadow', label: 'Schatten' },
-                            { property: 'opacity', label: 'Deckkraft' },
+                            // Kein box-shadow/opacity — dafür gibt es den CSS-Editor
                         ],
                     },
                 ],
@@ -193,25 +186,25 @@ window.BbfFormbuilder = {
             },
         });
 
+        // ── Remove generic Forms-plugin blocks (fallback if blocks:[] didn't work) ──
+        const bm = editor.BlockManager;
+        ['form', 'input', 'textarea', 'select', 'button', 'label', 'checkbox', 'radio'].forEach(id => {
+            if (bm.get(id)) {
+                bm.remove(id);
+                console.log('BBF: Removed generic block:', id);
+            }
+        });
+
         // ── Fix Canvas Drop Events ───────────────────────────
         editor.on('load', () => {
-            // iFrame body must accept drag events
             const frame = editor.Canvas.getFrameEl();
             if (frame?.contentDocument?.body) {
-                frame.contentDocument.body.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-                frame.contentDocument.body.addEventListener('drop', e => {
-                    e.preventDefault();
-                });
-                console.log('BBF: Canvas drop events fixed');
+                frame.contentDocument.body.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); });
+                frame.contentDocument.body.addEventListener('drop', e => e.preventDefault());
             }
-            // Parent canvas wrapper too
             const canvasEl = editor.Canvas.getElement();
-            if (canvasEl) {
-                canvasEl.addEventListener('dragover', e => e.preventDefault());
-            }
+            if (canvasEl) canvasEl.addEventListener('dragover', e => e.preventDefault());
+            console.log('BBF: Canvas drop events fixed');
         });
 
         // (Forms plugin blocks disabled via blocks:[] config — only BBF blocks shown)
