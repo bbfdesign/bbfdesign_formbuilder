@@ -1,7 +1,5 @@
 {* GrapesJS Form Builder *}
 
-<link rel="stylesheet" href="{$adminUrl}js/dist/grapes.min.css">
-
 <style>
 .bbf-builder-wrap {ldelim} display:flex; flex-direction:column; height:calc(100vh - 200px); min-height:500px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); {rdelim}
 .bbf-builder-toolbar {ldelim} display:flex; align-items:center; gap:8px; padding:8px 16px; background:#f8f9fa; border-bottom:1px solid #dee2e6; flex-shrink:0; flex-wrap:wrap; {rdelim}
@@ -80,7 +78,8 @@ function bbfSwitchTab(btn, panel) {
     document.getElementById('bbf-gjs-' + panel).classList.add('active');
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+// Init immediately — this script runs AFTER the IIFE is loaded by admin.js
+(function() {
     var editorEl = document.getElementById('bbf-gjs-editor');
     if (!editorEl) return;
 
@@ -104,6 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
     {rdelim});
 
 {literal}
-});
+})();
 {/literal}
 </script>

@@ -84,6 +84,10 @@ function bbfNavigate(page, extraParams) {
             if (response && response.content) {
                 contentEl.html(response.content);
                 try { $(".select2").select2(); } catch(e) {}
+                // Load page-specific JS bundles FIRST, then execute inline scripts
+                bbfAfterPageLoad(page, function () {
+                    bbfExecInlineScripts(contentEl[0]);
+                });
             } else {
                 contentEl.html(
                     '<div style="margin:24px;padding:20px;background:#fefbf0;border:1px solid #f0dca0;border-radius:8px;color:#5c4a1a;">' +
@@ -211,4 +215,57 @@ function bbdNotify(title, message, type, icon, from, align) {
         { icon: icon, title: title, message: message },
         { type: type, placement: { from: from, align: align }, time: 1000, delay: 2000 }
     );
+}
+
+/**
+ * Execute inline <script> tags in AJAX-loaded content.
+ * Browsers ignore scripts inserted via innerHTML — we must re-create them.
+ */
+function bbfExecInlineScripts(container) {
+    var scripts = container.querySelectorAll('script');
+    scripts.forEach(function (oldScript) {
+        var newScript = document.createElement('script');
+        if (oldScript.src) {
+            // External script — skip, handled by bbfAfterPageLoad
+            return;
+        }
+        // Inline script — copy content and execute
+        newScript.textContent = oldScript.textContent;
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+}
+
+/**
+ * After AJAX page load: dynamically load page-specific JS bundles.
+ */
+function bbfAfterPageLoad(pageName, callback) {
+    if (pageName === 'form-builder') {
+        bbfLoadScript(adminUrl + 'js/dist/bbf-formbuilder.iife.js', function () {
+            console.log('BBF FormBuilder IIFE loaded');
+            if (callback) callback();
+        });
+    } else {
+        // No bundle needed — execute inline scripts immediately
+        if (callback) callback();
+    }
+}
+
+/**
+ * Dynamically load a JS file (skip if already loaded).
+ */
+function bbfLoadScript(src, callback) {
+    if (document.querySelector('script[src="' + src + '"]')) {
+        if (callback) callback();
+        return;
+    }
+    var script = document.createElement('script');
+    script.src = src;
+    script.onload = function () {
+        console.log('Loaded: ' + src);
+        if (callback) callback();
+    };
+    script.onerror = function () {
+        console.error('Failed to load: ' + src);
+    };
+    document.head.appendChild(script);
 }

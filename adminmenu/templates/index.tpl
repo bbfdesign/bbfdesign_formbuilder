@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="{$adminUrl}css/admin.css">
+<link rel="stylesheet" href="{$adminUrl}js/dist/grapes.min.css">
 
 <div class="bbf-plugin-page">
     {$jtl_token}
