@@ -57,8 +57,8 @@ window.BbfFormbuilder = {
                 styles: [...canvasStyles],
             },
 
-            // No default panels — we use our own toolbar
-            panels: { defaults: [] },
+            // Keep default panels for D&D to work — hide via CSS
+            // panels: { defaults: [] },  ← REMOVED: kills drag & drop
 
             deviceManager: {
                 devices: [
@@ -189,6 +189,27 @@ window.BbfFormbuilder = {
                 [bbfFormTraits]: {},
                 [bbfFormBlocks]: {},
             },
+        });
+
+        // ── Fix Canvas Drop Events ───────────────────────────
+        editor.on('load', () => {
+            // iFrame body must accept drag events
+            const frame = editor.Canvas.getFrameEl();
+            if (frame?.contentDocument?.body) {
+                frame.contentDocument.body.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                frame.contentDocument.body.addEventListener('drop', e => {
+                    e.preventDefault();
+                });
+                console.log('BBF: Canvas drop events fixed');
+            }
+            // Parent canvas wrapper too
+            const canvasEl = editor.Canvas.getElement();
+            if (canvasEl) {
+                canvasEl.addEventListener('dragover', e => e.preventDefault());
+            }
         });
 
         // ── Translate Forms plugin blocks ─────────────────────
