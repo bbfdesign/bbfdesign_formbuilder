@@ -195,8 +195,9 @@ window.BbfFormbuilder = {
             }
         });
 
-        // ── Fix Canvas Drop Events ───────────────────────────
+        // ── Fix Canvas Drop Events + Cleanup on load ─────────
         editor.on('load', () => {
+            // Canvas iFrame drop events
             const frame = editor.Canvas.getFrameEl();
             if (frame?.contentDocument?.body) {
                 frame.contentDocument.body.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); });
@@ -204,10 +205,25 @@ window.BbfFormbuilder = {
             }
             const canvasEl = editor.Canvas.getElement();
             if (canvasEl) canvasEl.addEventListener('dragover', e => e.preventDefault());
-            console.log('BBF: Canvas drop events fixed');
-        });
 
-        // (Forms plugin blocks disabled via blocks:[] config — only BBF blocks shown)
+            // Remove unwanted Style Manager sectors (keep only German ones)
+            try {
+                const sm = editor.StyleManager;
+                const keep = ['Abmessungen', 'Typografie', 'Darstellung'];
+                const sectors = sm.getSectors();
+                const toRemove = [];
+                sectors.forEach(s => {
+                    const name = s.get('name') || s.get('id') || '';
+                    if (!keep.includes(name)) toRemove.push(s.get('id') || name);
+                });
+                toRemove.forEach(id => {
+                    try { sm.removeSector(id); } catch(e) {}
+                });
+                if (toRemove.length) console.log('BBF: Removed SM sectors:', toRemove);
+            } catch(e) { console.warn('BBF: SM cleanup error', e); }
+
+            console.log('BBF: Editor load complete');
+        });
 
         // ── Toolbar ──────────────────────────────────────────
         setupHtmlToolbar(editor);
