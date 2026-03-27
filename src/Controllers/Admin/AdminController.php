@@ -94,6 +94,10 @@ class AdminController
                 return $this->deleteApiEndpoint();
             case 'testApiConnection':
                 return $this->testApiConnection();
+            case 'getEmailTemplate':
+                return $this->getEmailTemplate();
+            case 'saveEmailTemplate':
+                return $this->saveEmailTemplate();
             default:
                 throw new Exception('Unrecognized action "' . Text::filterXSS($action) . '"');
         }
@@ -960,5 +964,37 @@ class AdminController
             return ['flag' => true, 'message' => 'Verbindung erfolgreich (HTTP ' . $statusCode . ')'];
         }
         return ['flag' => false, 'errors' => ['Verbindung fehlgeschlagen: ' . ($error ?: 'Kein Status')]];
+    }
+
+    // ─── E-Mail Templates ───
+
+    public function getEmailTemplate(): array
+    {
+        $id = (int)($this->request['template_id'] ?? 0);
+        $model = new EmailTemplate();
+        $template = $model->getById($id);
+        if ($template === null) {
+            return ['flag' => false, 'errors' => ['Template nicht gefunden.']];
+        }
+        return ['flag' => true, 'template' => $template];
+    }
+
+    public function saveEmailTemplate(): array
+    {
+        $model = new EmailTemplate();
+        $id = (int)($this->request['template_id'] ?? 0);
+
+        $data = [
+            'name' => trim($this->request['name'] ?? ''),
+            'type' => $this->request['type'] ?? 'standard',
+            'html_template' => $this->request['html_template'] ?? '',
+        ];
+
+        if ($id > 0) {
+            $model->update($id, $data);
+            return ['flag' => true, 'message' => 'E-Mail-Template gespeichert.'];
+        }
+
+        return ['flag' => false, 'errors' => ['Template-ID fehlt.']];
     }
 }

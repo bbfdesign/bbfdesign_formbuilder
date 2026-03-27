@@ -49,6 +49,41 @@ class Bootstrap extends Bootstrapper
             });
         }
 
+        // [bbf_form] Shortcode im HTML-Output ersetzen
+        if (Shop::isFrontend()) {
+            $dispatcher->listen('shop.hook.' . \HOOK_SMARTY_OUTPUTFILTER, static function (array $args) {
+                if (!isset($args['output'])) {
+                    return;
+                }
+                // Nur verarbeiten wenn [bbf_form im Output vorkommt
+                if (strpos($args['output'], '[bbf_form') === false) {
+                    return;
+                }
+                $args['output'] = preg_replace_callback(
+                    '/\[bbf_form\s+id=["\']?(\d+)["\']?(?:\s+([^\]]*))?\]/',
+                    static function (array $matches): string {
+                        $formId = (int)$matches[1];
+                        $attribs = $matches[2] ?? '';
+                        $params = [];
+                        if (preg_match_all('/(\w+)=["\']([^"\']*)["\']/', $attribs, $attrMatches, PREG_SET_ORDER)) {
+                            foreach ($attrMatches as $am) {
+                                $params[$am[1]] = $am[2];
+                            }
+                        }
+                        try {
+                            $renderer = new \BbfdesignFormbuilder\Services\FormRenderService();
+                            return $renderer->renderById($formId, [
+                                'class' => $params['class'] ?? '',
+                            ]);
+                        } catch (\Throwable $e) {
+                            return '<!-- BBF Formbuilder: ' . htmlspecialchars($e->getMessage()) . ' -->';
+                        }
+                    },
+                    $args['output']
+                );
+            });
+        }
+
         // Register frontend routes (submit endpoint, ALTCHA challenge)
         if (\defined('HOOK_ROUTER_PRE_DISPATCH')) {
             $dispatcher->listen('shop.hook.' . \HOOK_ROUTER_PRE_DISPATCH, function (array $args) use ($plugin) {
