@@ -53,7 +53,9 @@ window.BbfFormbuilder = {
             storageManager: false,
 
             canvas: {
-                styles: [...canvasStyles],
+                styles: canvasStyles.length > 0 ? [...canvasStyles] : [
+                    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
+                ],
             },
 
             // Keep default panels for D&D to work — hide via CSS

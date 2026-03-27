@@ -240,6 +240,27 @@ class AdminController
         }
 
         $plugin = $this->plugin;
+
+        // Canvas-CSS dynamisch aus aktivem Shop-Template ermitteln
+        $canvasStyles = [];
+        try {
+            $shopUrl = Shop::getURL();
+            $templateDir = Shop::Container()->getTemplateService()->getActiveTemplate()->getDir();
+
+            $bootstrapPath = '/templates/' . $templateDir . '/themes/base/bootstrap/bootstrap.min.css';
+            if (file_exists(\PFAD_ROOT . $bootstrapPath)) {
+                $canvasStyles[] = $shopUrl . $bootstrapPath;
+            }
+
+            $customCssPath = '/templates/' . $templateDir . '/themes/base/css/custom.css';
+            if (file_exists(\PFAD_ROOT . $customCssPath)) {
+                $canvasStyles[] = $shopUrl . $customCssPath;
+            }
+        } catch (\Throwable $e) {
+            // Fallback: Bootstrap CDN
+            $canvasStyles[] = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
+        }
+
         return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/form-builder.tpl',
             [
@@ -248,6 +269,7 @@ class AdminController
                 'formId'            => $formId,
                 'postURL'           => $plugin->getPaths()->getBackendURL(),
                 'pluginFrontendUrl' => $plugin->getPaths()->getFrontendURL(),
+                'canvasStyles'      => json_encode($canvasStyles),
             ]
         );
     }

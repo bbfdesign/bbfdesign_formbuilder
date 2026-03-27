@@ -147,7 +147,7 @@ function bbfSwitchTab(btn, panel) {
         formId: {$formId|default:0},
         csrfToken: document.querySelector('[name="jtl_token"]') ? document.querySelector('[name="jtl_token"]').value : '',
         postURL: '{$postURL}',
-        canvasStyles: ['{$ShopURL}/templates/NOVA/themes/base/bootstrap/bootstrap.min.css']
+        canvasStyles: {$canvasStyles|default:'[]'}
     {rdelim});
 
 {literal}
