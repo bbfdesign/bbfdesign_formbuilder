@@ -243,23 +243,44 @@ class AdminController
 
         // Canvas-CSS dynamisch aus aktivem Shop-Template ermitteln
         $canvasStyles = [];
+        $templateDir = '';
         try {
             $shopUrl = Shop::getURL();
-            $templateDir = Shop::Container()->getTemplateService()->getActiveTemplate()->getDir();
+            $oTemplate = Shop::Container()->getTemplateService()->getActiveTemplate();
+            $templateDir = $oTemplate->getDir();
 
-            $bootstrapPath = '/templates/' . $templateDir . '/themes/base/bootstrap/bootstrap.min.css';
-            if (file_exists(\PFAD_ROOT . $bootstrapPath)) {
-                $canvasStyles[] = $shopUrl . $bootstrapPath;
+            // Bootstrap des aktiven Templates (mehrere Pfad-Kandidaten)
+            $bootstrapCandidates = [
+                '/templates/' . $templateDir . '/themes/base/bootstrap/bootstrap.min.css',
+                '/templates/' . $templateDir . '/themes/base/css/bootstrap.min.css',
+                '/templates/' . $templateDir . '/bootstrap/bootstrap.min.css',
+            ];
+            foreach ($bootstrapCandidates as $candidate) {
+                if (file_exists(\PFAD_ROOT . ltrim($candidate, '/'))) {
+                    $canvasStyles[] = $shopUrl . $candidate;
+                    break;
+                }
             }
 
-            $customCssPath = '/templates/' . $templateDir . '/themes/base/css/custom.css';
-            if (file_exists(\PFAD_ROOT . $customCssPath)) {
-                $canvasStyles[] = $shopUrl . $customCssPath;
+            // Template Haupt-CSS (mehrere Pfad-Kandidaten)
+            $mainCssCandidates = [
+                '/templates/' . $templateDir . '/themes/base/css/theme.css',
+                '/templates/' . $templateDir . '/themes/base/css/custom.css',
+                '/templates/' . $templateDir . '/css/style.css',
+            ];
+            foreach ($mainCssCandidates as $candidate) {
+                if (file_exists(\PFAD_ROOT . ltrim($candidate, '/'))) {
+                    $canvasStyles[] = $shopUrl . $candidate;
+                    break;
+                }
             }
         } catch (\Throwable $e) {
             // Fallback: Bootstrap CDN
             $canvasStyles[] = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
         }
+
+        // Plugin Frontend-CSS (immer laden)
+        $canvasStyles[] = $plugin->getPaths()->getFrontendURL() . 'css/bbf-forms.css';
 
         return $this->renderTemplate(
             $this->adminTemplatePath . 'templates/form-builder.tpl',
