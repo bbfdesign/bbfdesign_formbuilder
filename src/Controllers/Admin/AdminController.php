@@ -488,6 +488,9 @@ class AdminController
         if (isset($this->request['is_searchable'])) {
             $data['is_searchable'] = (int)$this->request['is_searchable'];
         }
+        if (isset($this->request['allow_in_account'])) {
+            $data['allow_in_account'] = (int)$this->request['allow_in_account'];
+        }
 
         $formModel->update($formId, $data);
 

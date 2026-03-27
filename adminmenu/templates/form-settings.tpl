@@ -144,6 +144,17 @@
             <span style="font-size:13px;">Im Suchplugin indexieren</span>
         </div>
 
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+            <label class="switch">
+                <input type="checkbox" name="allow_in_account" value="1" {if !isset($form->allow_in_account) || $form->allow_in_account}checked{/if}>
+                <span class="slider"></span>
+            </label>
+            <div>
+                <span style="font-size:13px;">Im Kundenkonto verfügbar</span>
+                <small style="display:block;font-size:11px;color:var(--bbf-text-light);margin-top:2px;">Kann im BBF Kundenkonto Plugin als eigene Seite eingebunden werden.</small>
+            </div>
+        </div>
+
         <div style="margin-bottom:16px;padding:12px;background:#f8f9fa;border-radius:6px;">
             <strong style="font-size:12px;color:var(--bbf-text-light);">Einbindung:</strong><br>
             <code style="font-size:12px;">&#123;bbf_form id={$form->id}&#125;</code> oder

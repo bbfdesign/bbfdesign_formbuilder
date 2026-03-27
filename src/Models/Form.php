@@ -128,6 +128,7 @@ class Form
             'is_multi_step'      => (int)($data['is_multi_step'] ?? 0),
             'submit_button_text' => $data['submit_button_text'] ?? 'Absenden',
             'is_searchable'      => (int)($data['is_searchable'] ?? 1),
+            'allow_in_account'   => (int)($data['allow_in_account'] ?? 1),
         ]);
         return (int)$id;
     }
@@ -143,7 +144,7 @@ class Form
         $allowedFields = [
             'title', 'slug', 'description', 'fields_json', 'settings_json',
             'css_classes', 'status', 'is_multi_step', 'submit_button_text', 'is_searchable',
-            'gjs_data', 'html_rendered', 'css_rendered',
+            'allow_in_account', 'gjs_data', 'html_rendered', 'css_rendered',
         ];
 
         foreach ($allowedFields as $field) {
@@ -196,6 +197,7 @@ class Form
             'is_multi_step'      => $form->is_multi_step,
             'submit_button_text' => $form->submit_button_text,
             'is_searchable'      => $form->is_searchable,
+            'allow_in_account'   => $form->allow_in_account ?? 1,
         ]);
     }
 
