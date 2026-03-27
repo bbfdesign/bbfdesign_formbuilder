@@ -37,6 +37,7 @@ class IncludeJsCssAssets
         // JS
         $js = '<script src="' . $frontendUrl . 'js/formbuilder.js" defer></script>' . "\n";
         $js .= '<script src="' . $frontendUrl . 'js/validation.js" defer></script>' . "\n";
+        $js .= '<script src="' . $frontendUrl . 'js/conditional-logic.js" defer></script>' . "\n";
 
         // Append to head/body
         if (isset($this->args['cCSS_arr'])) {

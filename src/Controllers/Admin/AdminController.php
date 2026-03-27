@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace BbfdesignFormbuilder\Controllers\Admin;
 
+use BbfdesignFormbuilder\Models\ApiConnection;
+use BbfdesignFormbuilder\Models\ApiEndpoint;
+use BbfdesignFormbuilder\Models\ApiLog;
 use BbfdesignFormbuilder\Models\Form;
 use BbfdesignFormbuilder\Models\FormEntry;
 use BbfdesignFormbuilder\Models\FormNotification;
@@ -81,6 +84,16 @@ class AdminController
                 return $this->bulkEntryAction();
             case 'exportEntriesCsv':
                 return $this->exportEntriesCsv();
+            case 'saveApiConnection':
+                return $this->saveApiConnection();
+            case 'deleteApiConnection':
+                return $this->deleteApiConnection();
+            case 'saveApiEndpoint':
+                return $this->saveApiEndpoint();
+            case 'deleteApiEndpoint':
+                return $this->deleteApiEndpoint();
+            case 'testApiConnection':
+                return $this->testApiConnection();
             default:
                 throw new Exception('Unrecognized action "' . Text::filterXSS($action) . '"');
         }
@@ -139,6 +152,9 @@ class AdminController
                 break;
             case 'css-editor':
                 $content = $this->renderCssEditor();
+                break;
+            case 'api-connections':
+                $content = $this->renderApiConnections();
                 break;
             case 'documentation':
                 $content = $this->renderTemplate($this->adminTemplatePath . 'templates/documentation.tpl');
@@ -819,5 +835,130 @@ class AdminController
         }
 
         return ['flag' => true, 'message' => 'Einstellungen gespeichert.'];
+    }
+
+    // ─── API Connections ───
+
+    private function renderApiConnections(): string
+    {
+        $connModel = new ApiConnection();
+        $endpointModel = new ApiEndpoint();
+        $logModel = new ApiLog();
+
+        return $this->renderTemplate(
+            $this->adminTemplatePath . 'templates/api-connections.tpl',
+            [
+                'connections' => $connModel->getAll(),
+                'endpoints' => $endpointModel->getAll(),
+                'logs' => $logModel->getAll([], 50),
+            ]
+        );
+    }
+
+    public function saveApiConnection(): array
+    {
+        $connModel = new ApiConnection();
+        $id = (int)($this->request['connection_id'] ?? 0);
+
+        $data = [
+            'name' => trim($this->request['name'] ?? ''),
+            'description' => $this->request['description'] ?? '',
+            'base_url' => trim($this->request['base_url'] ?? ''),
+            'auth_type' => $this->request['auth_type'] ?? 'none',
+            'auth_config' => $this->request['auth_config'] ?? '{}',
+            'headers' => $this->request['headers'] ?? '{}',
+            'timeout' => (int)($this->request['timeout'] ?? 30),
+            'active' => (int)($this->request['active'] ?? 1),
+        ];
+
+        if (empty($data['name']) || empty($data['base_url'])) {
+            return ['flag' => false, 'errors' => ['Name und Base-URL sind erforderlich.']];
+        }
+
+        if ($id > 0) {
+            $connModel->update($id, $data);
+            return ['flag' => true, 'message' => 'Verbindung aktualisiert.'];
+        }
+
+        $newId = $connModel->create($data);
+        return ['flag' => true, 'message' => 'Verbindung erstellt.', 'connection_id' => $newId];
+    }
+
+    public function deleteApiConnection(): array
+    {
+        $connModel = new ApiConnection();
+        $id = (int)($this->request['connection_id'] ?? 0);
+        if ($id <= 0) {
+            return ['flag' => false, 'errors' => ['Keine Verbindung angegeben.']];
+        }
+        $connModel->delete($id);
+        return ['flag' => true, 'message' => 'Verbindung gelöscht.'];
+    }
+
+    public function saveApiEndpoint(): array
+    {
+        $endpointModel = new ApiEndpoint();
+        $id = (int)($this->request['endpoint_id'] ?? 0);
+
+        $data = [
+            'connection_id' => (int)($this->request['connection_id'] ?? 0),
+            'name' => trim($this->request['name'] ?? ''),
+            'method' => $this->request['method'] ?? 'POST',
+            'path' => trim($this->request['path'] ?? ''),
+            'content_type' => $this->request['content_type'] ?? 'application/json',
+            'trigger_on' => $this->request['trigger_on'] ?? 'submit',
+            'field_mapping' => $this->request['field_mapping'] ?? '[]',
+            'response_map' => $this->request['response_map'] ?? '{}',
+            'error_map' => $this->request['error_map'] ?? '{}',
+            'active' => (int)($this->request['active'] ?? 1),
+        ];
+
+        if (empty($data['name']) || empty($data['path']) || $data['connection_id'] <= 0) {
+            return ['flag' => false, 'errors' => ['Name, Pfad und Verbindung sind erforderlich.']];
+        }
+
+        if ($id > 0) {
+            $endpointModel->update($id, $data);
+            return ['flag' => true, 'message' => 'Endpunkt aktualisiert.'];
+        }
+
+        $newId = $endpointModel->create($data);
+        return ['flag' => true, 'message' => 'Endpunkt erstellt.', 'endpoint_id' => $newId];
+    }
+
+    public function deleteApiEndpoint(): array
+    {
+        $endpointModel = new ApiEndpoint();
+        $id = (int)($this->request['endpoint_id'] ?? 0);
+        if ($id <= 0) {
+            return ['flag' => false, 'errors' => ['Kein Endpunkt angegeben.']];
+        }
+        $endpointModel->delete($id);
+        return ['flag' => true, 'message' => 'Endpunkt gelöscht.'];
+    }
+
+    public function testApiConnection(): array
+    {
+        $baseUrl = trim($this->request['base_url'] ?? '');
+        if (empty($baseUrl)) {
+            return ['flag' => false, 'errors' => ['Keine URL angegeben.']];
+        }
+
+        $ch = curl_init($baseUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_NOBODY => true,
+            CURLOPT_FOLLOWLOCATION => true,
+        ]);
+        curl_exec($ch);
+        $statusCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($statusCode > 0) {
+            return ['flag' => true, 'message' => 'Verbindung erfolgreich (HTTP ' . $statusCode . ')'];
+        }
+        return ['flag' => false, 'errors' => ['Verbindung fehlgeschlagen: ' . ($error ?: 'Kein Status')]];
     }
 }

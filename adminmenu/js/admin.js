@@ -24,7 +24,8 @@ var bbfPageTitles = {
     'email-templates': 'E-Mail-Templates',
     'css-editor':      'CSS-Editor',
     'documentation':   'Dokumentation',
-    'changelog':       'Changelog'
+    'changelog':       'Changelog',
+    'api-connections': 'API-Verbindungen'
 };
 
 /**

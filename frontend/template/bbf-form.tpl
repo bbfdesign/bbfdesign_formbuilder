@@ -34,6 +34,8 @@
                 <div x-show="isFieldVisible(field) && field.type !== 'page_break' && (totalSteps <= 1 || field._step === currentStep)"
                      class="bbf-field"
                      :class="'bbf-field--' + (field.width || 'full') + (errors[field.id] ? ' bbf-field--error' : '')"
+                     :data-bbf-field-id="field.id"
+                     :data-bbf-conditions="field.conditions && field.conditions.enabled ? JSON.stringify(field.conditions) : null"
                      role="group"
                      :aria-labelledby="'label-' + field.id">
 

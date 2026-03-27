@@ -143,6 +143,16 @@ class SubmitController
             );
         }
 
+        // API-Connector: Endpunkte ausführen (wenn konfiguriert)
+        try {
+            $apiConnector = new \BbfdesignFormbuilder\ApiConnector\ApiConnector();
+            $apiConnector->executeForForm($formId, $entryId, $sanitizedValues);
+        } catch (\Throwable $e) {
+            Shop::Container()->getLogService()->error(
+                'BBF Formbuilder: API Connector error: ' . $e->getMessage()
+            );
+        }
+
         // Regenerate CSRF token for next submission
         $newToken = bin2hex(random_bytes(32));
         $_SESSION['bbf_form_token_' . $formId] = $newToken;
