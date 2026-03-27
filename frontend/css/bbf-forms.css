@@ -1,15 +1,26 @@
 /* BBF Formbuilder — Frontend Styles (template-unabhängig) */
 /* Wird im Canvas geladen UND im Frontend-Output genutzt   */
 
+/* Basis-Reset für Canvas iFrame */
+body {
+    margin: 16px;
+    font-family: inherit;
+    background: #fff;
+}
+
+/* Form Wrapper */
 .bbf-form-wrap {
     font-family: inherit;
 }
 
-.bbf-field-wrap {
-    margin-bottom: 1.25rem;
+/* Felder (.bbf-field = Klasse aus bbf-form-blocks.js) */
+.bbf-field {
+    margin-bottom: 1rem;
 }
 
-.bbf-field-wrap > label {
+.bbf-field > label,
+.bbf-field .form-label,
+.bbf-field .bbf-label {
     font-weight: 500;
     margin-bottom: 0.35rem;
     display: block;
@@ -17,8 +28,8 @@
     color: inherit;
 }
 
-.bbf-field-wrap .form-control,
-.bbf-field-wrap .form-select {
+.bbf-field .form-control,
+.bbf-field .form-select {
     border-radius: 6px;
     font-size: 14px;
     width: 100%;
@@ -29,21 +40,36 @@
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 
-.bbf-field-wrap .form-control:focus,
-.bbf-field-wrap .form-select:focus {
+.bbf-field .form-control:focus,
+.bbf-field .form-select:focus {
     border-color: #e8420a;
     box-shadow: 0 0 0 3px rgba(232, 66, 10, .15);
     outline: none;
 }
 
-.bbf-submit-button {
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem;
+/* Submit-Button */
+.bbf-submit-btn {
     background: linear-gradient(135deg, #e8420a, #ff6b35);
     border: none;
     border-radius: 6px;
-    padding: .6rem 1.5rem;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    transition: opacity .2s;
+}
+
+.bbf-submit-btn:hover {
+    opacity: .88;
+}
+
+/* Legacy alias */
+.bbf-submit-button {
+    background: linear-gradient(135deg, #e8420a, #ff6b35);
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.5rem;
     font-weight: 600;
     color: #fff;
     cursor: pointer;
@@ -55,6 +81,7 @@
     opacity: .88;
 }
 
+/* Section Break */
 .bbf-section-break {
     margin-bottom: 1.5rem;
 }
@@ -63,6 +90,7 @@
     border-color: #dee2e6;
 }
 
+/* Page Break */
 .bbf-page-break {
     border: 2px dashed #e8420a;
     background: #fff0eb;
@@ -74,6 +102,7 @@
     font-weight: 600;
 }
 
+/* Rating Stars */
 .bbf-rating-stars {
     display: flex;
     gap: 4px;
@@ -83,6 +112,11 @@
     font-size: 22px;
     color: #f59e0b;
     cursor: pointer;
+}
+
+/* Spalten-Layouts: min-height im Canvas */
+.row > [class*="col-"] {
+    min-height: 40px;
 }
 
 /* Dashed Drop-Zones im Builder (nur im Canvas sichtbar) */

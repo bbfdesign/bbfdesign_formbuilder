@@ -263,26 +263,29 @@ class AdminController
 
         // Canvas-CSS dynamisch aus aktivem Shop-Template ermitteln
         $canvasStyles = [];
-        $templateDir = '';
+        $bootstrapFound = false;
+
         try {
             $shopUrl = Shop::getURL();
             $oTemplate = Shop::Container()->getTemplateService()->getActiveTemplate();
             $templateDir = $oTemplate->getDir();
 
-            // Bootstrap des aktiven Templates (mehrere Pfad-Kandidaten)
+            // Bootstrap des aktiven Templates suchen
             $bootstrapCandidates = [
                 '/templates/' . $templateDir . '/themes/base/bootstrap/bootstrap.min.css',
                 '/templates/' . $templateDir . '/themes/base/css/bootstrap.min.css',
                 '/templates/' . $templateDir . '/bootstrap/bootstrap.min.css',
+                '/templates/' . $templateDir . '/css/bootstrap.min.css',
             ];
             foreach ($bootstrapCandidates as $candidate) {
                 if (file_exists(\PFAD_ROOT . ltrim($candidate, '/'))) {
                     $canvasStyles[] = $shopUrl . $candidate;
+                    $bootstrapFound = true;
                     break;
                 }
             }
 
-            // Template Haupt-CSS (mehrere Pfad-Kandidaten)
+            // Template Haupt-CSS suchen
             $mainCssCandidates = [
                 '/templates/' . $templateDir . '/themes/base/css/theme.css',
                 '/templates/' . $templateDir . '/themes/base/css/custom.css',
@@ -295,11 +298,18 @@ class AdminController
                 }
             }
         } catch (\Throwable $e) {
-            // Fallback: Bootstrap CDN
-            $canvasStyles[] = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css';
+            // Template-Ermittlung fehlgeschlagen — Bootstrap kommt aus CDN
         }
 
-        // Plugin Frontend-CSS (immer laden)
+        // IMMER sicherstellen dass Bootstrap vorhanden ist
+        if (!$bootstrapFound) {
+            array_unshift($canvasStyles, 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+        }
+
+        // Font Awesome für Block-Icons im Canvas
+        $canvasStyles[] = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+
+        // Plugin Frontend-CSS IMMER als letztes (überschreibt Bootstrap)
         $canvasStyles[] = $plugin->getPaths()->getFrontendURL() . 'css/bbf-forms.css';
 
         return $this->renderTemplate(
