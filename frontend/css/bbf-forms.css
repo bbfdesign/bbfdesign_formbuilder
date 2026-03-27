@@ -3,9 +3,15 @@
 
 /* Basis-Reset für Canvas iFrame */
 body {
-    margin: 16px;
+    margin: 0;
+    padding: 24px;
     font-family: inherit;
     background: #fff;
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 /* Form Wrapper */
