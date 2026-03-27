@@ -4,7 +4,6 @@
  */
 
 import grapesjs from 'grapesjs';
-import grapesjsPluginForms from 'grapesjs-plugin-forms';
 import bbfFormBlocks from './plugins/bbf-form-blocks.js';
 import bbfFormTraits from './plugins/bbf-form-traits.js';
 
@@ -158,11 +157,10 @@ window.BbfFormbuilder = {
                         blockManager: {
                             labels: {},
                             categories: {
-                                'Forms': 'Formular-Elemente',
-                                'BBF Standard-Felder': 'Standard-Felder',
-                                'BBF Erweiterte Felder': 'Erweiterte Felder',
-                                'BBF Layout': 'Layout',
-                                'BBF Spezial': 'Spezial',
+                                'Standard-Felder': 'Standard-Felder',
+                                'Erweiterte Felder': 'Erweiterte Felder',
+                                'Layout': 'Layout',
+                                'Spezial': 'Spezial',
                             },
                         },
                         domComponents: {
@@ -173,26 +171,13 @@ window.BbfFormbuilder = {
             },
 
             plugins: [
-                grapesjsPluginForms,
                 bbfFormTraits,
                 bbfFormBlocks,
             ],
             pluginsOpts: {
-                [grapesjsPluginForms]: {
-                    blocks: [],  // No sidebar blocks — we have our own BBF blocks
-                },
                 [bbfFormTraits]: {},
                 [bbfFormBlocks]: {},
             },
-        });
-
-        // ── Remove generic Forms-plugin blocks (fallback if blocks:[] didn't work) ──
-        const bm = editor.BlockManager;
-        ['form', 'input', 'textarea', 'select', 'button', 'label', 'checkbox', 'radio'].forEach(id => {
-            if (bm.get(id)) {
-                bm.remove(id);
-                console.log('BBF: Removed generic block:', id);
-            }
         });
 
         // ── Fix Canvas Drop Events + Cleanup on load ─────────
