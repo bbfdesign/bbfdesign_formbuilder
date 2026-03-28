@@ -1,134 +1,205 @@
-/* BBF Formbuilder — Frontend Styles (template-unabhängig) */
-/* Wird im Canvas geladen UND im Frontend-Output genutzt   */
+/* ============================================================
+   BBF Formbuilder — Canvas Styles
+   Geladen im GrapesJS iFrame + im Frontend
+   ============================================================ */
 
-/* Basis-Reset für Canvas iFrame */
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
     margin: 0;
-    padding: 24px;
-    font-family: inherit;
-    background: #fff;
-    box-sizing: border-box;
+    padding: 32px 40px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    color: #1f2937;
+    background: #f9fafb;
+    line-height: 1.5;
 }
 
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
-/* Form Wrapper */
+/* ── Formular-Wrapper ── */
 .bbf-form-wrap {
-    font-family: inherit;
+    max-width: 720px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
 }
 
-/* Felder (.bbf-field = Klasse aus bbf-form-blocks.js) */
+/* ── Einzelnes Feld — Karten-Optik ── */
 .bbf-field {
-    margin-bottom: 1rem;
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    transition: border-color .15s, box-shadow .15s;
+    position: relative;
 }
 
+.bbf-field:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+/* Label */
 .bbf-field > label,
 .bbf-field .form-label,
 .bbf-field .bbf-label {
-    font-weight: 500;
-    margin-bottom: 0.35rem;
     display: block;
-    font-size: 14px;
-    color: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    letter-spacing: .01em;
 }
 
+.bbf-field .bbf-required {
+    color: #e8420a;
+    margin-left: 2px;
+}
+
+/* Inputs */
 .bbf-field .form-control,
-.bbf-field .form-select {
-    border-radius: 6px;
-    font-size: 14px;
+.bbf-field .form-select,
+.bbf-field input[type="text"],
+.bbf-field input[type="email"],
+.bbf-field input[type="tel"],
+.bbf-field input[type="number"],
+.bbf-field input[type="url"],
+.bbf-field input[type="password"],
+.bbf-field input[type="date"],
+.bbf-field input[type="time"],
+.bbf-field textarea,
+.bbf-field select {
     width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #ced4da;
+    padding: 9px 12px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #374151;
     background: #fff;
-    color: #212529;
-    transition: border-color .15s ease, box-shadow .15s ease;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .bbf-field .form-control:focus,
-.bbf-field .form-select:focus {
+.bbf-field .form-select:focus,
+.bbf-field input:focus,
+.bbf-field textarea:focus,
+.bbf-field select:focus {
     border-color: #e8420a;
-    box-shadow: 0 0 0 3px rgba(232, 66, 10, .15);
-    outline: none;
+    box-shadow: 0 0 0 3px rgba(232,66,10,.12);
 }
 
-/* Submit-Button */
-.bbf-submit-btn {
-    background: linear-gradient(135deg, #e8420a, #ff6b35);
-    border: none;
-    border-radius: 6px;
-    padding: 0.6rem 1.5rem;
-    font-weight: 600;
-    color: #fff;
-    cursor: pointer;
-    font-size: 15px;
-    transition: opacity .2s;
+.bbf-field textarea { resize: vertical; min-height: 90px; }
+
+.bbf-field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
 }
 
-.bbf-submit-btn:hover {
-    opacity: .88;
+.bbf-field input::placeholder,
+.bbf-field textarea::placeholder { color: #9ca3af; font-size: 13px; }
+
+.bbf-field .form-text,
+.bbf-field small { display: block; font-size: 12px; color: #9ca3af; margin-top: 5px; }
+
+/* ── Radio / Checkbox ── */
+.bbf-field .form-check { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
+.bbf-field .form-check-input { width: 16px; height: 16px; margin: 0; border: 1.5px solid #d1d5db; border-radius: 3px; cursor: pointer; flex-shrink: 0; accent-color: #e8420a; }
+.bbf-field .form-check-input[type="radio"] { border-radius: 50%; }
+.bbf-field .form-check-label { font-size: 13px; color: #374151; cursor: pointer; font-weight: 400; }
+
+/* ── Datei-Upload ── */
+.bbf-field input[type="file"] { padding: 7px 10px; background: #f9fafb; border: 1.5px dashed #d1d5db; cursor: pointer; font-size: 13px; }
+
+/* ── Zusammengesetzte Felder (Name, Adresse) ── */
+.bbf-compound-field {
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
 }
 
-/* Legacy alias */
-.bbf-submit-button {
-    background: linear-gradient(135deg, #e8420a, #ff6b35);
-    border: none;
-    border-radius: 6px;
-    padding: 0.6rem 1.5rem;
-    font-weight: 600;
-    color: #fff;
-    cursor: pointer;
-    font-size: 15px;
-    transition: opacity .2s;
+.bbf-compound-field label.form-label {
+    font-size: 12px; font-weight: 600; color: #6b7280;
+    margin-bottom: 5px; display: block;
+    text-transform: uppercase; letter-spacing: .04em;
 }
 
-.bbf-submit-button:hover {
-    opacity: .88;
+/* ── Spalten-Layout ── */
+.bbf-col-wrap {
+    border: 1.5px dashed #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #fafafa;
 }
 
-/* Section Break */
-.bbf-section-break {
-    margin-bottom: 1.5rem;
+.bbf-col-placeholder {
+    font-size: 11px; color: #d1d5db; width: 100%;
+    text-align: center; padding: 10px 0; user-select: none;
 }
 
-.bbf-section-break hr {
-    border-color: #dee2e6;
-}
+/* ── Abschnitt-Trenner ── */
+.bbf-section-break { padding: 10px 0 14px; margin-bottom: 8px; }
+.bbf-section-break h5 { font-size: 15px; font-weight: 700; color: #1f2937; margin: 0 0 4px; }
+.bbf-section-break p { font-size: 13px; color: #9ca3af; margin: 0 0 10px; }
+.bbf-section-break hr { border: none; border-top: 2px solid #f3f4f6; margin: 0; }
 
-/* Page Break */
+/* ── Seitenumbruch ── */
 .bbf-page-break {
-    border: 2px dashed #e8420a;
-    background: #fff0eb;
-    border-radius: 6px;
-    padding: 14px;
-    text-align: center;
-    margin: 1rem 0;
-    color: #e8420a;
-    font-weight: 600;
+    border: 2px dashed #fca5a5; background: #fff7f5; border-radius: 8px;
+    padding: 14px 20px; margin-bottom: 12px; text-align: center;
+    color: #e8420a; font-weight: 600; font-size: 13px;
 }
 
-/* Rating Stars */
-.bbf-rating-stars {
-    display: flex;
-    gap: 4px;
+/* ── Verstecktes Feld ── */
+.bbf-hidden-field-preview {
+    border: 1.5px dashed #e5e7eb; border-radius: 6px; padding: 8px 14px;
+    background: #f9fafb; font-size: 12px; color: #9ca3af;
+    display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
 }
 
-.bbf-rating-stars i {
-    font-size: 22px;
-    color: #f59e0b;
-    cursor: pointer;
+/* ── CAPTCHA Placeholder ── */
+.bbf-captcha-preview {
+    border: 1.5px dashed #e5e7eb; border-radius: 8px; background: #f9fafb;
+    padding: 20px; text-align: center; margin-bottom: 12px;
 }
+.bbf-captcha-preview span { font-size: 12px; color: #9ca3af; }
 
-/* Spalten-Layouts: min-height im Canvas */
-.row > [class*="col-"] {
-    min-height: 40px;
+/* ── DSGVO-Feld ── */
+.bbf-gdpr-field {
+    background: #fff8f5; border: 1.5px solid #fed7aa; border-radius: 8px;
+    padding: 14px 18px; margin-bottom: 12px;
+    display: flex; gap: 10px; align-items: flex-start;
 }
+.bbf-gdpr-field input[type="checkbox"] { margin-top: 2px; width: 16px; height: 16px; flex-shrink: 0; accent-color: #e8420a; }
+.bbf-gdpr-field label { font-size: 13px; color: #374151; line-height: 1.5; }
+.bbf-gdpr-field a { color: #e8420a; text-decoration: underline; }
 
-/* Dashed Drop-Zones im Builder (nur im Canvas sichtbar) */
-[data-gjs-droppable="true"] {
-    min-height: 60px;
-    border: 1px dashed #ced4da;
-    padding: 10px;
-    border-radius: 4px;
+/* ── Bewertung ── */
+.bbf-rating { display: flex; gap: 4px; font-size: 24px; color: #fbbf24; }
+.bbf-star { cursor: pointer; transition: color .1s; }
+.bbf-star:hover { color: #f59e0b; }
+
+/* ── Submit-Button ── */
+.bbf-submit-wrap { margin-bottom: 12px; }
+.bbf-submit-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 28px;
+    background: linear-gradient(135deg, #e8420a 0%, #ff6b35 100%);
+    color: #fff; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+    transition: opacity .2s, transform .1s;
+    box-shadow: 0 2px 8px rgba(232,66,10,.25);
 }
+.bbf-submit-btn:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,66,10,.3); }
