@@ -213,6 +213,24 @@ window.BbfFormbuilder = {
             console.log('BBF: Editor load complete');
         });
 
+        // ── Auto-Switch: Bei Selektion → Optionen-Tab ──────
+        editor.on('component:selected', (component) => {
+            const type = component.get('type');
+            if (['bbf-field', 'bbf-compound-field', 'bbf-submit', 'bbf-layout'].includes(type)) {
+                const traitsTab = document.querySelector('.bbf-sidebar-tab[onclick*="traits"]');
+                if (traitsTab && !traitsTab.classList.contains('active')) {
+                    traitsTab.click();
+                }
+            }
+        });
+
+        editor.on('component:deselected', () => {
+            const blocksTab = document.querySelector('.bbf-sidebar-tab[onclick*="blocks"]');
+            if (blocksTab && !blocksTab.classList.contains('active')) {
+                blocksTab.click();
+            }
+        });
+
         // ── Toolbar ──────────────────────────────────────────
         setupHtmlToolbar(editor);
 

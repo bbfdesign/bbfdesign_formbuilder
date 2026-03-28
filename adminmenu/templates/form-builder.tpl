@@ -1,6 +1,31 @@
 {* GrapesJS Form Builder *}
 
 <style>
+/* ── GrapesJS Theme Override: Light Theme ── */
+#bbf-gjs-blocks, #bbf-gjs-styles, #bbf-gjs-traits, .gjs-editor, .gjs-editor-cont {ldelim}
+    --gjs-primary-color: #ffffff;
+    --gjs-secondary-color: #f3f4f6;
+    --gjs-tertiary-color: #f9fafb;
+    --gjs-quaternary-color: #e5e7eb;
+    --gjs-font-color: #374151;
+    --gjs-font-color-active: #1f2937;
+    --gjs-main-color: #ffffff;
+    --gjs-main-dark-color: rgba(0,0,0,0.05);
+    --gjs-secondary-dark-color: rgba(0,0,0,0.03);
+    --gjs-main-light-color: rgba(0,0,0,0.04);
+    --gjs-secondary-light-color: rgba(0,0,0,0.06);
+    --gjs-soft-light-color: rgba(0,0,0,0.02);
+    --gjs-color-highlight: #e8420a;
+{rdelim}
+.gjs-blocks-c {ldelim} background: #fff !important; {rdelim}
+.gjs-block-categories {ldelim} background: #fff !important; {rdelim}
+.gjs-sm-sectors {ldelim} background: #fff !important; {rdelim}
+.gjs-trt-traits {ldelim} background: #fff !important; {rdelim}
+.gjs-one-bg {ldelim} background-color: #fff !important; {rdelim}
+.gjs-two-color {ldelim} color: #374151 !important; {rdelim}
+.gjs-three-bg {ldelim} background-color: #f9fafb !important; {rdelim}
+.gjs-four-color, .gjs-four-color-h:hover {ldelim} color: #e8420a !important; {rdelim}
+
 .bbf-builder-wrap {ldelim} display:flex; flex-direction:column; height:calc(100vh - 160px); min-height:600px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); {rdelim}
 .bbf-builder-toolbar {ldelim} display:flex; align-items:center; gap:8px; padding:8px 16px; background:#f8f9fa; border-bottom:1px solid #dee2e6; flex-shrink:0; flex-wrap:wrap; {rdelim}
 .bbf-builder-toolbar-left {ldelim} display:flex; align-items:center; gap:8px; {rdelim}
@@ -18,8 +43,8 @@
 .bbf-sidebar-tab {ldelim} flex:1; padding:10px 8px; text-align:center; font-size:11px; font-weight:600; border:none; background:none; cursor:pointer; color:#6c757d; border-bottom:2px solid transparent; margin-bottom:-2px; {rdelim}
 .bbf-sidebar-tab:hover {ldelim} color:#333; {rdelim}
 .bbf-sidebar-tab.active {ldelim} color:var(--bbf-primary); border-bottom-color:var(--bbf-primary); {rdelim}
-.bbf-sidebar-panel {ldelim} display:none; {rdelim}
-.bbf-sidebar-panel.active {ldelim} display:block; {rdelim}
+.bbf-sidebar-panel {ldelim} display:block !important; visibility:hidden; height:0; overflow:hidden; pointer-events:none; {rdelim}
+.bbf-sidebar-panel.active {ldelim} visibility:visible; height:auto; overflow:visible; pointer-events:auto; {rdelim}
 
 /* GrapesJS Canvas — height chain must be unbroken */
 #bbf-gjs-editor {ldelim} height:100% !important; {rdelim}
@@ -132,6 +157,15 @@ function bbfSwitchTab(btn, panel) {
     document.querySelectorAll('.bbf-sidebar-panel').forEach(function(p) { p.classList.remove('active'); });
     btn.classList.add('active');
     document.getElementById('bbf-gjs-' + panel).classList.add('active');
+
+    // Traits-Panel: GrapesJS zwingen die Traits neu zu rendern
+    if (panel === 'traits' && typeof BbfFormbuilder !== 'undefined' && BbfFormbuilder.editor) {
+        var ed = BbfFormbuilder.editor;
+        var selected = ed.getSelected();
+        if (selected) {
+            setTimeout(function() { ed.selectRemove(selected); ed.select(selected); }, 30);
+        }
+    }
 }
 
 // Init — runs after IIFE loaded by admin.js, with retry
