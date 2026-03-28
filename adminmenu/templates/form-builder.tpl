@@ -37,24 +37,45 @@
 .gjs-pn-panels {ldelim} display:none !important; {rdelim}
 .gjs-pn-views-container {ldelim} display:none !important; {rdelim}
 
-/* GrapesJS bbfdesign Theme */
-.gjs-one-bg {ldelim} background-color:#f8f9fa !important; {rdelim}
-.gjs-two-color {ldelim} color:#1f2937 !important; {rdelim}
-.gjs-three-bg {ldelim} background-color:#fff !important; {rdelim}
-.gjs-four-color, .gjs-four-color-h:hover {ldelim} color:var(--bbf-primary) !important; {rdelim}
-/* Block Grid */
-.gjs-blocks-c {ldelim} display:grid !important; grid-template-columns:1fr 1fr !important; gap:6px !important; padding:8px !important; {rdelim}
-.gjs-block {ldelim} border:1px solid #e5e7eb !important; border-radius:6px !important; padding:10px 4px !important; margin:0 !important; font-size:11px !important; transition:all 0.15s !important; min-height:70px !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:auto !important; {rdelim}
-.gjs-block .fa, .gjs-block [class*="fa-"] {ldelim} font-size:20px !important; color:#6b7280 !important; {rdelim}
-.gjs-block:hover .fa, .gjs-block:hover [class*="fa-"] {ldelim} color:var(--bbf-primary) !important; {rdelim}
-.gjs-block-label {ldelim} font-size:11px !important; font-weight:500 !important; text-align:center !important; line-height:1.2 !important; {rdelim}
-.gjs-block:hover {ldelim} border-color:var(--bbf-primary) !important; box-shadow:0 2px 8px rgba(219,46,135,0.12) !important; {rdelim}
-.gjs-block-category .gjs-title {ldelim} background:#f1f3f5 !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; text-transform:none !important; letter-spacing:0 !important; border-bottom:1px solid #e5e7eb !important; {rdelim}
-.gjs-sm-sector .gjs-sm-sector-title {ldelim} background:#f1f3f5 !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; border-bottom:1px solid #e5e7eb !important; {rdelim}
-.gjs-selected {ldelim} outline:2px solid var(--bbf-primary) !important; outline-offset:-2px !important; {rdelim}
-.gjs-hovered {ldelim} outline:1px dashed var(--bbf-primary) !important; {rdelim}
-.gjs-toolbar {ldelim} background:var(--bbf-primary) !important; border-radius:4px !important; {rdelim}
-.gjs-toolbar .gjs-toolbar-item {ldelim} color:#fff !important; {rdelim}
+/* ── GrapesJS Canvas-Hintergrund ── */
+.gjs-cv-canvas__frames {ldelim} background: #f3f4f6 !important; {rdelim}
+
+/* ── Block-Grid in Sidebar ── */
+.gjs-blocks-c {ldelim} display:grid !important; grid-template-columns:1fr 1fr !important; gap:6px !important; padding:10px !important; {rdelim}
+
+/* ── Block-Karten ── */
+.gjs-block {ldelim} border:1.5px solid #f0f0f0 !important; border-radius:8px !important; padding:10px 6px !important; margin:0 !important; min-height:72px !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:5px !important; width:auto !important; background:#fff !important; cursor:grab !important; transition:all .15s !important; {rdelim}
+.gjs-block:hover {ldelim} border-color:#e8420a !important; background:#fff8f6 !important; box-shadow:0 2px 8px rgba(232,66,10,.10) !important; transform:translateY(-1px) !important; {rdelim}
+.gjs-block .fa, .gjs-block [class*="fa-"] {ldelim} font-size:18px !important; color:#9ca3af !important; line-height:1 !important; {rdelim}
+.gjs-block:hover .fa, .gjs-block:hover [class*="fa-"] {ldelim} color:#e8420a !important; {rdelim}
+.gjs-block-label {ldelim} font-size:11px !important; font-weight:600 !important; color:#6b7280 !important; text-align:center !important; line-height:1.2 !important; {rdelim}
+.gjs-block:hover .gjs-block-label {ldelim} color:#e8420a !important; {rdelim}
+
+/* ── Kategorien-Titel ── */
+.gjs-block-category .gjs-title {ldelim} background:#fff !important; font-size:11px !important; font-weight:700 !important; color:#9ca3af !important; padding:10px 12px 6px !important; text-transform:uppercase !important; letter-spacing:.06em !important; border-bottom:none !important; border-top:1px solid #f3f4f6 !important; {rdelim}
+
+/* ── Style Manager ── */
+.gjs-sm-sector .gjs-sm-sector-title {ldelim} background:#f9fafb !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; border-bottom:1px solid #f0f0f0 !important; color:#374151 !important; {rdelim}
+
+/* ── Selektion ── */
+.gjs-selected {ldelim} outline:2px solid #e8420a !important; outline-offset:2px !important; {rdelim}
+.gjs-hovered {ldelim} outline:1px dashed #fca5a5 !important; outline-offset:2px !important; {rdelim}
+
+/* ── Toolbar ── */
+.gjs-toolbar {ldelim} background:#1f2937 !important; border-radius:6px !important; padding:2px !important; {rdelim}
+.gjs-toolbar .gjs-toolbar-item {ldelim} color:#fff !important; width:28px !important; height:28px !important; font-size:13px !important; {rdelim}
+.gjs-toolbar .gjs-toolbar-item:hover {ldelim} background:rgba(255,255,255,.15) !important; border-radius:4px !important; {rdelim}
+
+/* ── Modal ── */
+.gjs-mdl-dialog {ldelim} border-radius:12px !important; box-shadow:0 20px 60px rgba(0,0,0,.15) !important; {rdelim}
+.gjs-mdl-header {ldelim} background:#fff !important; border-bottom:1px solid #f0f0f0 !important; padding:16px 20px !important; {rdelim}
+.gjs-mdl-title {ldelim} font-size:15px !important; font-weight:700 !important; color:#1f2937 !important; {rdelim}
+
+/* ── Traits Panel ── */
+.gjs-trt-trait {ldelim} padding:8px 12px !important; border-bottom:1px solid #f9fafb !important; {rdelim}
+.gjs-trt-trait__label {ldelim} font-size:12px !important; font-weight:600 !important; color:#6b7280 !important; margin-bottom:4px !important; {rdelim}
+.gjs-trt-trait input, .gjs-trt-trait select {ldelim} border:1.5px solid #e5e7eb !important; border-radius:5px !important; padding:6px 8px !important; font-size:13px !important; width:100% !important; {rdelim}
+.gjs-trt-trait input:focus, .gjs-trt-trait select:focus {ldelim} border-color:#e8420a !important; outline:none !important; {rdelim}
 </style>
 
 <div class="bbf-builder-wrap" id="bbf-builder-wrap">
