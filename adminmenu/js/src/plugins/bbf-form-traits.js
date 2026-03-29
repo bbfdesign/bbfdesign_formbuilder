@@ -1,150 +1,73 @@
 /**
- * BBF Formbuilder – Custom Component Types & Traits
+ * BBF Formbuilder – Custom Component Types, Traits & Commands
  * isComponent MUST match the exact HTML from bbf-form-blocks.js
  */
 export default function bbfFormTraits(editor) {
     const dc = editor.DomComponents;
 
-    // ── Shared traits ─────────────────────────────────────────
+    // ── Escape helper ─────────────────────────────────────────
+    const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    // ── Shared button traits ──────────────────────────────────
     const conditionsButtonTrait = {
-        type: 'button', name: 'data-conditions-btn',
-        label: 'Bedingte Anzeige', text: 'Regeln konfigurieren',
+        type: 'button', name: 'btn-conditions',
+        label: 'Bedingte Anzeige', text: '🔀 Regeln konfigurieren',
         full: true, command: 'bbf:open-conditions-panel',
     };
-
-    const optionsButtonTrait = {
-        type: 'button', name: 'data-options-btn',
-        label: 'Optionen bearbeiten', text: 'Optionen / Auswahlwerte',
-        full: true,
-        command: (ed) => {
-            const sel = ed.getSelected();
-            const ft = sel?.getAttributes()['data-field-type'];
-            if (['select', 'radio', 'checkbox'].includes(ft)) {
-                ed.Commands.run('bbf:open-options-editor');
-            }
-        },
-    };
-
-    const translationsButtonTrait = {
-        type: 'button', name: 'data-trans-btn',
-        label: 'Übersetzungen', text: '🌐 Mehrsprachigkeit konfigurieren',
-        full: true, command: 'bbf:open-translations-panel',
-    };
-
-    // ── Escape helper ─────────────────────────────────────────
-    function escStr(s) {
-        return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;')
-            .replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
 
     // ══════════════════════════════════════════════════════════
     //  COMMAND: Conditions Panel
     // ══════════════════════════════════════════════════════════
     editor.Commands.add('bbf:open-conditions-panel', {
         run(ed) {
-            const selected = ed.getSelected();
-            if (!selected) return;
-
-            const currentJson = selected.getAttributes()['data-conditions'] || '';
+            const sel = ed.getSelected();
+            if (!sel) return;
             let conditions;
-            try { conditions = currentJson ? JSON.parse(currentJson) : null; } catch (e) { conditions = null; }
+            try { conditions = JSON.parse(sel.getAttributes()['data-conditions'] || ''); } catch (e) { conditions = null; }
             if (!conditions) conditions = { enabled: false, action: 'show', match: 'all', rules: [] };
 
             const allFields = [];
-            function collectFields(comp) {
-                const type = comp.get('type');
-                if ((type === 'bbf-field' || type === 'bbf-compound-field') && comp !== selected) {
+            (function collect(comp) {
+                const t = comp.get('type');
+                if ((t === 'bbf-field' || t === 'bbf-compound-field') && comp !== sel) {
                     const a = comp.getAttributes();
-                    allFields.push({ id: a['data-field-id'] || comp.getId(), label: a['data-label'] || a['data-field-type'] || type });
+                    allFields.push({ id: a['data-field-id'] || comp.getId(), label: a['data-label'] || a['data-field-type'] || t });
                 }
-                comp.components().each(c => collectFields(c));
-            }
-            collectFields(ed.getWrapper());
+                comp.components().each(c => collect(c));
+            })(ed.getWrapper());
 
-            const operators = [
-                { id: 'is', name: 'ist gleich' }, { id: 'is_not', name: 'ist nicht gleich' },
-                { id: 'contains', name: 'enthält' }, { id: 'does_not_contain', name: 'enthält nicht' },
-                { id: 'is_empty', name: 'ist leer' }, { id: 'is_not_empty', name: 'ist nicht leer' },
-                { id: 'greater_than', name: 'größer als' }, { id: 'less_than', name: 'kleiner als' },
-                { id: 'is_checked', name: 'ist angehakt' }, { id: 'is_not_checked', name: 'ist nicht angehakt' },
-            ];
-            const noValueOps = ['is_empty', 'is_not_empty', 'is_checked', 'is_not_checked'];
+            const ops = [['is','ist gleich'],['is_not','ist nicht gleich'],['contains','enthält'],['does_not_contain','enthält nicht'],['is_empty','ist leer'],['is_not_empty','ist nicht leer'],['greater_than','größer als'],['less_than','kleiner als'],['is_checked','ist angehakt'],['is_not_checked','ist nicht angehakt']];
+            const noVal = ['is_empty','is_not_empty','is_checked','is_not_checked'];
+            const fOpts = allFields.map(f => `<option value="${esc(f.id)}">${esc(f.label)}</option>`).join('');
+            const oOpts = ops.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('');
 
-            const fieldOpts = allFields.map(f => `<option value="${escStr(f.id)}">${escStr(f.label)} (${escStr(f.id)})</option>`).join('');
-            const operatorOpts = operators.map(o => `<option value="${escStr(o.id)}">${escStr(o.name)}</option>`).join('');
+            const renderRule = () => `<div class="bbf-cr" style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;"><select data-r="f" style="flex:1;min-width:110px;padding:7px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;"><option value="">— Feld —</option>${fOpts}</select><select data-r="o" style="flex:1;min-width:110px;padding:7px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;">${oOpts}</select><input data-r="v" placeholder="Wert" style="flex:1;min-width:80px;padding:7px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;"><button data-r="x" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:18px;padding:4px;">×</button></div>`;
 
-            function renderRules(rules) {
-                if (!rules.length) return '<p style="color:#6c757d;font-size:13px;">Keine Regeln definiert.</p>';
-                return rules.map((rule, i) => `
-                    <div class="bbf-cond-rule" data-idx="${i}" style="display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
-                        <select data-role="field" style="flex:1;min-width:120px;padding:6px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;"><option value="">— Feld —</option>${fieldOpts}</select>
-                        <select data-role="operator" style="flex:1;min-width:120px;padding:6px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;">${operatorOpts}</select>
-                        <input data-role="value" type="text" placeholder="Wert" style="flex:1;min-width:80px;padding:6px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;">
-                        <button type="button" data-role="remove" style="background:none;border:none;color:#dc3545;cursor:pointer;font-size:16px;padding:4px;" title="Entfernen">&times;</button>
-                    </div>`).join('');
-            }
-
-            const html = `<div style="padding:16px;min-width:500px;">
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                    <label style="font-size:13px;font-weight:600;">Bedingte Anzeige</label>
-                    <label class="switch" style="margin:0;"><input type="checkbox" id="bbf-cond-enabled" ${conditions.enabled ? 'checked' : ''}><span class="slider"></span></label>
+            const html = `<div style="padding:20px;min-width:520px;font-family:inherit;">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;"><label style="font-size:13px;font-weight:600;">Bedingte Anzeige</label><input type="checkbox" id="ce" ${conditions.enabled?'checked':''} style="accent-color:#e8420a;width:18px;height:18px;"></div>
+                <div id="cc" style="${conditions.enabled?'':'opacity:0.4;pointer-events:none;'}">
+                    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap;font-size:13px;"><span>Dieses Feld</span><select id="ca" style="padding:6px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;"><option value="show" ${conditions.action==='show'?'selected':''}>anzeigen</option><option value="hide" ${conditions.action==='hide'?'selected':''}>verbergen</option></select><span>wenn</span><select id="cm" style="padding:6px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;"><option value="all" ${conditions.match==='all'?'selected':''}>alle Bedingungen</option><option value="any" ${conditions.match==='any'?'selected':''}>eine Bedingung</option></select><span>erfüllt</span></div>
+                    <div id="cr">${conditions.rules.length ? conditions.rules.map(() => renderRule()).join('') : '<p style="color:#9ca3af;font-size:13px;">Keine Regeln.</p>'}</div>
+                    <button id="ca2" style="padding:7px 16px;border-radius:6px;border:1.5px solid #e8420a;background:#fff;color:#e8420a;font-size:12px;font-weight:600;cursor:pointer;">+ Regel</button>
                 </div>
-                <div id="bbf-cond-config" style="${conditions.enabled ? '' : 'opacity:0.4;pointer-events:none;'}">
-                    <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;">
-                        <span style="font-size:13px;">Dieses Feld</span>
-                        <select id="bbf-cond-action" style="padding:6px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;">
-                            <option value="show" ${conditions.action === 'show' ? 'selected' : ''}>anzeigen</option>
-                            <option value="hide" ${conditions.action === 'hide' ? 'selected' : ''}>verbergen</option>
-                        </select>
-                        <span style="font-size:13px;">wenn</span>
-                        <select id="bbf-cond-match" style="padding:6px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;">
-                            <option value="all" ${conditions.match === 'all' ? 'selected' : ''}>alle Bedingungen</option>
-                            <option value="any" ${conditions.match === 'any' ? 'selected' : ''}>eine Bedingung</option>
-                        </select>
-                        <span style="font-size:13px;">erfüllt ist</span>
-                    </div>
-                    <div id="bbf-cond-rules" style="margin-bottom:12px;">${renderRules(conditions.rules)}</div>
-                    <button type="button" id="bbf-cond-add" style="padding:6px 14px;border-radius:4px;border:1px solid #e8420a;background:transparent;color:#e8420a;font-size:12px;cursor:pointer;">+ Regel hinzufügen</button>
-                </div>
-                <div style="margin-top:20px;display:flex;gap:8px;justify-content:flex-end;">
-                    <button type="button" id="bbf-cond-cancel" style="padding:8px 18px;border-radius:6px;border:1px solid #dee2e6;background:#fff;cursor:pointer;font-size:13px;">Abbrechen</button>
-                    <button type="button" id="bbf-cond-save" style="padding:8px 18px;border-radius:6px;border:none;background:#e8420a;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Speichern</button>
-                </div>
+                <div style="margin-top:18px;padding-top:14px;border-top:1px solid #f3f4f6;display:flex;gap:8px;justify-content:flex-end;"><button id="cx" style="padding:8px 20px;border-radius:6px;border:1.5px solid #e5e7eb;background:#fff;cursor:pointer;font-size:13px;">Abbrechen</button><button id="cs" style="padding:8px 20px;border-radius:6px;border:none;background:#e8420a;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Speichern</button></div>
             </div>`;
 
-            const modal = ed.Modal;
-            modal.setTitle('Bedingte Anzeige konfigurieren');
-            const container = document.createElement('div');
-            container.innerHTML = html;
-            modal.setContent(container);
-            modal.open();
+            const modal = ed.Modal; modal.setTitle('Bedingte Anzeige'); const w = document.createElement('div'); w.innerHTML = html; modal.setContent(w); modal.open();
 
-            const ruleEls = container.querySelectorAll('.bbf-cond-rule');
-            conditions.rules.forEach((rule, i) => {
-                if (!ruleEls[i]) return;
-                ruleEls[i].querySelector('[data-role="field"]').value = rule.field || '';
-                ruleEls[i].querySelector('[data-role="operator"]').value = rule.operator || 'is';
-                const vi = ruleEls[i].querySelector('[data-role="value"]');
-                vi.value = rule.value || '';
-                vi.style.display = noValueOps.includes(rule.operator) ? 'none' : '';
-            });
+            // Set existing rule values
+            const rows = w.querySelectorAll('.bbf-cr');
+            conditions.rules.forEach((r, i) => { if (!rows[i]) return; rows[i].querySelector('[data-r="f"]').value = r.field||''; rows[i].querySelector('[data-r="o"]').value = r.operator||'is'; const vi = rows[i].querySelector('[data-r="v"]'); vi.value = r.value||''; vi.style.display = noVal.includes(r.operator)?'none':''; });
 
-            container.querySelector('#bbf-cond-enabled').addEventListener('change', function () {
-                const cfg = container.querySelector('#bbf-cond-config');
-                cfg.style.opacity = this.checked ? '' : '0.4';
-                cfg.style.pointerEvents = this.checked ? '' : 'none';
-            });
-            container.addEventListener('change', e => { if (e.target.dataset.role === 'operator') { e.target.closest('.bbf-cond-rule').querySelector('[data-role="value"]').style.display = noValueOps.includes(e.target.value) ? 'none' : ''; } });
-            container.querySelector('#bbf-cond-add').addEventListener('click', () => { const rd = container.querySelector('#bbf-cond-rules'); const p = rd.querySelector('p'); if (p) p.remove(); const d = document.createElement('div'); d.innerHTML = renderRules([{ field: '', operator: 'is', value: '' }]); rd.appendChild(d.firstElementChild); });
-            container.addEventListener('click', e => { if (e.target.dataset.role === 'remove') e.target.closest('.bbf-cond-rule').remove(); });
-            container.querySelector('#bbf-cond-cancel').addEventListener('click', () => modal.close());
-            container.querySelector('#bbf-cond-save').addEventListener('click', () => {
-                const rules = [];
-                container.querySelectorAll('.bbf-cond-rule').forEach(row => {
-                    const f = row.querySelector('[data-role="field"]').value;
-                    if (f) rules.push({ field: f, operator: row.querySelector('[data-role="operator"]').value, value: row.querySelector('[data-role="value"]').value });
-                });
-                selected.addAttributes({ 'data-conditions': JSON.stringify({ enabled: container.querySelector('#bbf-cond-enabled').checked, action: container.querySelector('#bbf-cond-action').value, match: container.querySelector('#bbf-cond-match').value, rules }) });
+            w.querySelector('#ce').addEventListener('change', function() { const c = w.querySelector('#cc'); c.style.opacity = this.checked?'':'0.4'; c.style.pointerEvents = this.checked?'':'none'; });
+            w.addEventListener('change', e => { if (e.target.dataset.r === 'o') e.target.closest('.bbf-cr').querySelector('[data-r="v"]').style.display = noVal.includes(e.target.value)?'none':''; });
+            w.querySelector('#ca2').addEventListener('click', () => { const cr = w.querySelector('#cr'); const p = cr.querySelector('p'); if (p) p.remove(); cr.insertAdjacentHTML('beforeend', renderRule()); });
+            w.addEventListener('click', e => { if (e.target.dataset.r === 'x') e.target.closest('.bbf-cr').remove(); });
+            w.querySelector('#cx').addEventListener('click', () => modal.close());
+            w.querySelector('#cs').addEventListener('click', () => {
+                const rules = []; w.querySelectorAll('.bbf-cr').forEach(r => { const f = r.querySelector('[data-r="f"]').value; if (f) rules.push({ field: f, operator: r.querySelector('[data-r="o"]').value, value: r.querySelector('[data-r="v"]').value }); });
+                sel.addAttributes({ 'data-conditions': JSON.stringify({ enabled: w.querySelector('#ce').checked, action: w.querySelector('#ca').value, match: w.querySelector('#cm').value, rules }) });
                 modal.close();
             });
         },
@@ -155,182 +78,88 @@ export default function bbfFormTraits(editor) {
     // ══════════════════════════════════════════════════════════
     editor.Commands.add('bbf:open-options-editor', {
         run(ed) {
-            const selected = ed.getSelected();
-            if (!selected) return;
-            const fieldType = selected.getAttributes()['data-field-type'];
-            const currentJson = selected.getAttributes()['data-options'] || '';
+            const sel = ed.getSelected(); if (!sel) return;
+            const fieldType = sel.getAttributes()['data-field-type'];
             let options = [];
-            try { options = currentJson ? JSON.parse(currentJson) : []; } catch (e) { options = []; }
-            if (!options.length) {
-                options = fieldType === 'select'
-                    ? [{ value: 'option_1', label: 'Option 1' }, { value: 'option_2', label: 'Option 2' }, { value: 'option_3', label: 'Option 3' }]
-                    : [{ value: 'option_a', label: 'Option A' }, { value: 'option_b', label: 'Option B' }];
-            }
+            try { options = JSON.parse(sel.getAttributes()['data-options'] || ''); } catch(e) {}
+            if (!options.length) options = fieldType === 'select'
+                ? [{label:'Option 1',value:'option_1'},{label:'Option 2',value:'option_2'},{label:'Option 3',value:'option_3'}]
+                : [{label:'Option A',value:'option_a'},{label:'Option B',value:'option_b'}];
 
-            function renderOpts(opts) {
-                if (!opts.length) return '<p style="color:#6c757d;font-size:13px;padding:8px 0;">Keine Optionen.</p>';
-                return opts.map((o, i) => `
-                    <div class="bbf-opt-row" data-idx="${i}" style="display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;">
-                        <input type="text" data-role="label" value="${escStr(o.label)}" placeholder="Angezeigter Text" style="padding:6px 8px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;width:100%;">
-                        <input type="text" data-role="value" value="${escStr(o.value)}" placeholder="Wert (intern)" style="padding:6px 8px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;width:100%;">
-                        <button type="button" data-role="remove-opt" style="background:none;border:none;color:#dc3545;cursor:pointer;font-size:16px;padding:4px 8px;" title="Entfernen">&times;</button>
-                    </div>`).join('');
-            }
+            const renderRows = opts => opts.length ? opts.map(o => `<div class="bbf-opt-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;"><input data-role="label" value="${esc(o.label)}" placeholder="Angezeigter Text" style="padding:7px 10px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;width:100%;outline:none;"><input data-role="value" value="${esc(o.value)}" placeholder="Wert (intern)" style="padding:7px 10px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;width:100%;outline:none;"><button data-role="del" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;" title="Entfernen">×</button></div>`).join('') : '<p style="color:#9ca3af;font-size:13px;margin:0;">Noch keine Optionen.</p>';
 
-            const title = fieldType === 'select' ? 'Dropdown-Optionen' : fieldType === 'radio' ? 'Radio-Optionen' : 'Checkbox-Optionen';
-            const html = `<div style="padding:16px;min-width:500px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                    <strong style="font-size:13px;">Optionen</strong>
-                    <button type="button" id="bbf-opt-add" style="padding:5px 14px;border-radius:4px;border:1px solid #e8420a;background:transparent;color:#e8420a;font-size:12px;cursor:pointer;">+ Option hinzufügen</button>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:6px;padding:6px 8px;margin-bottom:4px;">
-                    <span style="font-size:11px;font-weight:600;color:#6c757d;">Angezeigter Text</span>
-                    <span style="font-size:11px;font-weight:600;color:#6c757d;">Wert (intern)</span><span></span>
-                </div>
-                <div id="bbf-opt-list">${renderOpts(options)}</div>
-                <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
-                    <button type="button" id="bbf-opt-cancel" style="padding:8px 18px;border-radius:6px;border:1px solid #dee2e6;background:#fff;cursor:pointer;font-size:13px;">Abbrechen</button>
-                    <button type="button" id="bbf-opt-save" style="padding:8px 18px;border-radius:6px;border:none;background:#e8420a;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Speichern</button>
-                </div>
-            </div>`;
+            const titles = {select:'Dropdown-Optionen',radio:'Radio-Optionen',checkbox:'Checkbox-Optionen'};
+            const html = `<div style="padding:20px;min-width:520px;font-family:inherit;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><div><div style="display:grid;grid-template-columns:1fr 1fr auto;gap:6px;font-size:11px;font-weight:600;color:#6b7280;"><span>Angezeigter Text</span><span>Wert (intern)</span><span></span></div></div><button id="bbf-opt-add" style="padding:7px 16px;border-radius:6px;border:1.5px solid #e8420a;background:#fff;color:#e8420a;font-size:12px;font-weight:600;cursor:pointer;">+ Option</button></div><div id="bbf-opt-list" style="margin-bottom:16px;">${renderRows(options)}</div><div style="padding-top:14px;border-top:1px solid #f3f4f6;display:flex;gap:8px;justify-content:flex-end;"><button id="bbf-opt-cancel" style="padding:8px 20px;border-radius:6px;border:1.5px solid #e5e7eb;background:#fff;cursor:pointer;font-size:13px;">Abbrechen</button><button id="bbf-opt-save" style="padding:8px 20px;border-radius:6px;border:none;background:#e8420a;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Speichern</button></div></div>`;
 
-            const modal = ed.Modal;
-            modal.setTitle(title);
-            const container = document.createElement('div');
-            container.innerHTML = html;
-            modal.setContent(container);
-            modal.open();
+            const modal = ed.Modal; modal.setTitle(titles[fieldType]||'Optionen'); const w = document.createElement('div'); w.innerHTML = html; modal.setContent(w); modal.open();
 
-            container.querySelector('#bbf-opt-add').addEventListener('click', () => {
-                const list = container.querySelector('#bbf-opt-list');
-                const p = list.querySelector('p'); if (p) p.remove();
-                const d = document.createElement('div');
-                d.innerHTML = renderOpts([{ label: '', value: '' }]);
-                list.appendChild(d.firstElementChild);
-            });
-            container.addEventListener('click', e => { if (e.target.dataset.role === 'remove-opt') { e.target.closest('.bbf-opt-row').remove(); } });
-            container.querySelector('#bbf-opt-cancel').addEventListener('click', () => modal.close());
-            container.querySelector('#bbf-opt-save').addEventListener('click', () => {
-                const newOpts = [];
-                container.querySelectorAll('.bbf-opt-row').forEach(row => {
-                    const l = row.querySelector('[data-role="label"]').value.trim();
-                    const v = row.querySelector('[data-role="value"]').value.trim();
-                    if (l || v) newOpts.push({ label: l || v, value: v || l });
-                });
-                selected.addAttributes({ 'data-options': JSON.stringify(newOpts) });
-                updateCanvasOptions(selected, newOpts, fieldType);
+            w.querySelector('#bbf-opt-add').addEventListener('click', () => { const l = w.querySelector('#bbf-opt-list'); const p = l.querySelector('p'); if (p) p.remove(); l.insertAdjacentHTML('beforeend', renderRows([{label:'',value:''}])); });
+            w.addEventListener('click', e => { if (e.target.dataset.role === 'del') { e.target.closest('.bbf-opt-row').remove(); if (!w.querySelector('.bbf-opt-row')) w.querySelector('#bbf-opt-list').innerHTML = '<p style="color:#9ca3af;font-size:13px;margin:0;">Noch keine Optionen.</p>'; }});
+            w.querySelector('#bbf-opt-cancel').addEventListener('click', () => modal.close());
+            w.querySelector('#bbf-opt-save').addEventListener('click', () => {
+                const newOpts = []; w.querySelectorAll('.bbf-opt-row').forEach(r => { const l = r.querySelector('[data-role="label"]').value.trim(), v = r.querySelector('[data-role="value"]').value.trim(); if (l||v) newOpts.push({label:l||v,value:v||l}); });
+                sel.addAttributes({'data-options':JSON.stringify(newOpts)});
+                // Canvas live update
+                try {
+                    if (fieldType === 'select') {
+                        sel.components().each(c => { if (c.get('tagName')==='select'||c.getClasses().includes('form-control')) { c.components().reset([{tagName:'option',attributes:{value:''},content:'— Bitte wählen —'}].concat(newOpts.map(o=>({tagName:'option',attributes:{value:o.value},content:o.label})))); }});
+                    } else {
+                        const inputType = fieldType==='radio'?'radio':'checkbox', gid = sel.getAttributes()['data-field-id']||sel.getId(), rm = [];
+                        sel.components().each(c => { if (c.getClasses().includes('form-check')) rm.push(c); }); rm.forEach(c => c.remove());
+                        newOpts.forEach(o => { const uid = 'o_'+Math.random().toString(36).slice(2,7); sel.components().add({tagName:'div',classes:['form-check'],components:[{tagName:'input',attributes:{type:inputType,class:'form-check-input',name:gid,value:o.value,id:uid}},{tagName:'label',attributes:{class:'form-check-label',for:uid},content:o.label}]}); });
+                    }
+                } catch(e) { console.warn('BBF: canvas update failed', e); }
                 modal.close();
             });
         },
     });
 
-    // ── Canvas options updater ────────────────────────────────
-    function updateCanvasOptions(component, options, fieldType) {
-        try {
-            if (fieldType === 'select') {
-                component.components().each(child => {
-                    if (child.get('tagName') === 'select') {
-                        child.components().reset();
-                        const items = [{ tagName: 'option', attributes: { value: '' }, content: '— Bitte wählen —' }];
-                        options.forEach(o => items.push({ tagName: 'option', attributes: { value: o.value }, content: o.label }));
-                        child.components().add(items);
-                    }
-                });
-            } else if (fieldType === 'radio' || fieldType === 'checkbox') {
-                const inputType = fieldType === 'radio' ? 'radio' : 'checkbox';
-                const groupName = 'bbf_' + (component.getAttributes()['data-field-id'] || component.getId());
-                const inner = component.components();
-                const toRemove = [];
-                inner.each(c => { if (c.getClasses().includes('form-check')) toRemove.push(c); });
-                toRemove.forEach(c => c.remove());
-                options.forEach(o => {
-                    const uid = 'bbf_' + Math.random().toString(36).slice(2, 7);
-                    inner.add({ tagName: 'div', classes: ['form-check'], components: [
-                        { tagName: 'input', attributes: { type: inputType, class: 'form-check-input', name: groupName, id: uid, value: o.value } },
-                        { tagName: 'label', attributes: { class: 'form-check-label', for: uid }, content: o.label },
-                    ] });
-                });
-            }
-        } catch (e) { console.warn('BBF: Canvas options update failed', e); }
-    }
-
     // ══════════════════════════════════════════════════════════
-    //  COMMAND: Translations Panel
+    //  COMMAND: Translations / Mehrsprachigkeit
     // ══════════════════════════════════════════════════════════
-    editor.Commands.add('bbf:open-translations-panel', {
+    editor.Commands.add('bbf:open-translations', {
         run(ed) {
-            const selected = ed.getSelected();
-            if (!selected) return;
-            const attrs = selected.getAttributes();
-            const langJson = attrs['data-languages'] || '["ger"]';
-            let languages = [];
-            try { languages = JSON.parse(langJson); } catch (e) { languages = ['ger']; }
+            const sel = ed.getSelected(); if (!sel) return;
+            const attrs = sel.getAttributes();
+            const LANGS = [{code:'ger',flag:'🇩🇪',name:'Deutsch'},{code:'eng',flag:'🇬🇧',name:'Englisch'},{code:'fra',flag:'🇫🇷',name:'Französisch'},{code:'ita',flag:'🇮🇹',name:'Italienisch'},{code:'spa',flag:'🇪🇸',name:'Spanisch'},{code:'nld',flag:'🇳🇱',name:'Niederländisch'},{code:'pol',flag:'🇵🇱',name:'Polnisch'},{code:'ces',flag:'🇨🇿',name:'Tschechisch'}];
+            let active = ['ger']; try { active = JSON.parse(attrs['data-languages']||'["ger"]'); } catch(e) {}
+            const FIELDS = [{key:'label',label:'Label'},{key:'placeholder',label:'Platzhalter'},{key:'description',label:'Hinweistext'}];
 
-            const langLabels = { ger: 'Deutsch', eng: 'Englisch', fra: 'Französisch', ita: 'Italienisch', spa: 'Spanisch', nld: 'Niederländisch', pol: 'Polnisch', ces: 'Tschechisch' };
-            const allLangs = Object.entries(langLabels);
-            const curLabel = attrs['data-label'] || '';
-            const curPlaceholder = attrs['data-placeholder'] || '';
-            const curDescription = attrs['data-description'] || '';
+            const renderSec = l => `<div class="bbf-lang-sec" data-lang="${l.code}" style="background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:8px;padding:14px 16px;margin-bottom:10px;"><div style="font-size:13px;font-weight:700;color:#1f2937;margin-bottom:12px;">${l.flag} ${l.name}</div>${FIELDS.map(f => `<div style="margin-bottom:10px;"><label style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;">${f.label}</label><input data-lang="${l.code}" data-field="${f.key}" value="${esc(attrs['data-'+f.key+'-'+l.code]||(l.code==='ger'?attrs['data-'+f.key]||'':''))}" placeholder="${esc(attrs['data-'+f.key]||f.label)}" style="width:100%;padding:8px 10px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:13px;outline:none;font-family:inherit;"></div>`).join('')}</div>`;
 
-            function transRow(lang, field, value, ph) {
-                return `<div style="margin-bottom:8px;"><label style="font-size:11px;font-weight:600;color:#6c757d;margin-bottom:3px;display:block;">${field === 'label' ? 'Label' : field === 'placeholder' ? 'Platzhalter' : 'Beschreibung'}</label><input type="text" data-trans-lang="${lang}" data-trans-field="${field}" value="${escStr(value)}" placeholder="${escStr(ph)}" style="width:100%;padding:6px 8px;border:1px solid #dee2e6;border-radius:4px;font-size:13px;"></div>`;
-            }
+            const html = `<div style="padding:20px;min-width:560px;font-family:inherit;"><div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Aktive Sprachen</div><div style="display:flex;flex-wrap:wrap;gap:8px;">${LANGS.map(l => `<label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:5px 10px;border:1.5px solid ${active.includes(l.code)?'#e8420a':'#e5e7eb'};border-radius:6px;background:${active.includes(l.code)?'#fff8f6':'#fff'};user-select:none;"><input type="checkbox" data-lt="${l.code}" ${active.includes(l.code)?'checked':''} style="accent-color:#e8420a;"> ${l.flag} ${l.name}</label>`).join('')}</div></div><div id="bls">${LANGS.filter(l=>active.includes(l.code)).map(l=>renderSec(l)).join('')}</div><div style="padding-top:14px;border-top:1px solid #f3f4f6;display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button id="btc" style="padding:8px 20px;border-radius:6px;border:1.5px solid #e5e7eb;background:#fff;cursor:pointer;font-size:13px;">Abbrechen</button><button id="bts" style="padding:8px 20px;border-radius:6px;border:none;background:#e8420a;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Speichern</button></div></div>`;
 
-            const html = `<div style="padding:16px;min-width:500px;">
-                <div style="margin-bottom:16px;">
-                    <strong style="font-size:12px;color:#6c757d;text-transform:uppercase;letter-spacing:.05em;">Aktive Sprachen</strong>
-                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
-                        ${allLangs.map(([c, n]) => `<label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;"><input type="checkbox" data-lang-toggle="${c}" ${languages.includes(c) ? 'checked' : ''}> ${n}</label>`).join('')}
-                    </div>
-                </div>
-                <div id="bbf-trans-fields">
-                    ${languages.map(l => `<div class="bbf-lang-section" data-lang="${l}" style="background:#f8f9fa;border-radius:6px;padding:12px;margin-bottom:10px;">
-                        <div style="font-size:13px;font-weight:700;margin-bottom:8px;">${langLabels[l] || l}</div>
-                        ${transRow(l, 'label', attrs['data-label-' + l] || (l === 'ger' ? curLabel : ''), curLabel)}
-                        ${transRow(l, 'placeholder', attrs['data-placeholder-' + l] || (l === 'ger' ? curPlaceholder : ''), curPlaceholder)}
-                        ${transRow(l, 'description', attrs['data-description-' + l] || (l === 'ger' ? curDescription : ''), curDescription)}
-                    </div>`).join('')}
-                </div>
-                <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
-                    <button type="button" id="bbf-trans-cancel" style="padding:8px 18px;border-radius:6px;border:1px solid #dee2e6;background:#fff;cursor:pointer;font-size:13px;">Abbrechen</button>
-                    <button type="button" id="bbf-trans-save" style="padding:8px 18px;border-radius:6px;border:none;background:#e8420a;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Speichern</button>
-                </div>
-            </div>`;
+            const modal = ed.Modal; modal.setTitle('Mehrsprachigkeit'); const w = document.createElement('div'); w.innerHTML = html; modal.setContent(w); modal.open();
 
-            const modal = ed.Modal;
-            modal.setTitle('Übersetzungen / Mehrsprachigkeit');
-            const container = document.createElement('div');
-            container.innerHTML = html;
-            modal.setContent(container);
-            modal.open();
+            w.addEventListener('change', e => { const t = e.target.dataset.lt; if (!t) return; const l = LANGS.find(x=>x.code===t), lbl = e.target.closest('label'), s = w.querySelector('#bls');
+                if (e.target.checked) { lbl.style.borderColor='#e8420a'; lbl.style.background='#fff8f6'; s.insertAdjacentHTML('beforeend', renderSec(l)); }
+                else { lbl.style.borderColor='#e5e7eb'; lbl.style.background='#fff'; const sec = s.querySelector(`[data-lang="${t}"]`); if (sec) sec.remove(); }});
 
-            container.addEventListener('change', e => {
-                if (!e.target.dataset.langToggle) return;
-                const lang = e.target.dataset.langToggle;
-                const section = container.querySelector(`.bbf-lang-section[data-lang="${lang}"]`);
-                if (e.target.checked && !section) {
-                    const d = document.createElement('div');
-                    d.innerHTML = `<div class="bbf-lang-section" data-lang="${lang}" style="background:#f8f9fa;border-radius:6px;padding:12px;margin-bottom:10px;"><div style="font-size:13px;font-weight:700;margin-bottom:8px;">${langLabels[lang] || lang}</div>${transRow(lang, 'label', '', curLabel)}${transRow(lang, 'placeholder', '', curPlaceholder)}${transRow(lang, 'description', '', curDescription)}</div>`;
-                    container.querySelector('#bbf-trans-fields').appendChild(d.firstElementChild);
-                } else if (!e.target.checked && section) { section.remove(); }
-            });
-
-            container.querySelector('#bbf-trans-cancel').addEventListener('click', () => modal.close());
-            container.querySelector('#bbf-trans-save').addEventListener('click', () => {
-                const newAttrs = {};
-                const activeLangs = [];
-                container.querySelectorAll('[data-lang-toggle]:checked').forEach(cb => activeLangs.push(cb.dataset.langToggle));
-                newAttrs['data-languages'] = JSON.stringify(activeLangs);
-                container.querySelectorAll('[data-trans-lang]').forEach(inp => {
-                    const l = inp.dataset.transLang, f = inp.dataset.transField, v = inp.value.trim();
-                    if (v) { newAttrs[`data-${f}-${l}`] = v; if (l === activeLangs[0]) newAttrs[`data-${f}`] = v; }
-                });
-                selected.addAttributes(newAttrs);
-                // Update canvas label
-                const newLabel = newAttrs['data-label'];
-                if (newLabel) { try { selected.components().each(c => { if (c.getClasses().includes('bbf-label') || c.getClasses().includes('form-label')) c.set('content', newLabel); }); } catch (e) {} }
+            w.querySelector('#btc').addEventListener('click', () => modal.close());
+            w.querySelector('#bts').addEventListener('click', () => {
+                const na = {}, al = []; w.querySelectorAll('[data-lt]:checked').forEach(cb => al.push(cb.dataset.lt)); na['data-languages'] = JSON.stringify(al);
+                w.querySelectorAll('[data-lang][data-field]').forEach(inp => { const l=inp.dataset.lang, f=inp.dataset.field, v=inp.value.trim(); if (v) { na[`data-${f}-${l}`]=v; if (l===al[0]) na[`data-${f}`]=v; }});
+                sel.addAttributes(na);
+                const nl = na['data-label']; if (nl) { try { sel.components().each(c => { if (c.getClasses().some(x=>['bbf-label','form-label'].includes(x))) c.set('content',nl); }); } catch(e){} }
                 modal.close();
             });
+        },
+    });
+
+    // ══════════════════════════════════════════════════════════
+    //  COMMAND: Change Field Type
+    // ══════════════════════════════════════════════════════════
+    editor.Commands.add('bbf:change-field-type', {
+        run(ed) {
+            const sel = ed.getSelected(); if (!sel) return;
+            const cur = sel.getAttributes()['data-field-type']||'';
+            const TYPES = [['text','Textfeld','fa-font'],['email','E-Mail','fa-envelope'],['textarea','Textbereich','fa-align-left'],['phone','Telefon','fa-phone'],['number','Zahl','fa-hashtag'],['url','URL','fa-link'],['password','Passwort','fa-lock'],['date','Datum','fa-calendar'],['time','Uhrzeit','fa-clock-o'],['select','Dropdown','fa-chevron-down'],['radio','Radio','fa-dot-circle-o'],['checkbox','Checkbox','fa-check-square'],['file_upload','Datei-Upload','fa-upload'],['rating','Bewertung','fa-star'],['hidden','Versteckt','fa-eye-slash']];
+
+            const html = `<div style="padding:20px;min-width:480px;font-family:inherit;"><p style="font-size:13px;color:#6b7280;margin:0 0 14px;">Aktuell: <strong style="color:#1f2937;">${cur}</strong></p><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;">${TYPES.map(t=>`<button data-type="${t[0]}" style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;border-radius:8px;cursor:pointer;border:1.5px solid ${t[0]===cur?'#e8420a':'#e5e7eb'};background:${t[0]===cur?'#fff8f6':'#fff'};font-size:11px;font-weight:600;color:#374151;transition:all .12s;"><i class="fa ${t[2]}" style="font-size:18px;color:${t[0]===cur?'#e8420a':'#6b7280'};"></i>${t[1]}</button>`).join('')}</div><div style="padding-top:12px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;"><button id="btx" style="padding:8px 20px;border-radius:6px;border:1.5px solid #e5e7eb;background:#fff;cursor:pointer;font-size:13px;">Abbrechen</button></div></div>`;
+
+            const modal = ed.Modal; modal.setTitle('Feldtyp ändern'); const w = document.createElement('div'); w.innerHTML = html; modal.setContent(w); modal.open();
+            w.querySelectorAll('[data-type]').forEach(b => b.addEventListener('click', () => { sel.addAttributes({'data-field-type':b.dataset.type}); modal.close(); if (['select','radio','checkbox'].includes(b.dataset.type)) setTimeout(()=>ed.Commands.run('bbf:open-options-editor'),100); }));
+            w.querySelector('#btx').addEventListener('click', () => modal.close());
         },
     });
 
@@ -338,152 +167,96 @@ export default function bbfFormTraits(editor) {
     //  Component Types
     // ══════════════════════════════════════════════════════════
 
-    // ── bbf-field ────────────────────────────────────────────
     dc.addType('bbf-field', {
-        isComponent: (el) => {
-            if (!el || !el.getAttribute) return false;
-            return el.getAttribute('data-gjs-type') === 'bbf-field'
-                || (el.classList?.contains('bbf-field') && el.getAttribute('data-field-type'));
-        },
-        model: {
-            defaults: {
-                draggable: true,
-                droppable: false,
-                traits: [
-                    { type: 'text', name: 'data-field-id', label: 'Feld-ID', placeholder: 'z.B. vorname' },
-                    { type: 'text', name: 'data-label', label: 'Label' },
-                    optionsButtonTrait,
-                    { type: 'text', name: 'data-placeholder', label: 'Platzhalter' },
-                    { type: 'text', name: 'data-description', label: 'Beschreibung' },
-                    { type: 'checkbox', name: 'data-required', label: 'Pflichtfeld' },
-                    {
-                        type: 'select', name: 'data-width', label: 'Breite',
-                        options: [
-                            { id: 'full', name: '100 %' }, { id: 'half', name: '50 %' },
-                            { id: 'third', name: '33 %' }, { id: 'two-thirds', name: '66 %' },
-                        ],
-                    },
-                    { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
-                    { type: 'text', name: 'data-default-value', label: 'Standardwert' },
-                    { type: 'number', name: 'data-min-length', label: 'Min. Länge' },
-                    { type: 'number', name: 'data-max-length', label: 'Max. Länge' },
-                    { type: 'text', name: 'data-pattern', label: 'Validierungsmuster (Regex)' },
-                    { type: 'text', name: 'data-error-message', label: 'Fehlermeldung' },
-                    conditionsButtonTrait,
-                    // Erweiterte Einstellungen
-                    { type: 'number', name: 'data-tabindex', label: 'Taboreihenfolge (tabindex)', placeholder: 'z.B. 1, 2, 3...' },
-                    { type: 'text', name: 'data-aria-label', label: 'ARIA-Label (Barrierefreiheit)' },
-                    { type: 'text', name: 'data-aria-describedby', label: 'ARIA-Describedby (ID des Hinweistexts)' },
-                    { type: 'checkbox', name: 'data-autocomplete-off', label: 'Autocomplete deaktivieren' },
-                    translationsButtonTrait,
-                ],
-            },
-        },
+        isComponent: el => el?.getAttribute?.('data-gjs-type') === 'bbf-field' || (el?.classList?.contains('bbf-field') && el?.getAttribute('data-field-type')),
+        model: { defaults: { draggable: true, droppable: false, traits: [
+            { type: 'text', name: 'data-field-id', label: 'Feld-ID', placeholder: 'z.B. vorname' },
+            { type: 'text', name: 'data-label', label: 'Label / Bezeichnung' },
+            { type: 'text', name: 'data-placeholder', label: 'Platzhalter' },
+            { type: 'text', name: 'data-description', label: 'Hinweistext (unter dem Feld)' },
+            { type: 'text', name: 'data-default-value', label: 'Standardwert' },
+            { type: 'checkbox', name: 'data-required', label: 'Pflichtfeld' },
+            { type: 'select', name: 'data-width', label: 'Feldbreite', options: [
+                { id: 'full', name: '100 % — volle Breite' }, { id: 'half', name: '50 % — halbe Breite' },
+                { id: 'third', name: '33 % — ein Drittel' }, { id: 'two-thirds', name: '66 % — zwei Drittel' },
+            ]},
+            { type: 'number', name: 'data-min-length', label: 'Min. Zeichen' },
+            { type: 'number', name: 'data-max-length', label: 'Max. Zeichen' },
+            { type: 'text', name: 'data-pattern', label: 'Validierung (Regex)', placeholder: 'z.B. [0-9]+' },
+            { type: 'text', name: 'data-error-message', label: 'Fehlermeldung' },
+            { type: 'number', name: 'data-tabindex', label: 'Tab-Reihenfolge' },
+            { type: 'text', name: 'data-aria-label', label: 'ARIA-Label (Screenreader)' },
+            { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
+            { type: 'button', name: 'btn-type', label: 'Feldtyp', text: '🔄 Feldtyp ändern', full: true, command: 'bbf:change-field-type' },
+            { type: 'button', name: 'btn-opts', label: 'Auswahloptionen', text: '⚙ Optionen bearbeiten', full: true,
+              command: ed => { const s=ed.getSelected(),t=s?.getAttributes()['data-field-type']; if(['select','radio','checkbox'].includes(t)) ed.Commands.run('bbf:open-options-editor'); else alert('Nur für Dropdown, Radio und Checkbox.'); }},
+            { type: 'button', name: 'btn-trans', label: 'Mehrsprachigkeit', text: '🌐 Übersetzungen konfigurieren', full: true, command: 'bbf:open-translations' },
+            conditionsButtonTrait,
+        ]}},
     });
 
-    // ── bbf-compound-field ───────────────────────────────────
     dc.addType('bbf-compound-field', {
-        isComponent: (el) => {
-            if (!el || !el.getAttribute) return false;
-            return el.getAttribute('data-gjs-type') === 'bbf-compound-field';
-        },
-        model: {
-            defaults: {
-                draggable: true,
-                droppable: false,
-                traits: [
-                    { type: 'text', name: 'data-field-id', label: 'Feld-ID' },
-                    { type: 'text', name: 'data-label', label: 'Label' },
-                    { type: 'checkbox', name: 'data-required', label: 'Pflichtfeld' },
-                    {
-                        type: 'select', name: 'data-width', label: 'Breite',
-                        options: [{ id: 'full', name: '100 %' }, { id: 'half', name: '50 %' }],
-                    },
-                    { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
-                    { type: 'text', name: 'data-error-message', label: 'Fehlermeldung' },
-                    conditionsButtonTrait,
-                    { type: 'number', name: 'data-tabindex', label: 'Taboreihenfolge' },
-                    { type: 'text', name: 'data-aria-label', label: 'ARIA-Label' },
-                ],
-            },
-        },
+        isComponent: el => el?.getAttribute?.('data-gjs-type') === 'bbf-compound-field',
+        model: { defaults: { draggable: true, droppable: false, traits: [
+            { type: 'text', name: 'data-field-id', label: 'Feld-ID' },
+            { type: 'text', name: 'data-label', label: 'Label' },
+            { type: 'checkbox', name: 'data-required', label: 'Pflichtfeld' },
+            { type: 'select', name: 'data-width', label: 'Breite', options: [{ id:'full',name:'100 %' },{ id:'half',name:'50 %' }] },
+            { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
+            { type: 'text', name: 'data-error-message', label: 'Fehlermeldung' },
+            { type: 'number', name: 'data-tabindex', label: 'Tab-Reihenfolge' },
+            { type: 'text', name: 'data-aria-label', label: 'ARIA-Label' },
+            conditionsButtonTrait,
+        ]}},
     });
 
-    // ── bbf-submit ───────────────────────────────────────────
     dc.addType('bbf-submit', {
-        isComponent: (el) => {
-            if (!el || !el.getAttribute) return false;
-            return el.getAttribute('data-gjs-type') === 'bbf-submit';
-        },
-        model: {
-            defaults: {
-                draggable: true,
-                droppable: false,
-                traits: [
-                    { type: 'text', name: 'data-button-text', label: 'Button-Text' },
-                    { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
-                    {
-                        type: 'select', name: 'data-button-style', label: 'Button-Stil',
-                        options: [
-                            { id: 'btn-primary', name: 'Primär' }, { id: 'btn-secondary', name: 'Sekundär' },
-                            { id: 'btn-success', name: 'Erfolg' }, { id: 'btn-outline-primary', name: 'Primär (Outline)' },
-                        ],
-                    },
-                    { type: 'checkbox', name: 'data-full-width', label: 'Volle Breite' },
-                ],
-            },
-        },
+        isComponent: el => el?.getAttribute?.('data-gjs-type') === 'bbf-submit',
+        model: { defaults: { draggable: true, droppable: false, traits: [
+            { type: 'text', name: 'data-button-text', label: 'Button-Text' },
+            { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
+            { type: 'select', name: 'data-button-style', label: 'Button-Stil', options: [
+                { id:'btn-primary',name:'Primär' },{ id:'btn-secondary',name:'Sekundär' },
+                { id:'btn-success',name:'Erfolg' },{ id:'btn-outline-primary',name:'Outline' },
+            ]},
+            { type: 'checkbox', name: 'data-full-width', label: 'Volle Breite' },
+            { type: 'select', name: 'data-align', label: 'Ausrichtung', options: [
+                { id:'left',name:'Links' },{ id:'center',name:'Zentriert' },{ id:'right',name:'Rechts' },
+            ]},
+            { type: 'text', name: 'data-icon', label: 'Icon-Klasse (z.B. fa-paper-plane)' },
+        ]}},
     });
 
-    // ── bbf-layout ───────────────────────────────────────────
     dc.addType('bbf-layout', {
-        isComponent: (el) => {
-            if (!el || !el.getAttribute) return false;
-            return el.getAttribute('data-gjs-type') === 'bbf-layout';
-        },
-        model: {
-            defaults: {
-                draggable: true,
-                droppable: true,
-                traits: [
-                    { type: 'text', name: 'data-field-type', label: 'Typ', attributes: { readonly: true } },
-                    { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
-                ],
-            },
-        },
+        isComponent: el => el?.getAttribute?.('data-gjs-type') === 'bbf-layout',
+        model: { defaults: { draggable: true, droppable: true, traits: [
+            { type: 'text', name: 'data-field-type', label: 'Typ', attributes: { readonly: true } },
+            { type: 'text', name: 'data-css-class', label: 'CSS-Klasse' },
+        ]}},
     });
 }
 
 export function extractFieldDefinitions(editor) {
     const fields = [];
-    function traverse(component) {
-        const type = component.get('type');
-        if (type === 'bbf-field' || type === 'bbf-compound-field' || type === 'bbf-submit') {
-            const a = component.getAttributes();
+    function traverse(c) {
+        const t = c.get('type');
+        if (['bbf-field','bbf-compound-field','bbf-submit'].includes(t)) {
+            const a = c.getAttributes();
             fields.push({
-                field_id: a['data-field-id'] || '',
-                field_type: a['data-field-type'] || type,
-                label: a['data-label'] || '',
-                placeholder: a['data-placeholder'] || '',
-                description: a['data-description'] || '',
-                required: a['data-required'] === 'true' || a['data-required'] === true,
-                width: a['data-width'] || 'full',
-                css_class: a['data-css-class'] || '',
-                default_value: a['data-default-value'] || '',
-                min_length: a['data-min-length'] || '',
-                max_length: a['data-max-length'] || '',
-                pattern: a['data-pattern'] || '',
-                error_message: a['data-error-message'] || '',
-                conditions: a['data-conditions'] || '',
-                options: a['data-options'] || '',
-                languages: a['data-languages'] || '',
-                tabindex: a['data-tabindex'] || '',
-                aria_label: a['data-aria-label'] || '',
-                aria_describedby: a['data-aria-describedby'] || '',
-                autocomplete_off: a['data-autocomplete-off'] === 'true' || a['data-autocomplete-off'] === true,
+                field_id: a['data-field-id']||'', field_type: a['data-field-type']||t,
+                label: a['data-label']||'', placeholder: a['data-placeholder']||'',
+                description: a['data-description']||'',
+                required: a['data-required']==='true'||a['data-required']===true,
+                width: a['data-width']||'full', css_class: a['data-css-class']||'',
+                default_value: a['data-default-value']||'',
+                min_length: a['data-min-length']||'', max_length: a['data-max-length']||'',
+                pattern: a['data-pattern']||'', error_message: a['data-error-message']||'',
+                conditions: a['data-conditions']||'', options: a['data-options']||'',
+                languages: a['data-languages']||'',
+                tabindex: a['data-tabindex']||'', aria_label: a['data-aria-label']||'',
             });
         }
-        component.components().each(c => traverse(c));
+        c.components().each(x => traverse(x));
     }
     traverse(editor.getWrapper());
     return fields;
