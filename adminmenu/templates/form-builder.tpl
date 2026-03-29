@@ -1,30 +1,31 @@
 {* GrapesJS Form Builder *}
 
 <style>
-/* ── GrapesJS Theme Override: Light Theme ── */
-#bbf-gjs-blocks, #bbf-gjs-styles, #bbf-gjs-traits, .gjs-editor, .gjs-editor-cont {ldelim}
-    --gjs-primary-color: #ffffff;
-    --gjs-secondary-color: #f3f4f6;
-    --gjs-tertiary-color: #f9fafb;
-    --gjs-quaternary-color: #e5e7eb;
-    --gjs-font-color: #374151;
-    --gjs-font-color-active: #1f2937;
-    --gjs-main-color: #ffffff;
-    --gjs-main-dark-color: rgba(0,0,0,0.05);
-    --gjs-secondary-dark-color: rgba(0,0,0,0.03);
-    --gjs-main-light-color: rgba(0,0,0,0.04);
-    --gjs-secondary-light-color: rgba(0,0,0,0.06);
-    --gjs-soft-light-color: rgba(0,0,0,0.02);
-    --gjs-color-highlight: #e8420a;
+/* ── GrapesJS Light Theme — überschreibt das Standard-Dark-Theme ── */
+:root {ldelim}
+    --gjs-primary-color: #ffffff !important;
+    --gjs-secondary-color: #f3f4f6 !important;
+    --gjs-tertiary-color: #f9fafb !important;
+    --gjs-quaternary-color: #e5e7eb !important;
+    --gjs-font-color: #374151 !important;
+    --gjs-font-color-active: #111827 !important;
+    --gjs-main-color: #ffffff !important;
+    --gjs-main-dark-color: rgba(0,0,0,0.04) !important;
+    --gjs-secondary-dark-color: rgba(0,0,0,0.02) !important;
+    --gjs-main-light-color: rgba(0,0,0,0.03) !important;
+    --gjs-secondary-light-color: rgba(0,0,0,0.05) !important;
+    --gjs-soft-light-color: rgba(0,0,0,0.01) !important;
+    --gjs-color-highlight: #e8420a !important;
 {rdelim}
-.gjs-blocks-c {ldelim} background: #fff !important; {rdelim}
-.gjs-block-categories {ldelim} background: #fff !important; {rdelim}
-.gjs-sm-sectors {ldelim} background: #fff !important; {rdelim}
-.gjs-trt-traits {ldelim} background: #fff !important; {rdelim}
-.gjs-one-bg {ldelim} background-color: #fff !important; {rdelim}
+.gjs-one-bg {ldelim} background-color: #ffffff !important; color: #374151 !important; {rdelim}
 .gjs-two-color {ldelim} color: #374151 !important; {rdelim}
 .gjs-three-bg {ldelim} background-color: #f9fafb !important; {rdelim}
 .gjs-four-color, .gjs-four-color-h:hover {ldelim} color: #e8420a !important; {rdelim}
+.gjs-pn-panel, .gjs-block-categories, .gjs-blocks-c, .gjs-sm-sectors, .gjs-trt-traits, .gjs-layer-manager, .gjs-editor {ldelim} background: #fff !important; {rdelim}
+
+/* Kategorietitel */
+.gjs-block-category > .gjs-title {ldelim} background: #f8f9fa !important; color: #6b7280 !important; font-size: 10px !important; font-weight: 700 !important; letter-spacing: .07em !important; text-transform: uppercase !important; padding: 8px 10px 5px !important; border-top: 1px solid #f0f0f0 !important; border-bottom: none !important; {rdelim}
+.gjs-block-category:first-child > .gjs-title {ldelim} border-top: none !important; {rdelim}
 
 .bbf-builder-wrap {ldelim} display:flex; flex-direction:column; height:calc(100vh - 160px); min-height:600px; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.08); {rdelim}
 .bbf-builder-toolbar {ldelim} display:flex; align-items:center; gap:8px; padding:8px 16px; background:#f8f9fa; border-bottom:1px solid #dee2e6; flex-shrink:0; flex-wrap:wrap; {rdelim}
@@ -37,12 +38,12 @@
 .bbf-tb:hover {ldelim} background:#e9ecef; {rdelim}
 .bbf-tb.active {ldelim} background:var(--bbf-primary); color:#fff; border-color:var(--bbf-primary); {rdelim}
 .bbf-builder-main {ldelim} display:flex; flex:1; min-height:0; {rdelim}
-.bbf-builder-sidebar {ldelim} width:280px; flex-shrink:0; border-right:1px solid #dee2e6; overflow-y:auto; background:#fff; height:100%; {rdelim}
+.bbf-builder-sidebar {ldelim} width:270px; flex-shrink:0; border-right:1px solid #e9ecef; overflow-y:auto; background:#fff; height:100%; {rdelim}
 .bbf-builder-canvas {ldelim} flex:1; position:relative; height:100%; overflow:hidden; {rdelim}
-.bbf-sidebar-tabs {ldelim} display:flex; border-bottom:2px solid #dee2e6; position:sticky; top:0; background:#fff; z-index:1; {rdelim}
-.bbf-sidebar-tab {ldelim} flex:1; padding:10px 8px; text-align:center; font-size:11px; font-weight:600; border:none; background:none; cursor:pointer; color:#6c757d; border-bottom:2px solid transparent; margin-bottom:-2px; {rdelim}
-.bbf-sidebar-tab:hover {ldelim} color:#333; {rdelim}
-.bbf-sidebar-tab.active {ldelim} color:var(--bbf-primary); border-bottom-color:var(--bbf-primary); {rdelim}
+.bbf-sidebar-tabs {ldelim} display:flex; border-bottom:1.5px solid #e9ecef; position:sticky; top:0; background:#fff; z-index:10; padding:0 4px; {rdelim}
+.bbf-sidebar-tab {ldelim} flex:1; padding:10px 4px; text-align:center; font-size:11px; font-weight:700; border:none; background:none; cursor:pointer; color:#9ca3af; border-bottom:2px solid transparent; margin-bottom:-1.5px; letter-spacing:.03em; text-transform:uppercase; transition:color .15s; {rdelim}
+.bbf-sidebar-tab:hover {ldelim} color:#374151; {rdelim}
+.bbf-sidebar-tab.active {ldelim} color:var(--bbf-primary, #e8420a); border-bottom-color:var(--bbf-primary, #e8420a); {rdelim}
 .bbf-sidebar-panel {ldelim} display:block !important; visibility:hidden; height:0; overflow:hidden; pointer-events:none; {rdelim}
 .bbf-sidebar-panel.active {ldelim} visibility:visible; height:auto; overflow:visible; pointer-events:auto; {rdelim}
 
@@ -65,19 +66,14 @@
 /* ── GrapesJS Canvas-Hintergrund ── */
 .gjs-cv-canvas__frames {ldelim} background: #f3f4f6 !important; {rdelim}
 
-/* ── Block-Grid in Sidebar ── */
-.gjs-blocks-c {ldelim} display:grid !important; grid-template-columns:1fr 1fr !important; gap:6px !important; padding:10px !important; {rdelim}
-
-/* ── Block-Karten ── */
-.gjs-block {ldelim} border:1.5px solid #f0f0f0 !important; border-radius:8px !important; padding:10px 6px !important; margin:0 !important; min-height:72px !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:5px !important; width:auto !important; background:#fff !important; cursor:grab !important; transition:all .15s !important; {rdelim}
-.gjs-block:hover {ldelim} border-color:#e8420a !important; background:#fff8f6 !important; box-shadow:0 2px 8px rgba(232,66,10,.10) !important; transform:translateY(-1px) !important; {rdelim}
-.gjs-block .fa, .gjs-block [class*="fa-"] {ldelim} font-size:18px !important; color:#9ca3af !important; line-height:1 !important; {rdelim}
-.gjs-block:hover .fa, .gjs-block:hover [class*="fa-"] {ldelim} color:#e8420a !important; {rdelim}
-.gjs-block-label {ldelim} font-size:11px !important; font-weight:600 !important; color:#6b7280 !important; text-align:center !important; line-height:1.2 !important; {rdelim}
-.gjs-block:hover .gjs-block-label {ldelim} color:#e8420a !important; {rdelim}
-
-/* ── Kategorien-Titel ── */
-.gjs-block-category .gjs-title {ldelim} background:#fff !important; font-size:11px !important; font-weight:700 !important; color:#9ca3af !important; padding:10px 12px 6px !important; text-transform:uppercase !important; letter-spacing:.06em !important; border-bottom:none !important; border-top:1px solid #f3f4f6 !important; {rdelim}
+/* ── Block-Kacheln: kompakt ── */
+.gjs-blocks-c {ldelim} display:grid !important; grid-template-columns:1fr 1fr !important; gap:5px !important; padding:8px !important; background:#fff !important; {rdelim}
+.gjs-block {ldelim} border:1.5px solid #e9ecef !important; border-radius:8px !important; padding:8px 4px !important; margin:0 !important; min-height:58px !important; max-height:58px !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:4px !important; width:auto !important; background:#fff !important; cursor:grab !important; transition:all .12s ease !important; overflow:hidden !important; {rdelim}
+.gjs-block:hover {ldelim} border-color:var(--bbf-primary, #e8420a) !important; background:#fff8f6 !important; box-shadow:0 2px 6px rgba(232,66,10,.12) !important; transform:translateY(-1px) !important; {rdelim}
+.gjs-block .fa, .gjs-block [class*="fa-"] {ldelim} font-size:16px !important; color:#4b5563 !important; line-height:1 !important; display:block !important; {rdelim}
+.gjs-block:hover .fa, .gjs-block:hover [class*="fa-"] {ldelim} color:var(--bbf-primary, #e8420a) !important; {rdelim}
+.gjs-block-label {ldelim} font-size:10px !important; font-weight:600 !important; color:#4b5563 !important; text-align:center !important; line-height:1.2 !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; max-width:90% !important; {rdelim}
+.gjs-block:hover .gjs-block-label {ldelim} color:var(--bbf-primary, #e8420a) !important; {rdelim}
 
 /* ── Style Manager ── */
 .gjs-sm-sector .gjs-sm-sector-title {ldelim} background:#f9fafb !important; font-weight:600 !important; font-size:12px !important; padding:8px 12px !important; border-bottom:1px solid #f0f0f0 !important; color:#374151 !important; {rdelim}

@@ -3,19 +3,21 @@
    Geladen im GrapesJS iFrame + im Frontend
    ============================================================ */
 
-/* Reset */
-*, *::before, *::after { box-sizing: border-box; }
+/* ── Canvas iFrame Body ── */
+html, body { margin: 0 !important; padding: 0 !important; }
 
 body {
-    margin: 0;
-    padding: 32px 40px;
+    padding: 28px 32px !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-                 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    color: #1f2937;
-    background: #f9fafb;
-    line-height: 1.5;
+                 'Helvetica Neue', Arial, sans-serif !important;
+    font-size: 14px !important;
+    color: #1f2937 !important;
+    background: #f3f4f6 !important;
+    line-height: 1.5 !important;
+    box-sizing: border-box !important;
 }
+
+*, *::before, *::after { box-sizing: border-box !important; }
 
 /* ── Formular-Wrapper ── */
 .bbf-form-wrap {

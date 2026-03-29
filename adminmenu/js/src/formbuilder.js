@@ -185,6 +185,17 @@ window.BbfFormbuilder = {
 
         // ── Fix Canvas Drop Events + Cleanup on load ─────────
         editor.on('load', () => {
+            // Canvas Body Padding sicherstellen (Fallback falls CSS nicht greift)
+            try {
+                const frame = editor.Canvas.getFrameEl();
+                if (frame?.contentDocument?.body) {
+                    const body = frame.contentDocument.body;
+                    body.style.setProperty('padding', '28px 32px', 'important');
+                    body.style.setProperty('background', '#f3f4f6', 'important');
+                    body.style.setProperty('margin', '0', 'important');
+                }
+            } catch(e) {}
+
             // Canvas iFrame drop events
             const frame = editor.Canvas.getFrameEl();
             if (frame?.contentDocument?.body) {

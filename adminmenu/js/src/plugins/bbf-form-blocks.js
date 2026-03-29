@@ -1,9 +1,30 @@
 /**
  * BBF Formbuilder — GrapesJS Form Blocks
  * Karten-Optik analog Easy Form Builder
+ * Reihenfolge bestimmt Kategorie-Sortierung in der Sidebar
  */
 export default function bbfFormBlocks(editor) {
     const bm = editor.BlockManager;
+
+    // ── Layout (6) — ZUERST registrieren = oben in Sidebar ──
+
+    bm.add('bbf-row-2', { label: '2 Spalten', category: 'Layout', attributes: { class: 'fa fa-columns' },
+        content: `<div class="bbf-col-wrap" data-gjs-type="bbf-layout" data-field-type="columns_2"><div style="display:flex;gap:10px;"><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">Spalte 1</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">Spalte 2</span></div></div></div>` });
+
+    bm.add('bbf-row-3', { label: '3 Spalten', category: 'Layout', attributes: { class: 'fa fa-th' },
+        content: `<div class="bbf-col-wrap" data-gjs-type="bbf-layout" data-field-type="columns_3"><div style="display:flex;gap:10px;"><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">1/3</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">1/3</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">1/3</span></div></div></div>` });
+
+    bm.add('bbf-row-4', { label: '4 Spalten', category: 'Layout', attributes: { class: 'fa fa-th-large' },
+        content: `<div class="bbf-col-wrap" data-gjs-type="bbf-layout" data-field-type="columns_4"><div style="display:flex;gap:8px;"><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div></div></div>` });
+
+    bm.add('bbf-section', { label: 'Abschnitt', category: 'Layout', attributes: { class: 'fa fa-minus' },
+        content: `<div class="bbf-section-break" data-gjs-type="bbf-layout" data-field-type="section_break"><h5>Abschnittstitel</h5><p>Optionale Beschreibung</p><hr /></div>` });
+
+    bm.add('bbf-page-break', { label: 'Seitenumbruch', category: 'Layout', attributes: { class: 'fa fa-arrow-right' },
+        content: `<div class="bbf-page-break" data-gjs-type="bbf-layout" data-field-type="page_break"><i class="fa fa-arrow-right"></i> Nächster Schritt</div>` });
+
+    bm.add('bbf-html', { label: 'HTML-Block', category: 'Layout', attributes: { class: 'fa fa-code' },
+        content: `<div class="bbf-field" data-gjs-type="bbf-layout" data-field-type="html_block"><p style="color:#9ca3af;font-size:13px;margin:0;">Freier HTML-Inhalt — doppelklicken zum Bearbeiten</p></div>` });
 
     // ── Standard-Felder (13) ─────────────────────────────
 
@@ -59,26 +80,6 @@ export default function bbfFormBlocks(editor) {
 
     bm.add('bbf-rating', { label: 'Bewertung', category: 'Erweiterte Felder', attributes: { class: 'fa fa-star' },
         content: `<div class="bbf-field" data-gjs-type="bbf-field" data-field-type="rating" data-label="Bewertung"><label class="bbf-label">Bewertung</label><div class="bbf-rating"><span class="bbf-star">★</span><span class="bbf-star">★</span><span class="bbf-star">★</span><span class="bbf-star">★</span><span class="bbf-star">★</span></div></div>` });
-
-    // ── Layout (6) ───────────────────────────────────────
-
-    bm.add('bbf-row-2', { label: '2 Spalten', category: 'Layout', attributes: { class: 'fa fa-columns' },
-        content: `<div class="bbf-col-wrap" data-gjs-type="bbf-layout" data-field-type="columns_2"><div style="display:flex;gap:10px;"><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">Spalte 1</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">Spalte 2</span></div></div></div>` });
-
-    bm.add('bbf-row-3', { label: '3 Spalten', category: 'Layout', attributes: { class: 'fa fa-th' },
-        content: `<div class="bbf-col-wrap" data-gjs-type="bbf-layout" data-field-type="columns_3"><div style="display:flex;gap:10px;"><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">1/3</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">1/3</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:10px;background:#fff;"><span class="bbf-col-placeholder">1/3</span></div></div></div>` });
-
-    bm.add('bbf-row-4', { label: '4 Spalten', category: 'Layout', attributes: { class: 'fa fa-th-large' },
-        content: `<div class="bbf-col-wrap" data-gjs-type="bbf-layout" data-field-type="columns_4"><div style="display:flex;gap:8px;"><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div><div style="flex:1;min-height:70px;border:1.5px dashed #e5e7eb;border-radius:6px;padding:8px;background:#fff;"><span class="bbf-col-placeholder">1/4</span></div></div></div>` });
-
-    bm.add('bbf-section', { label: 'Abschnitt', category: 'Layout', attributes: { class: 'fa fa-minus' },
-        content: `<div class="bbf-section-break" data-gjs-type="bbf-layout" data-field-type="section_break"><h5>Abschnittstitel</h5><p>Optionale Beschreibung</p><hr /></div>` });
-
-    bm.add('bbf-page-break', { label: 'Seitenumbruch', category: 'Layout', attributes: { class: 'fa fa-arrow-right' },
-        content: `<div class="bbf-page-break" data-gjs-type="bbf-layout" data-field-type="page_break"><i class="fa fa-arrow-right"></i> Nächster Schritt</div>` });
-
-    bm.add('bbf-html', { label: 'HTML-Block', category: 'Layout', attributes: { class: 'fa fa-code' },
-        content: `<div class="bbf-field" data-gjs-type="bbf-layout" data-field-type="html_block"><p style="color:#9ca3af;font-size:13px;margin:0;">Freier HTML-Inhalt — doppelklicken zum Bearbeiten</p></div>` });
 
     // ── Spezial (3) ──────────────────────────────────────
 
